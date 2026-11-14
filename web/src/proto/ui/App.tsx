@@ -278,6 +278,7 @@ export function App() {
   return (
     <div className="page">
       <div className="app">
+        <div className="rail left">
         <h1>cascade</h1>
         <p className="subtitle">prototype a — matching sigils</p>
 
@@ -372,56 +373,9 @@ export function App() {
           </span>
         </div>
 
-        {card && (
-          <div className="abilitybox">
-            <b>{card.ability.toUpperCase()}</b>{' '}
-            <span className="muted">
-              changes {ABILITY_INFO[card.ability].changes}
-            </span>
-            {' · '}
-            {live
-              ? <button onClick={() => setArmed(!armed)}>
-                  {armed ? 'armed ✓' : 'use it'}
-                </button>
-              : <span className="muted">
-                  from your {ABILITY_FROM_PLACEMENT}nd placement
-                </span>}
-            <p>{ABILITY_INFO[card.ability].text}</p>
-            <p className="muted small2">
-              this card is <b>{cardShape(card.sigils)}</b> —{' '}
-              {SHAPE_INFO[cardShape(card.sigils)]}
-            </p>
-          </div>
-        )}
+        </div>{/* rail left */}
 
-        {picker && card && (
-          <div className="picker">
-            <p className="hint">
-              <b>{card.ability}</b> on cell {picker.cell} — hover a choice
-              to see what it takes, then click it
-              <button onClick={() => { setPicker(null); setPickHover(null); }}>
-                cancel
-              </button>
-            </p>
-            <ul onMouseLeave={() => setPickHover(null)}>
-              {picker.options.map((o, i) => (
-                <li key={i}
-                    className={`${pickHover === i ? 'on' : ''}`
-                      + `${o.captured > 0 ? ' takes' : ''}`}
-                    onMouseEnter={() => setPickHover(i)}
-                    onClick={() => place(picker.cell, o.option)}>
-                  <span className="plabel">{o.label}</span>
-                  <span className="pgain">
-                    {o.captured > 0
-                      ? `takes ${o.captured}`
-                      : 'takes nothing'}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
+        <div className="stage">
         {card && (
           <div className="previewkey">
             <span><i className="k-open" />exposed edge</span>
@@ -435,7 +389,11 @@ export function App() {
         )}
 
         <div className="board"
-             style={{ gridTemplateColumns: `repeat(${s.cols}, var(--cell))` }}>
+             style={{
+               gridTemplateColumns: `repeat(${s.cols}, var(--cell))`,
+               ['--rows' as string]: String(s.rows),
+               ['--cols' as string]: String(s.cols),
+             } as React.CSSProperties}>
           {Array.from({ length: s.cells }, (_, cell) => {
             const c = game.board.cards[cell];
             const owner = (shownOwn[0] >>> cell) & 1 ? 0
@@ -520,6 +478,59 @@ export function App() {
           </div>
         )}
 
+        </div>{/* stage */}
+
+        <div className="rail right">
+        {card && (
+          <div className="abilitybox">
+            <b>{card.ability.toUpperCase()}</b>{' '}
+            <span className="muted">
+              changes {ABILITY_INFO[card.ability].changes}
+            </span>
+            {' · '}
+            {live
+              ? <button onClick={() => setArmed(!armed)}>
+                  {armed ? 'armed ✓' : 'use it'}
+                </button>
+              : <span className="muted">
+                  from your {ABILITY_FROM_PLACEMENT}nd placement
+                </span>}
+            <p>{ABILITY_INFO[card.ability].text}</p>
+            <p className="muted small2">
+              this card is <b>{cardShape(card.sigils)}</b> —{' '}
+              {SHAPE_INFO[cardShape(card.sigils)]}
+            </p>
+          </div>
+        )}
+
+        {picker && card && (
+          <div className="picker">
+            <p className="hint">
+              <b>{card.ability}</b> on cell {picker.cell} — hover a choice
+              to see what it takes, then click it
+              <button onClick={() => { setPicker(null); setPickHover(null); }}>
+                cancel
+              </button>
+            </p>
+            <ul onMouseLeave={() => setPickHover(null)}>
+              {picker.options.map((o, i) => (
+                <li key={i}
+                    className={`${pickHover === i ? 'on' : ''}`
+                      + `${o.captured > 0 ? ' takes' : ''}`}
+                    onMouseEnter={() => setPickHover(i)}
+                    onClick={() => place(picker.cell, o.option)}>
+                  <span className="plabel">{o.label}</span>
+                  <span className="pgain">
+                    {o.captured > 0
+                      ? `takes ${o.captured}`
+                      : 'takes nothing'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {game.reserve.length > 0 && (
           <div className="reserve">
             <span className="handlabel">
@@ -555,8 +566,6 @@ export function App() {
         <ul className="log">
           {log.map((l, i) => <li key={i} className="ln">{l}</li>)}
         </ul>
-      </div>
-
       <aside className="sigilmap">
         <h2>the four sigils</h2>
         <p className="muted small2">
@@ -585,6 +594,9 @@ export function App() {
           ))}
         </ul>
       </aside>
+        </div>{/* rail right */}
+      </div>
+
     </div>
   );
 }

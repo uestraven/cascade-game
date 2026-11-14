@@ -29,6 +29,17 @@ import { type Sfx, isMuted, loadMuted, setMuted, sfx } from '../src/proto/ui/sou
 describe('the app renders', () => {
   const html = renderToStaticMarkup(createElement(App));
 
+  it('renders a three-column shell with the board in the middle', () => {
+    expect(html).toContain('class="rail left"');
+    expect(html).toContain('class="stage"');
+    expect(html).toContain('class="rail right"');
+    // the board publishes its own dimensions so CSS can size cells to
+    // the viewport without measuring the DOM
+    expect(html).toMatch(/--rows:\s*\d/);
+    expect(html).toMatch(/--cols:\s*\d/);
+  });
+
+
   it('mounts without throwing', () => {
     expect(html.length).toBeGreaterThan(500);
   });
@@ -127,6 +138,37 @@ describe('the whole installed art set is reachable', () => {
         .filter((u) => u !== 'http://www.w3.org/2000/svg');
       expect(urls, f).toEqual([]);
     }
+  });
+
+  it('sizes cells from the viewport, for every board', () => {
+    const css = readFileSync(
+      resolve(__dirname, '..', 'src', 'proto', 'ui', 'styles.css'), 'utf8');
+    // --cell must be derived, or a 4x4 board overflows the screen that a
+    // 3x3 fits exactly
+    expect(css).toMatch(/--cell:\s*min\(/);
+    expect(css).toContain('--boardH');
+    expect(css).toContain('--boardW');
+    expect(css).toMatch(/\.app\{[^}]*height:100vh/s);
+
+    // work the arithmetic the browser will do, so a bad constant is
+    // caught here rather than by squinting at a screenshot
+    const cell = (vw: number, vh: number, rows: number, cols: number) => {
+      const railL = 258, railR = 310, gap = 16;
+      const h = vh - 210, w = vw - railL - railR - 5 * gap;
+      return Math.min((h - rows * 8) / rows, (w - cols * 8) / cols);
+    };
+    for (const [vw, vh] of [[1920, 1080], [1440, 900], [1366, 768]]) {
+      for (const [r, c] of [[3, 3], [3, 4], [4, 4]]) {
+        const px = cell(vw, vh, r, c);
+        // big enough to read four sigils and a painting...
+        expect(px, `${vw}x${vh} ${r}x${c}`).toBeGreaterThan(100);
+        // ...and the whole board still inside the viewport
+        expect(r * px + r * 8, `${vw}x${vh} ${r}x${c} height`)
+          .toBeLessThan(vh - 120);
+      }
+    }
+    // and it should be a real enlargement over the old fixed 104px
+    expect(cell(1920, 1080, 3, 3)).toBeGreaterThan(200);
   });
 
   it('no .pcard rule uses the background shorthand', () => {

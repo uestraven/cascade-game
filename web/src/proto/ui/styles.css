@@ -3,15 +3,48 @@
   --p1:#4a9eff; --p1d:#1d3a5c; --p2:#ff7043; --p2d:#5c2c1d;
   --text:#e6e9f0; --muted:#7b8294; --gold:#ffd84a;
   --cell:104px;
+  /* the two side rails, and what the board gets after them */
+  --railL:258px; --railR:310px; --gap:16px;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);
   font:14px/1.45 ui-sans-serif,system-ui,-apple-system,sans-serif}
-.page{display:flex;gap:22px;align-items:flex-start;padding:22px;
-  flex-wrap:wrap}
-.app{max-width:560px}
+/* ---------------------------------------------------------------------
+   Layout: the board is the point, so it gets the viewport.
+
+   Three columns -- a rail of state on the left, the board and hand in
+   the middle, the card you are holding and the reference on the right.
+   The rails scroll independently so the board never moves while you
+   read something beside it.
+   ------------------------------------------------------------------ */
+.page{padding:0;margin:0}
+.app{display:grid;
+  grid-template-columns:var(--railL) minmax(0,1fr) var(--railR);
+  gap:var(--gap);
+  height:100vh;max-height:100vh;padding:var(--gap);
+  align-items:start}
+.rail{height:100%;overflow-y:auto;overflow-x:hidden;
+  padding-right:4px;scrollbar-width:thin}
+.rail.right{border-left:1px solid var(--line);padding-left:var(--gap)}
+.rail.left{border-right:1px solid var(--line)}
+
+/* The stage centres the board and keeps the hand pinned beneath it. */
+.stage{height:100%;display:grid;grid-template-rows:auto 1fr auto;
+  align-items:center;justify-items:center;min-width:0;gap:6px}
+
+/* Cell size is derived, not fixed, so a 3x3 and a 4x4 both fill the
+   height available. The board's own --rows/--cols come from the markup,
+   and the two subtracted constants are the hand strip and the gaps --
+   measuring the DOM for this would mean a reflow on every render. */
+.board{--boardH:calc(100vh - 210px);
+  --boardW:calc(100vw - var(--railL) - var(--railR) - 5*var(--gap));
+  --cell:min(calc((var(--boardH) - var(--rows)*8px) / var(--rows)),
+             calc((var(--boardW) - var(--cols)*8px) / var(--cols)));
+  display:grid;gap:8px;margin:0}
+
+h1{margin:0;font-size:20px;letter-spacing:.2em;text-transform:uppercase}
 h1{margin:0;font-size:26px;letter-spacing:.22em;text-transform:uppercase}
-.subtitle{margin:2px 0 14px;font-size:11px;letter-spacing:.14em;
+.subtitle{margin:2px 0 10px;font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted)}
 h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--muted);margin:16px 0 6px}
@@ -46,7 +79,6 @@ button:disabled{opacity:.4;cursor:default}
 .seg.mine.done{background:var(--p1)} .seg.theirs.done{background:var(--p2)}
 .seg.now{outline:1px solid var(--gold)}
 
-.board{display:grid;gap:6px;margin:12px 0}
 .cell{width:var(--cell);height:var(--cell);border:1px dashed var(--line);
   border-radius:9px;display:grid;place-items:center;position:relative}
 .cell.placeable{border-color:var(--p1);cursor:pointer}
@@ -60,6 +92,7 @@ button:disabled{opacity:.4;cursor:default}
    Four sigils, one per edge, and nothing competing with them. The
    ability is named in the centre rather than drawn, because the centre
    is where a fifth icon would be easiest to mistake for an edge. */
+.cell .pcard{width:100%;height:100%}
 .pcard{position:relative;width:88px;height:88px;border-radius:8px;
   border:1px solid var(--line);transition:background-color .25s,border-color .25s}
 .pcard.p1{background-color:#16293f;border-color:var(--p1)}
@@ -69,13 +102,18 @@ button:disabled{opacity:.4;cursor:default}
 .pcard.dim{opacity:.45}
 .pcard.flash{background-color:#4a3a0f;border-color:var(--gold)}
 
+/* Sigil zones are a proportion of the card, not a pixel size, so they
+   stay in the frame's reserved discs at any board scale. The SVG inside
+   is stretched to fill, which overrides the size attribute the
+   component sets -- CSS wins over a presentation attribute. */
 .pedge{position:absolute;display:grid;place-items:center;
-  width:28px;height:28px}
-.pcard.sm .pedge{width:21px;height:21px}
-.pedge.n{top:2px;left:50%;transform:translateX(-50%)}
-.pedge.s{bottom:2px;left:50%;transform:translateX(-50%)}
-.pedge.w{left:2px;top:50%;transform:translateY(-50%)}
-.pedge.e{right:2px;top:50%;transform:translateY(-50%)}
+  width:32%;height:32%;min-width:16px;min-height:16px}
+.pedge > .sigil{width:100%;height:100%}
+.pcard.sm .pedge{width:34%;height:34%}
+.pedge.n{top:2%;left:50%;transform:translateX(-50%)}
+.pedge.s{bottom:2%;left:50%;transform:translateX(-50%)}
+.pedge.w{left:2%;top:50%;transform:translateY(-50%)}
+.pedge.e{right:2%;top:50%;transform:translateY(-50%)}
 
 /* Sigil socket: a recess sunk into the card behind each sigil.
    The artwork used to be delivered at 40% opacity so the sigils stayed
@@ -247,3 +285,42 @@ button:disabled{opacity:.4;cursor:default}
 /* long ability names must not spill out of an 88px card */
 .pability{padding:0 4px;max-width:100%;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap;font-size:8px}
+
+/* ---------------------------------------------------------------------
+   Scale-dependent card detail.
+
+   The ability name and the open/wild markers were sized for an 88px
+   card. With the board filling the viewport a cell can be 200px+, so
+   anything in points rather than proportions ends up tiny and lost.
+   ------------------------------------------------------------------ */
+.cell .pcard .pability{font-size:clamp(8px, calc(var(--cell) * 0.085), 15px)}
+.cell .pcard .pedge::before{background:radial-gradient(circle,
+  rgba(6,8,12,.94) 0%, rgba(6,8,12,.86) 54%,
+  rgba(6,8,12,.5) 80%, rgba(6,8,12,0) 100%)}
+
+/* the rails hold dense text; tighten it so both fit without scrolling
+   on a normal laptop */
+.rail h2{margin:12px 0 5px}
+.rail .rule{margin:10px 0 4px;font-size:12px}
+.rail .log{max-height:30vh;overflow-y:auto}
+.rail.right .picker ul{max-height:34vh}
+.rail .sigilmap,.rail aside{margin:0}
+.rail .abilitybox p{margin:5px 0}
+
+/* The hand sits under the board. Cards there are a fixed, comfortable
+   size rather than scaled with the cell: they are read individually,
+   not compared across a grid. */
+.stage .hand{margin:0;justify-content:center;flex-wrap:nowrap;
+  overflow-x:auto;max-width:100%;padding:2px}
+.stage .previewkey{margin:0}
+
+/* Below this width three columns stop being honest about the space, so
+   stack and let the page scroll rather than squeezing the board. */
+@media (max-width: 1100px) {
+  .app{grid-template-columns:1fr;height:auto;max-height:none}
+  .rail{height:auto;overflow:visible;border:0;padding:0}
+  .rail.right{border-left:0;padding-left:0}
+  .rail.left{border-right:0}
+  .stage{height:auto}
+  .board{--boardW:calc(100vw - 3*var(--gap));--boardH:calc(100vh - 260px)}
+}
