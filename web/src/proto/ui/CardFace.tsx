@@ -4,6 +4,21 @@ import { SIGIL_NAMES, Sigil } from './Sigil';
 
 const ART_COUNT = 20;
 
+/**
+ * Card art file extension.
+ *
+ * Painted, photoreal art cannot be SVG, so the card artwork is raster
+ * while the frames and sigils stay vector. Set to 'webp' once the
+ * realistic set lands; 'svg' is the emblematic placeholder set.
+ *
+ * This is one constant rather than a per-card field because all twenty
+ * are delivered together as one set in one format -- a mixed deck where
+ * some cards are vector and some raster would show as a visible
+ * difference in grain between cards, which is exactly the kind of tell
+ * that lets a player identify a card by its art instead of its sigils.
+ */
+const ART_EXT = 'svg';
+
 /** Frame carries ownership; it is far more legible across a table than a
  *  background tint, so the tint was dropped rather than run alongside. */
 const frameFor = (owner: number): string =>
@@ -18,7 +33,7 @@ function artFor(art: number | undefined, sigils: Card): string {
     ? art
     : ((sigils[0] * 64 + sigils[1] * 16 + sigils[2] * 4 + sigils[3])
        % ART_COUNT) + 1;
-  return `/art/cards/card-${String(n).padStart(2, '0')}.svg`;
+  return `/art/cards/card-${String(n).padStart(2, '0')}.${ART_EXT}`;
 }
 
 export interface Props {

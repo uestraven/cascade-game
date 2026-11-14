@@ -76,17 +76,34 @@ button:disabled{opacity:.4;cursor:default}
 .pedge.s{bottom:2px;left:50%;transform:translateX(-50%)}
 .pedge.w{left:2px;top:50%;transform:translateY(-50%)}
 .pedge.e{right:2px;top:50%;transform:translateY(-50%)}
+
+/* Sigil socket: a recess sunk into the card behind each sigil.
+   The artwork used to be delivered at 40% opacity so the sigils stayed
+   readable on top of it, which washed out the art. Darkening only the
+   four 28px discs the sigils occupy does the same job locally, so the
+   painting can run at full strength everywhere else. The gradient fades
+   to nothing at the rim rather than ending on a hard edge, or it reads
+   as four grey dots stuck on the card. */
+.pedge::before{content:'';position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(6,8,12,.94) 0%,
+    rgba(6,8,12,.86) 54%,rgba(6,8,12,.55) 80%,rgba(6,8,12,0) 100%)}
 /* an exposed edge can be attacked next turn -- a fact, not a rating */
 .pedge.open::after{content:'';position:absolute;inset:-1px;
   border-radius:50%;box-shadow:0 0 0 1px var(--gold);opacity:.45}
 .pedge.wild{filter:drop-shadow(0 0 4px var(--gold))}
-.sigil{display:block}
+/* above the socket */
+.sigil{display:block;position:relative}
 
+/* The ability name sits over the middle of the painting, where there is
+   no socket to hide in, so it carries its own halo instead. */
 .pability{position:absolute;inset:0;display:grid;place-items:center;
   font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);pointer-events:none}
+  color:var(--muted);pointer-events:none;
+  text-shadow:0 0 3px #05070b,0 0 6px #05070b,0 0 10px #05070b,
+    0 1px 1px #000}
 .pabilitydot{position:absolute;top:50%;left:50%;width:4px;height:4px;
-  margin:-2px 0 0 -2px;border-radius:50%;background:var(--muted)}
+  margin:-2px 0 0 -2px;border-radius:50%;background:var(--muted);
+  box-shadow:0 0 0 2px rgba(6,8,12,.8)}
 
 .hand{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .slot{display:flex;flex-direction:column;align-items:center;gap:3px;
