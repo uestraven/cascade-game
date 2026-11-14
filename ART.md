@@ -62,11 +62,18 @@ shows its painting on its side; there is no code on a tabletop. So the
 digital and physical versions no longer look identical, which was
 previously a hard requirement.
 
-The practical consequence for you: **do not let the painting encode
-anything a player needs.** A playtester must never learn "the dragon card
-is the one with Pivot" from the picture's orientation, or rely on which
-way a figure faces, because on the table that cue breaks. Orientation
-must be decorative only.
+The practical consequence is narrower than an earlier draft of this file
+claimed. That draft told you the painting must not let a player infer the
+card's rules. **That was wrong and is withdrawn.** A card in a real deck
+is permanently one artwork and one ability; players learn cards by their
+pictures, and that is a feature. The engine in fact pins artwork to
+ability (§5.3), so the correlation exists whether or not you lean on it.
+Lean on it.
+
+What must stay decorative is **orientation specifically**. Nothing a
+player needs may depend on which way the painting faces, because that is
+the one cue a physical card destroys when it is turned. So do not compose
+so that a figure's gaze direction, an arrow, or a tilt carries meaning.
 
 A good test: cover the four edges of your painting and ask whether
 anything load-bearing was in them. Then ask whether a player could tell
@@ -193,30 +200,114 @@ and back stay vector.
   strength
 - No transparency needed; these sit behind an opaque frame
 
-One per card in the 20-card deck (`protodeck.json` has the roster). Each
-card has a sigil layout and an ability. The art does not need to depict
-its ability and **must not be readable as its ability** (§1), but the
-four abilities are a fine well to draw mood from:
+One per card in the 20-card deck. **The engine pins artwork to ability**
+— `buildDeck` derives both from the same deck index, and 20 is a
+multiple of 4, so art *N* always carries ability *(N−1) mod 4* in every
+game ever played:
 
-| Ability | Mood to draw on |
+| Ability | Artworks |
 |---|---|
-| **Pivot** | turning, orreries, clockwork, a key in a lock |
-| **Exchange** | twins, reflections, a bargain struck, doorways |
-| **Relay** | a current passed hand to hand, chains, lightning |
-| **Prism** | refraction, becoming-anything, a lens, a prism |
+| **Pivot** | 01, 05, 09, 13, 17 |
+| **Exchange** | 02, 06, 10, 14, 18 |
+| **Relay** | 03, 07, 11, 15, 19 |
+| **Prism** | 04, 08, 12, 16, 20 |
+
+Treat that as the organising structure, not a coincidence. Each ability
+is a **family of five paintings** that share a visual thread, so a player
+learns the ability from the picture:
+
+| Ability | Visual thread | Palette family |
+|---|---|---|
+| **Pivot** | turning, orreries, clockwork, a key in a lock | brass and amber on deep brown |
+| **Exchange** | twins, reflections, a bargain struck, doorways | cool teal and silver |
+| **Relay** | a current passed on, chains, lightning, conduits | violet and electric blue |
+| **Prism** | refraction, lenses, becoming-anything | pale bone and iridescence |
+
+Keeping each family to its own palette is deliberate: it makes a crowded
+board readable at 88px, and it leaks nothing, because a card's ability is
+public the moment it is on the table and printed on its own face in hand.
+
+### The allocation — please follow it slot by slot
+
+The first delivery was twenty variations on one painting. This table
+exists so that cannot happen again. Within each ability family the five
+cards take five different subject classes and five different brightness
+bands, so cards that share a palette never share a silhouette.
+
+| art | ability | subject class | target brightness |
+|---|---|---|---|
+| `card-01` | Pivot | a single figure | very dark (18-28) |
+| `card-02` | Exchange | a single figure | dark (30-40) |
+| `card-03` | Relay | a single figure | mid (45-55) |
+| `card-04` | Prism | a single figure | light (58-68) |
+| `card-05` | Pivot | a creature or beast | dark (30-40) |
+| `card-06` | Exchange | a creature or beast | mid (45-55) |
+| `card-07` | Relay | a creature or beast | light (58-68) |
+| `card-08` | Prism | a creature or beast | high-key (70-80) |
+| `card-09` | Pivot | an architecture or a place, no figure | mid (45-55) |
+| `card-10` | Exchange | an architecture or a place, no figure | light (58-68) |
+| `card-11` | Relay | an architecture or a place, no figure | high-key (70-80) |
+| `card-12` | Prism | an architecture or a place, no figure | very dark (18-28) |
+| `card-13` | Pivot | a close object, almost still life | light (58-68) |
+| `card-14` | Exchange | a close object, almost still life | high-key (70-80) |
+| `card-15` | Relay | a close object, almost still life | very dark (18-28) |
+| `card-16` | Prism | a close object, almost still life | dark (30-40) |
+| `card-17` | Pivot | a phenomenon, no subject at all | high-key (70-80) |
+| `card-18` | Exchange | a phenomenon, no subject at all | very dark (18-28) |
+| `card-19` | Relay | a phenomenon, no subject at all | dark (30-40) |
+| `card-20` | Prism | a phenomenon, no subject at all | mid (45-55) |
+
+Only four of twenty are a single human figure. Four are creatures, four
+are places with nobody in them, four are objects seen close, and four
+have no subject — weather, refraction, a tide of light.
 
 Named characters already in the project — **The Veiled Equinox**, the
-**Stormgrave Empress** — should now be painted as actual characters
-rather than recomposed as emblems. They were the two strongest ideas in
-the previous set and the emblem constraint was wasting them.
+**Stormgrave Empress** — belong in the "single figure" slots. The Veiled
+Equinox as delivered on `card-01` is the strongest painting in the set
+and only needs its brightness pulled down to band.
 
-**Twenty cards want twenty distinct silhouettes at a glance.** Vary the
-subject class deliberately rather than painting twenty robed figures:
-some cards a creature, some a single figure, some an architecture or a
-place, some a close object, some a phenomenon with no subject at all.
-Vary the palette and the value structure too — if four cards are all
-dark blue with a central glow they will be confused with each other on a
-crowded board.
+### Five motifs are now retired
+
+These appeared on most of the first twenty and are spent. Do not use any
+of them again on any card:
+
+1. The gothic pointed-arch arcade or ruined viaduct in the mid-distance
+2. The snow-capped mountain vista seen from above
+3. The gold floral rosette on windblown fabric — it was the same ornament
+   on at least four garments, which read as one faction rather than
+   twenty cards
+4. A low sun and a visible moon in the same sky
+5. The composition itself: a figure in the left two-thirds, cloak
+   streaming, striding or reaching to the right, valley below, luminous
+   sky above
+
+### Keep the top-left clear
+
+Faces and focal points in the first set landed in the upper left, which
+is exactly where the north and west sigils sit. Composition must respect
+§5.1's four edge-centre discs *and* avoid putting the single most
+important part of the painting under one of them. The safe region for a
+focal point is the middle band and the lower centre.
+
+### Check your own set before delivering
+
+The first delivery's uniformity was measurable, and so is the fix. From
+the `cards/` directory:
+
+```sh
+for f in card-*.webp; do
+  printf '%s %s\n' "$f" \
+    "$(convert "$f" -colorspace Gray -format '%[fx:int(100*mean)]' info:)"
+done
+```
+
+Pass conditions:
+
+- Every card within ±6 of its assigned band in the table above
+- The twenty values spanning at least 50 points end to end. The first
+  set spanned 31 to 51, a 20-point range, which is the whole problem
+- Not more than 13 of 20 warmer than neutral. In the first set all 20
+  had red above blue and 19 of 20 had red above green
 
 ### 5.4 Ability marks — 4 pieces
 
@@ -272,8 +363,11 @@ web/public/art/
 **For the 20 card artworks (§5.3):**
 
 - [ ] Is it upright, painted at full opacity, and free of lettering? *(§1)*
-- [ ] Could a player infer this card's *rules* from the picture? If yes,
-      make it less informative *(§1)*
+- [ ] Does it match its assigned subject class, palette family and
+      brightness band in the §5.3 table? *(§5.3)*
+- [ ] Is it clear of all five retired motifs? *(§5.3)*
+- [ ] Is the focal point out of the upper-left and out of the four
+      edge-centre discs? *(§5.3, §5.1)*
 - [ ] Are the four edge-centre discs and the dead centre free of focal
       detail? *(§5.1, §1)*
 - [ ] Does it read as a distinct card next to the other nineteen —
