@@ -132,6 +132,37 @@ export interface CaptureEvent {
 
 export interface Resolution { captured: number; waves: number[] }
 
+/** `cell:side` -> the turn after which the shield lapses. Fortify is the
+ *  only effect in the game that outlives its own placement. */
+export type Shields = Record<string, number>;
+
+export const edgeKey = (cell: number, side: number): string =>
+  `${cell}:${side}`;
+
+export const isShielded = (sh: Shields | undefined, cell: number,
+                           side: number, turn: number): boolean => {
+  if (!sh) return false;
+  const until = sh[edgeKey(cell, side)];
+  return until !== undefined && turn <= until;
+};
+
+/**
+ * Hooks the sixteen adopted abilities need from the capture engine.
+ *
+ * `extras` lets one edge count as additional sigils (Attune, Converge).
+ * `only` restricts the FIRST wave to named edges, which is how Crossing,
+ * Amplify and Corner give up their other attacks. `free` captures with
+ * no match at all (Amplify's follow-up). `shields` blocks capture
+ * through a Fortified edge.
+ */
+export interface CascadeExtra {
+  extras?: Record<string, readonly number[]>;
+  only?: ReadonlySet<string> | null;
+  free?: readonly [number, number] | null;
+  shields?: Shields;
+  turn?: number;
+}
+
 /**
  * The capture engine. `wild` is an optional [cell, side] whose sigil
  * matches anything -- that is Prism.
@@ -140,8 +171,10 @@ export function cascadeFrom(
   s: Shape, b: Board, origin: number, player: number, cap: number,
   wild?: readonly [number, number] | null,
   trace?: CaptureEvent[],
+  x?: CascadeExtra,
 ): Resolution {
   const opp = 1 - player;
+  const turn = x?.turn ?? 0;
   let frontier = origin, captured = 0, depth = 0;
   const waves: number[] = [];
   while (frontier && depth <= cap) {
@@ -151,16 +184,23 @@ export function cascadeFrom(
       const sc = b.cards[src];
       if (!sc) continue;
       for (let d = 0; d < 4; d++) {
+        // a restricted first wave: everything not named is forfeited
+        if (depth === 0 && x?.only && !x.only.has(edgeKey(src, d))) continue;
         const t = s.nb[src][d];
         if (t < 0) continue;
         if (((b.own[opp] >>> t) & 1) === 0) continue;
         const tc = b.cards[t];
         if (!tc) continue;
+        if (isShielded(x?.shields, t, OPPSIDE[d], turn)) continue;
         const isWild = !!wild && wild[0] === src && wild[1] === d;
-        if (isWild || sc[d] === tc[OPPSIDE[d]]) {
+        const isFree = !!x?.free && x.free[0] === src && x.free[1] === d;
+        const extra = x?.extras?.[edgeKey(src, d)];
+        const matched = sc[d] === tc[OPPSIDE[d]]
+          || (!!extra && extra.includes(tc[OPPSIDE[d]]));
+        if (isWild || isFree || matched) {
           if (((newly >>> t) & 1) === 0 && trace) {
             trace.push({ wave: depth, src, target: t, sigil: sc[d],
-                         side: d, wild: isWild });
+                         side: d, wild: isWild || isFree });
           }
           newly |= 1 << t;
         }
@@ -177,3 +217,37 @@ export function cascadeFrom(
   }
   return { captured, waves };
 }
+
+/** Diagonal neighbours of a cell, with the two edges that point at each. */
+export function diagonals(s: Shape, cell: number):
+    [number, [number, number]][] {
+  const r = Math.floor(cell / s.cols), c = cell % s.cols;
+  const out: [number, [number, number]][] = [];
+  const spec: [number, number, [number, number]][] = [
+    [-1, -1, [NORTH, WEST]], [-1, 1, [NORTH, EAST]],
+    [1, -1, [SOUTH, WEST]], [1, 1, [SOUTH, EAST]],
+  ];
+  for (const [dr, dc, pair] of spec) {
+    const nr = r + dr, nc = c + dc;
+    if (nr >= 0 && nr < s.rows && nc >= 0 && nc < s.cols) {
+      out.push([nr * s.cols + nc, pair]);
+    }
+  }
+  return out;
+}
+
+/** The cell two steps away in direction `d`, and the one between. */
+export function lineBeyond(s: Shape, cell: number, d: number):
+    [number, number] | null {
+  const mid = s.nb[cell][d];
+  if (mid < 0) return null;
+  const far = s.nb[mid][d];
+  if (far < 0) return null;
+  return [mid, far];
+}
+
+export const AXES: readonly [number, number][] =
+  [[NORTH, SOUTH], [EAST, WEST]];
+/** adjacent edge pairs, for Mirror */
+export const ADJ: readonly [number, number][] =
+  [[NORTH, EAST], [EAST, SOUTH], [SOUTH, WEST], [WEST, NORTH]];

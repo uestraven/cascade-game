@@ -18,7 +18,7 @@ sigils are the same seal recognising itself.
 | | |
 |---|---|
 | **Sigils** | Halo ⬤, Ward ◆, Crux ✦, Gyre ✸ |
-| **Abilities** | Pivot (orientation), Exchange (position), Relay (attack origin), Prism (matching) |
+| **Abilities** | **20**, all live — 4 original (Pivot, Exchange, Relay, Prism) plus 16 in playtest |
 | **Board** | 3×3 default, 3×4 and 4×4 selectable |
 | **Deck** | one shared deck, dealt to both players |
 | **Cascade** | two waves; the final placement starts no chain |
@@ -85,6 +85,7 @@ turned out to be an artefact of two bots disagreeing in direction.
 | `proto.py` | reference implementation of the current design, and the oracle the web app is verified against |
 | `proto16.py` | sixteen proposed abilities, deliberately outside the shipped engine |
 | `measure16.py`, `live16.py`, `verify16.py` | power/lure/forced measurement, inertness detection, and 43 scenarios pinning each ability's stated mechanic |
+| `gen_proto16_fixture.py` | emits the 19,820-outcome fixture the TypeScript port of the sixteen is replayed against |
 | `identity.py`, `scorch_trap.py`, `timing.py`, … | ablation, lure tests, timing, board size, deck composition |
 | `v3.py`, `v3_abilities.py` | the superseded elemental engine; kept because the app still replays its fixtures |
 | `web/` | the playable app (Vite + React + TypeScript) |
@@ -119,11 +120,14 @@ scales with hand size rather than board size.
 
 Open:
 
-- The four shipped abilities are measured, and **Prism is the strongest
-  at 80.4%** against a floor of 68.6% — it is the balance suspect.
-- Of sixteen proposed abilities, seven are worth nothing, eight are
-  genuinely inert, and three land above the current ceiling. See
-  `measure16.py`.
+- **All twenty abilities are playable, and their balance is not
+  settled.** Six measured inside noise of doing nothing (Lance,
+  Crossing, Amplify, Handoff, Reorient, Withdraw) and three measured
+  above the strongest original ability (Corner 87%, Mend 86%, Converge
+  82%). They are in so they can be played and audited, not because they
+  are finished. See `measure16.py` and the table in `RULES.md`.
+- Set the board to **4×4** to get a 20-card deck holding one of every
+  ability; 3×3 uses a 12-card deck and so the first twelve only.
 - The centre square's value needs a search-based bot or human play; the
   greedy bot cannot answer it.
 - Cards have no stable identity in the app yet: `buildDeck` randomises

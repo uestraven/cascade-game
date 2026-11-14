@@ -125,18 +125,72 @@ optionally, use its ability. Then captures resolve.
 
 ---
 
-## The four abilities
+## The twenty abilities
 
-Every card has one. Each changes exactly one thing you already
-understand — none of them needs a table to explain.
+Every card has one, and using it is always optional. Each changes
+exactly one thing you already understand, and they are grouped by
+*what* they change.
 
-| Ability | Changes | What it does |
-|---|---|---|
-| **Pivot** | orientation | Rotate one adjacent card 90° clockwise — **either player's** — before attacking. |
-| **Exchange** | position | Swap this card with one adjacent card you control. **It attacks from its destination.** |
-| **Relay** | attack origin | Instead of this card attacking, an adjacent card you control attacks from its own position. |
-| **Prism** | matching | Choose one edge of this card. For this placement, **that edge matches any sigil.** |
+Four came with the original design. The other sixteen are in for
+playtesting — they are implemented and verified against the reference
+engine, but their balance is not settled. Measured worth is noted where
+it is known.
 
+### The original four
+
+| Ability | Changes | What it does | Worth |
+|---|---|---|---|
+| **Pivot** | orientation | Rotate one adjacent card 90° clockwise — either player’s — before attacking. | 72% |
+| **Exchange** | position | Swap this card with one adjacent card you own. The card you placed attacks from its new cell. | 71% |
+| **Relay** | attack origin | One adjacent card you own makes the attack instead of this card. | 69% |
+| **Prism** | matching | Choose one edge of this card. It matches any sigil this placement. | 80% |
+
+### Change the edges
+
+| Ability | Changes | What it does | Worth |
+|---|---|---|---|
+| **Mirror** | edge order | Choose two adjacent edges of this card with different sigils and swap them for this placement. | 67% |
+| **Echo** | a repeated sigil | Copy the sigil on one edge of this card onto another edge of this card for this placement. | 76% |
+| **Attune** | a borrowed sigil | Choose an adjacent card you own. One edge of this card also counts as the sigil that ally shows this card. | 54% |
+| **Converge** | two edges at once | Choose two edges of this card. Each counts as either of their two sigils for this placement. | 82% |
+
+### Change the attack geometry
+
+| Ability | Changes | What it does | Worth |
+|---|---|---|---|
+| **Lance** | reach through a gap | Choose an edge facing an empty cell. This card also attacks the card beyond that empty cell, in line. | 49% |
+| **Corner** | a diagonal attack | Attack one diagonal neighbour with the chosen edge. This card gives up all of its orthogonal attacks. | 87% |
+| **Bridge** | reach past an ally | Choose an adjacent card you own. This card also attacks the enemy directly beyond it, in line. | 58% |
+| **Crossing** | one axis, then a step | Attack along one axis only. If exactly one card falls, this card may then move into the empty cell opposite it. | 48% |
+
+### Change the cascade
+
+| Ability | Changes | What it does | Worth |
+|---|---|---|---|
+| **Hinge** | the chain’s aim | After direct captures, rotate one card you captured 90° clockwise before it makes its cascade attack. The rotation persists. | 67% |
+| **Amplify** | a free capture | Attack along one edge only. If it captures, that card makes one cascade attack on an adjacent enemy that ignores matching. Its other edges do not attack. | 51% |
+| **Anchor** | the chain for a step | If this card captures directly, you may give up the entire cascade to move one captured card into an empty cell beside it. It keeps its orientation and does not attack. | 71%* |
+| **Handoff** | who chains | A card you captured makes no cascade attack. Instead one card you already owned, adjacent to this one, makes it from its own position. | 50% |
+
+### Change the board you leave behind
+
+| Ability | Changes | What it does | Worth |
+|---|---|---|---|
+| **Fortify** | an edge that holds | Choose one edge of this card. It cannot be captured through until the end of your opponent’s next turn. | 56% |
+| **Withdraw** | a retreat on a miss | If this card captured nothing, move it to an adjacent empty cell. | 52% |
+| **Reorient** | an ally’s facing | After everything resolves, rotate one adjacent card you own 90° in either direction. | 51% |
+| **Mend** | advancing into a capture | If the chosen edge captures directly, swap this card with that card after the cascade resolves. | 86%* |
+
+*Worth* is the win rate of a player allowed to use that ability against
+one holding the same card but forbidden to — so **50% means the ability
+is worth nothing**. An asterisk marks a figure taken from forced use,
+because the measuring bot refuses those two on its own and cannot price
+them; see the README.
+
+**Anything at or near 50% is a known problem, not a subtlety.** Lance,
+Crossing, Amplify, Handoff, Reorient and Withdraw all measured inside
+noise of doing nothing. Corner, Mend and Converge measured *above* the
+strongest original ability. None of that is fixed yet.
 **Abilities matter here.** Removing them costs about **20 points** of win
 rate, against roughly 2 in the elemental version. They are a real second
 pillar — but positioning still outranks them, which is the intent:

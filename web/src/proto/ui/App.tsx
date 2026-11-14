@@ -10,11 +10,22 @@ import {
   abilityOptions, applyMove, cardShape, isOver, newGame, ownershipSteps,
   placedCount, score, toMove,
 } from '../game';
+import { describeOption } from '../abilities';
 import { pick, type Difficulty } from '../bot';
 import { mulberry32, randomSeed } from '../../rng';
 import { CardFace } from './CardFace';
 import { SIGIL_NAMES, SIGIL_SHAPE, Sigil } from './Sigil';
 import { isMuted, loadMuted, primeAudio, setMuted, sfx } from './sound';
+
+interface Pick {
+  option: Option;
+  label: string;
+  captured: number;
+  /** cells this card takes directly, and cells the chain takes */
+  direct: number;
+  chain: number;
+}
+interface Picker { cell: number; options: Pick[] }
 
 const WAVE_MS = 320;
 const BOT_MS = 420;
@@ -38,7 +49,8 @@ export function App() {
   const [sel, setSel] = useState<number | null>(null);
   const [spin, setSpin] = useState(0);
   const [armed, setArmed] = useState(false);
-  const [targeting, setTargeting] = useState<Option[] | null>(null);
+  const [picker, setPicker] = useState<Picker | null>(null);
+  const [pickHover, setPickHover] = useState<number | null>(null);
   const [anim, setAnim] = useState<Anim | null>(null);
   const [hover, setHover] = useState<number | null>(null);
   const [log, setLog] = useState<string[]>([]);
@@ -49,7 +61,8 @@ export function App() {
   const reset = useCallback((s: number, seat: number, bn: BoardName) => {
     setSeed(s); setMySeat(seat); setBoardName(bn);
     setGame(newGame(s, BOARDS[bn]));
-    setSel(null); setSpin(0); setArmed(false); setTargeting(null);
+    setSel(null); setSpin(0); setArmed(false); setPicker(null);
+    setPickHover(null);
     setAnim(null); setHover(null); setLog([]); setLanded(null);
     botRng.current = mulberry32(s ^ 0x9e3779b9);
   }, []);
@@ -60,12 +73,7 @@ export function App() {
     const opt = move.option;
     const bits: string[] = [];
     bits.push(`${who} placed ${move.placed.ability} on cell ${move.cell}`);
-    if (opt) {
-      bits.push(opt.kind === 'prism'
-        ? `${opt.kind}: edge ${['top', 'right', 'bottom', 'left'][opt.edge]}`
-        + ' matches anything'
-        : `${opt.kind}: cell ${opt.cell}`);
-    }
+    if (opt) bits.push(`${opt.kind} — ${describeOption(opt)}`);
     for (const e of events) {
       bits.push(e.wild
         ? `wild edge took cell ${e.target}`
@@ -80,7 +88,8 @@ export function App() {
     if (!events.length) sfx('nothing');
     setLanded(move.cell);
     setGame(state);
-    setSel(null); setSpin(0); setArmed(false); setTargeting(null);
+    setSel(null); setSpin(0); setArmed(false); setPicker(null);
+    setPickHover(null);
     setHover(null);
     setAnim({ steps: ownershipSteps(before, move, resolution.waves),
               waves: resolution.waves, index: 0 });
@@ -210,59 +219,50 @@ export function App() {
     } catch { return null; }
   }, [myTurn, sel, sigils, hover, game]);
 
-  const targetCells = useMemo(() => {
-    if (!targeting) return new Set<number>();
-    const out = new Set<number>();
-    for (const o of targeting) if (o && 'cell' in o) out.add(o.cell);
-    return out;
-  }, [targeting]);
+  /**
+   * Every choice the armed card offers at `cell`, each with what it
+   * would actually do. The outcome is computed by running the real
+   * engine on a throwaway copy, so the number in the list is the number
+   * the player will get -- not an estimate, and not a second
+   * implementation of the rules that could disagree with the first.
+   */
+  const optionsAt = useCallback((cell: number): Pick[] => {
+    if (sel === null || !sigils || !card) return [];
+    return abilityOptions(game, active, card.ability, cell, sigils)
+      .map((option) => {
+        try {
+          const a = applyMove(game, { handIndex: sel, cell, sigils,
+                                      option });
+          let chain = 0;
+          for (let i = 1; i < a.resolution.waves.length; i++) {
+            chain |= a.resolution.waves[i];
+          }
+          return { option, label: describeOption(option),
+                   captured: a.resolution.captured,
+                   direct: a.resolution.waves[0] ?? 0, chain };
+        } catch {
+          return { option, label: describeOption(option), captured: 0,
+                   direct: 0, chain: 0 };
+        }
+      });
+  }, [game, active, card, sel, sigils]);
 
   const place = (cell: number, option: Option) => {
     if (sel === null || !sigils) return;
+    setPicker(null); setPickHover(null);
     commit(game, { handIndex: sel, cell, sigils, option },
            mode === 'hotseat' ? `P${active + 1}` : 'You');
   };
 
   const onCell = (cell: number) => {
     if (!myTurn || sel === null || !sigils) return;
-    if (targeting) {
-      const here = targeting.filter((o) => o && 'cell' in o
-                                      && o.cell === cell);
-      if (!here.length) return;
-      let bestOpt = here[0];
-      let bestGain = -1;
-      for (const o of here) {
-        const got = applyMove(game, {
-          handIndex: sel, cell: pendingCell.current!, sigils, option: o,
-        }).resolution.captured;
-        if (got > bestGain) { bestGain = got; bestOpt = o; }
-      }
-      place(pendingCell.current!, bestOpt);
-      return;
-    }
     if (game.board.cards[cell] !== null) return;
-    if (armed && live && card) {
-      const opts = abilityOptions(game, active, card.ability, cell)
-        .filter((o) => o !== null);
-      if (!opts.length) { place(cell, null); return; }
-      if (card.ability === 'prism') {
-        // choose the edge that captures most; its only outcome is capture
-        // or nothing, so preferring a capturing edge is lossless
-        let bestOpt = opts[0];
-        let bestGain = -1;
-        for (const o of opts) {
-          const got = applyMove(game, { handIndex: sel, cell, sigils,
-                                        option: o }).resolution.captured;
-          if (got > bestGain) { bestGain = got; bestOpt = o; }
-        }
-        place(cell, bestOpt);
-        return;
-      }
-      pendingCell.current = cell;
-      setTargeting(opts);
-      return;
-    }
-    place(cell, null);
+    if (!armed || !live || !card) { place(cell, null); return; }
+    const opts = optionsAt(cell);
+    // nothing to choose between is not a choice worth a dialog
+    if (opts.length <= 1) { place(cell, opts[0]?.option ?? null); return; }
+    setPicker({ cell, options: opts });
+    setPickHover(null);
   };
 
   const finished = isOver(game) && !anim;
@@ -394,12 +394,32 @@ export function App() {
           </div>
         )}
 
-        {targeting && (
-          <p className="hint">pick a target
-            <button onClick={() => {
-              setTargeting(null); pendingCell.current = null;
-            }}>cancel</button>
-          </p>
+        {picker && card && (
+          <div className="picker">
+            <p className="hint">
+              <b>{card.ability}</b> on cell {picker.cell} — hover a choice
+              to see what it takes, then click it
+              <button onClick={() => { setPicker(null); setPickHover(null); }}>
+                cancel
+              </button>
+            </p>
+            <ul onMouseLeave={() => setPickHover(null)}>
+              {picker.options.map((o, i) => (
+                <li key={i}
+                    className={`${pickHover === i ? 'on' : ''}`
+                      + `${o.captured > 0 ? ' takes' : ''}`}
+                    onMouseEnter={() => setPickHover(i)}
+                    onClick={() => place(picker.cell, o.option)}>
+                  <span className="plabel">{o.label}</span>
+                  <span className="pgain">
+                    {o.captured > 0
+                      ? `takes ${o.captured}`
+                      : 'takes nothing'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {card && (
@@ -420,13 +440,19 @@ export function App() {
             const c = game.board.cards[cell];
             const owner = (shownOwn[0] >>> cell) & 1 ? 0
               : (shownOwn[1] >>> cell) & 1 ? 1 : -1;
-            const placeable = myTurn && !targeting && sel !== null
+            const placeable = myTurn && !picker && sel !== null
               && c === null;
-            const isTarget = !!targeting && targetCells.has(cell);
+            const isTarget = !!picker && picker.cell === cell;
             const bit = 1 << cell;
-            const kind = preview
-              ? (preview.direct & bit ? ' cap-direct'
-                : preview.chain & bit ? ' cap-cascade' : '')
+            // while the picker is open the highlight shows the option
+            // under the cursor, so the player sees each result before
+            // choosing between them
+            const shown = picker
+              ? (pickHover !== null ? picker.options[pickHover] : null)
+              : preview;
+            const kind = shown
+              ? (shown.direct & bit ? ' cap-direct'
+                : shown.chain & bit ? ' cap-cascade' : '')
               : '';
             return (
               <div key={cell}
@@ -456,7 +482,7 @@ export function App() {
         <div className="hand">
           {hand.map((h, i) => (
             <button key={i} className={`slot${sel === i ? ' sel' : ''}`}
-                    disabled={!myTurn || !!targeting}
+                    disabled={!myTurn || !!picker}
                     onClick={() => {
                       primeAudio();
                       setSel(sel === i ? null : i);
@@ -466,7 +492,7 @@ export function App() {
               <CardFace sigils={sel === i ? spinCard(h.sigils, spin)
                                           : h.sigils}
                         owner={active} small art={h.art}
-                        dim={!myTurn || !!targeting} />
+                        dim={!myTurn || !!picker} />
               <small className={live ? 'live' : ''}>{h.ability}</small>
             </button>
           ))}
@@ -519,7 +545,7 @@ export function App() {
               : `final ${result!.mine}–${result!.theirs} — `
                 + `${result!.won ? 'you win' : 'bot wins'}`)
             : anim ? 'resolving…'
-            : targeting ? 'choosing a target…'
+            : picker ? 'choose how to use it…'
             : myTurn
               ? sel === null ? 'pick a card'
                 : 'turn it if you like, then pick a cell'

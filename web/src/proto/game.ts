@@ -1,17 +1,12 @@
 /**
- * Prototype A game layer: the shared deck, the four abilities, moves.
+ * Prototype A game layer: the shared deck, the abilities, moves.
  *
- * Four abilities, each modifying exactly one understood thing, so none
- * of them needs a relationship table to explain:
- *
- *   pivot     orientation   rotate one adjacent card 90 clockwise,
- *                           either player's, before attacking
- *   exchange  position      swap the placed card with an adjacent card
- *                           you control; it attacks from its destination
- *   relay     attack origin an adjacent card you control attacks from
- *                           its own position instead
- *   prism     matching      one edge of the placed card matches ANY
- *                           sigil, this placement only
+ * All twenty abilities are live: the four the design shipped with, and
+ * the sixteen adopted for playtesting. Each modifies exactly one
+ * understood thing -- the edges, the attack geometry, the cascade, or
+ * the board you leave behind -- so none needs a relationship table to
+ * explain. Definitions, option shapes and resolution are in
+ * `abilities.ts`; this file owns the deck, turn order and move records.
  *
  * Measured on the oracle: abilities are worth about 20 points of win
  * rate here, against roughly 2 in the eight-element game, while cell
@@ -22,32 +17,19 @@
 
 import {
   type Board, type Card, type CaptureEvent, type Resolution, type Shape,
-  type Sigil, BOARDS, NSYM, OPPSIDE, capForTurn, cascadeFrom, cloneBoard,
-  count, emptyBoard, emptyCells, orientations, popcount, rot90,
+  type Sigil, type Shields, BOARDS, NSYM, capForTurn, cloneBoard,
+  count, emptyBoard, emptyCells, orientations,
 } from './engine';
+import {
+  ALL_ABILITIES, type AbilityId, type AbilityDef, ABILITY_INFO,
+  type Option, expireShields, optionsFor, resolvePlacement,
+} from './abilities';
 import { type Rng, mulberry32 } from '../rng';
 
-export const ABILITIES = ['pivot', 'exchange', 'relay', 'prism'] as const;
-export type AbilityId = typeof ABILITIES[number];
+export { ABILITY_INFO, type AbilityId, type AbilityDef, type Option };
+export const ABILITIES = ALL_ABILITIES;
 
 export const ABILITY_FROM_PLACEMENT = 2;
-
-export interface AbilityDef { changes: string; text: string }
-
-export const ABILITY_INFO: Record<AbilityId, AbilityDef> = {
-  pivot: { changes: 'orientation',
-    text: 'Rotate one adjacent card 90° clockwise — either player’s — '
-        + 'before attacking.' },
-  exchange: { changes: 'position',
-    text: 'Swap this card with one adjacent card you control. It attacks '
-        + 'from its destination.' },
-  relay: { changes: 'attack origin',
-    text: 'Instead of this card attacking, an adjacent card you control '
-        + 'attacks from its own position.' },
-  prism: { changes: 'matching',
-    text: 'Choose one edge of this card. For this placement, that edge '
-        + 'matches any sigil.' },
-};
 
 /** The three symbol shapes, by how a card's four sigils repeat. */
 export type CardShape = 'versatile' | 'focused' | 'specialized';
@@ -71,11 +53,6 @@ export interface GameCard {
   art?: number;
 }
 
-export type Option =
-  | null
-  | { kind: 'pivot' | 'exchange' | 'relay'; cell: number }
-  | { kind: 'prism'; edge: number };
-
 export interface Move {
   player: number;
   handIndex: number;
@@ -93,6 +70,8 @@ export interface GameState {
   turn: number;
   history: Move[];
   seed: number;
+  /** Fortify's shields: the one effect that outlives its placement */
+  shields: Shields;
 }
 
 // ---------------------------------------------------------------------------
@@ -142,9 +121,13 @@ export function buildDeck(rng: Rng, size: number): GameCard[] {
     const pool = BY_SHAPE[sh];
     deck.push({
       sigils: pool[Math.floor(rng() * pool.length)],
+      // Abilities cycle through all twenty, so a 20-card deck holds one
+      // of each and a 12-card deck holds the first twelve. Which twelve
+      // is deliberately NOT randomised: a playtester auditing abilities
+      // needs to know which are in the deck, and a fixed prefix makes
+      // "set the board size to 4x4 to see all twenty" a usable
+      // instruction rather than a matter of luck.
       ability: ABILITIES[i % ABILITIES.length],
-      // the 20 artworks map onto deck position, so a 12-card 3x3 deck
-      // uses art 1-12 and a 20-card 4x4 deck uses all of it
       art: (i % 20) + 1,
     });
   }
@@ -168,6 +151,7 @@ export function newGame(seed: number, shape: Shape = BOARDS['3x3']):
     turn: 0,
     history: [],
     seed,
+    shields: {},
   };
 }
 
@@ -192,32 +176,19 @@ export interface Candidate {
 }
 
 export function abilityOptions(g: GameState, player: number,
-                               ability: AbilityId, cell: number): Option[] {
+                               ability: AbilityId, cell: number,
+                               sigils?: Card): Option[] {
   if (!abilityLive(g, player)) return [null];
-  const s = g.shape, b = g.board;
-  const out: Option[] = [null];
-  const mine = b.own[player];
-  switch (ability) {
-    case 'pivot':
-      for (let d = 0; d < 4; d++) {
-        const t = s.nb[cell][d];
-        if (t >= 0 && b.cards[t]) out.push({ kind: 'pivot', cell: t });
-      }
-      break;
-    case 'exchange':
-    case 'relay':
-      for (let d = 0; d < 4; d++) {
-        const t = s.nb[cell][d];
-        if (t >= 0 && ((mine >>> t) & 1)) {
-          out.push({ kind: ability, cell: t });
-        }
-      }
-      break;
-    case 'prism':
-      for (let e = 0; e < 4; e++) out.push({ kind: 'prism', edge: e });
-      break;
-  }
-  return out;
+  // Mirror needs the card as it would be laid down, because which swaps
+  // are legal depends on the rotation. Callers that do not have a
+  // rotation in hand yet get the unrotated card, which is correct for
+  // every other ability and the best available answer for Mirror.
+  const fallback = g.hands[player].find((c) => c.ability === ability);
+  return optionsFor(ability, {
+    s: g.shape, b: g.board, player, cell,
+    sigils: sigils ?? fallback?.sigils ?? ([0, 0, 0, 0] as unknown as Card),
+    cap: capForTurn(g.shape, g.turn),
+  });
 }
 
 export function legalMoves(g: GameState): Candidate[] {
@@ -228,7 +199,8 @@ export function legalMoves(g: GameState): Candidate[] {
   g.hands[player].forEach((card, handIndex) => {
     for (const sigils of orientations(card.sigils)) {
       for (const cell of cells) {
-        for (const option of abilityOptions(g, player, card.ability, cell)) {
+        for (const option of abilityOptions(g, player, card.ability, cell,
+                                            sigils)) {
           out.push({ handIndex, cell, sigils, option });
         }
       }
@@ -261,33 +233,12 @@ export function applyMove(g: GameState, c: Candidate): Applied {
   const live = abilityLive(g, player);
   const opt = live ? c.option : null;
   const events: CaptureEvent[] = [];
+  const shields: Shields = { ...g.shields };
 
-  // orientation changes before anything is compared, so a pivot can set
-  // up the capture that follows rather than merely annoying the opponent
-  if (opt?.kind === 'pivot') {
-    board.cards[opt.cell] = rot90(board.cards[opt.cell] as Card);
-  }
-
-  board.cards[c.cell] = c.sigils;
-  board.own[player] = board.own[player] | (1 << c.cell);
-
-  let origin = 1 << c.cell;
-  let wild: [number, number] | null = null;
-
-  if (opt?.kind === 'exchange') {
-    const tmp = board.cards[c.cell];
-    board.cards[c.cell] = board.cards[opt.cell];
-    board.cards[opt.cell] = tmp;
-    origin = 1 << opt.cell;          // the placed card attacks from there
-  } else if (opt?.kind === 'relay') {
-    origin = 1 << opt.cell;          // the ally attacks instead
-  } else if (opt?.kind === 'prism') {
-    wild = [c.cell, opt.edge];
-  }
-
-  const cap = capForTurn(s, g.turn);
-  const resolution = cascadeFrom(s, board, origin, player, cap, wild,
-                                 events);
+  const resolution = resolvePlacement({
+    s, b: board, player, cell: c.cell, sigils: c.sigils, option: opt,
+    cap: capForTurn(s, g.turn), turn: g.turn, shields, trace: events,
+  });
 
   const hands: [GameCard[], GameCard[]] =
     [g.hands[0].slice(), g.hands[1].slice()];
@@ -299,7 +250,8 @@ export function applyMove(g: GameState, c: Candidate): Applied {
   };
   return {
     state: { ...g, board, hands, turn: g.turn + 1,
-             history: [...g.history, move] },
+             history: [...g.history, move],
+             shields: expireShields(shields, g.turn + 1) },
     resolution, move, events,
   };
 }

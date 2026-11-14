@@ -220,3 +220,30 @@ button:disabled{opacity:.4;cursor:default}
 .reservepile{display:flex;gap:4px;flex-wrap:wrap}
 .reservepile .pcard{width:34px;height:34px;opacity:.5}
 .reservepile .pcard .pedge{display:none}
+
+/* ---------------------------------------------------------------------
+   The option picker.
+
+   Every ability choice is listed with what it would actually take, so
+   the result is visible before the card is committed rather than after.
+   With twenty abilities, some offering a dozen choices, a list that
+   reports its own outcome is the only way a player can tell them apart
+   -- and it is how an ability gets audited in play.
+   ------------------------------------------------------------------ */
+.picker{margin:10px 0;padding:8px;border:1px solid var(--gold);
+  border-radius:9px;background:#191a22}
+.picker ul{list-style:none;margin:6px 0 0;padding:0;display:grid;
+  gap:3px;max-height:220px;overflow-y:auto}
+.picker li{display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:5px 8px;border:1px solid var(--line);
+  border-radius:6px;cursor:pointer;font-size:12px;
+  transition:background .1s,border-color .1s}
+.picker li:hover,.picker li.on{background:#223049;border-color:var(--p1)}
+.picker li.takes .pgain{color:#52c272;font-weight:600}
+.picker .plabel{flex:1}
+.picker .pgain{font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap}
+
+/* long ability names must not spill out of an 88px card */
+.pability{padding:0 4px;max-width:100%;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;font-size:8px}

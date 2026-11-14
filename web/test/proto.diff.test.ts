@@ -13,12 +13,13 @@
 import { describe, expect, it } from 'vitest';
 
 import fixture from './fixtures/proto.json';
+import { SHIPPED } from '../src/proto/abilities';
 import {
   type Board, type Card, type Shape, BOARDS, CASCADE_CAP, makeShape,
   rot90,
 } from '../src/proto/engine';
 import {
-  type AbilityId, type GameCard, type GameState, type Option, ABILITIES,
+  type AbilityId, type GameCard, type GameState, type Option,
   abilityOptions, applyMove, cardShape,
 } from '../src/proto/game';
 
@@ -85,9 +86,13 @@ function stateFor(c: Case, card: GameCard): GameState {
 }
 
 describe('proto fixture integrity', () => {
-  it('covers every ability and every board', () => {
+  it('covers every shipped ability and every board', () => {
+    // SHIPPED, not ABILITIES: this fixture is the original four. The
+    // sixteen adopted abilities are covered by proto16.diff.test.ts
+    // against their own oracle, and asserting them here would only make
+    // this file fail for the wrong reason.
     const seenAb = new Set(cases.map((c) => c.ability));
-    for (const a of ABILITIES) expect(seenAb.has(a)).toBe(true);
+    for (const a of SHIPPED) expect(seenAb.has(a)).toBe(true);
     const seenB = new Set(cases.map((c) => c.board));
     for (const b of Object.keys(BOARDS)) expect(seenB.has(b)).toBe(true);
   });
