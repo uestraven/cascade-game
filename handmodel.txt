@@ -1,0 +1,9 @@
+Shared 28-card deck, 9 placements, every card an ability
+
+  hand model              draws   P1 win   seat   depth  choices/turn   turn 1
+  3 each, draw to 3        0.0%    70.0%  20.0%   65.5%            91      108
+  4 each, draw to 4        0.0%    73.8%  23.8%   61.8%           122      144
+  3 each, no draw          2.7%     0.0%  50.0%   49.9%            74      108
+  4 each, no draw          6.7%     0.5%  49.5%   50.7%            88      144
+  5 each, no draw          0.0%    57.2%   7.2%   61.2%           108      180
+  5 and 6, no draw         0.0%    55.2%   5.2%   67.0%           122      180

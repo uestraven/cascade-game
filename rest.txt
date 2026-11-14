@@ -1,0 +1,16 @@
+========================================================================
+ABILITY POWER UNDER THE SHIPPED RULES (seats swapped)
+========================================================================
+  hands (5, 6) dealt once, no draws, <=5 ability cards, live from placement 2
+  1200 games per row
+
+  ability     holder win  vs neutral    used   depth
+  (none)           49.9%          --      --   70.2%
+  backlash         51.4%        1.4%    3.8%   68.2%
+  cyclone          55.4%        5.4%   49.0%   73.5%
+  upheaval         49.0%       -1.0%   60.3%   73.0%
+  glaciate         50.9%        0.9%   40.2%   69.3%
+  umbra            53.6%        3.6%   71.0%   66.0%
+
+  holder win rate spans  49.0%- 55.4%; a neutral ability sits at 50%
+  baseline depth  70.2%; with abilities  66.0%- 73.5%

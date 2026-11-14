@@ -1,0 +1,14 @@
+Does the CENTRE help whoever takes it?   2500 games per row.
+The 'opened on' columns prove the force actually took effect.
+
+  forced                  bot           P1 win   P1 opened on        P2 opened on
+  nothing                 full           51.1%   corner 100.0%       edge 100.0%
+  nothing                 no defence     48.8%   edge  46.3%, corner  42.4%edge  53.7%, corner  31.2%
+  P1 -> centre            full           64.4%   centre 100.0%       corner  60.9%, edge  39.1%
+  P1 -> centre            no defence     55.8%   centre 100.0%       edge 100.0%
+  P2 -> centre            full           67.0%   corner 100.0%       centre 100.0%
+  P2 -> centre            no defence     49.8%   corner  45.8%, edge  43.2%centre  89.0%, edge  11.0%
+  P1 -> edge              full           46.0%   edge 100.0%         corner 100.0%
+  P1 -> edge              no defence     38.0%   edge 100.0%         corner  65.3%, centre  34.7%
+  P2 -> corner            full           44.0%   corner 100.0%       corner 100.0%
+  P2 -> corner            no defence     56.3%   corner  45.3%, edge  43.8%corner 100.0%

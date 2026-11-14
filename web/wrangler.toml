@@ -1,0 +1,15 @@
+# Cloudflare Pages — static hosting for Cascade.
+#
+# Cascade is a public game: the intended audience is anonymous callers, so
+# the site is deliberately unauthenticated. That is the correct posture
+# here rather than an omission — there is no backend, no API, no user
+# accounts, no stored data and no secrets, and the built bundle makes zero
+# network requests at runtime. Gating it would only lock out the people it
+# exists for.
+#
+# Nothing server-side is deployed. `dist/` is static files and that is the
+# entire attack surface.
+
+name = "cascade"
+compatibility_date = "2026-11-14"
+pages_build_output_dir = "dist"

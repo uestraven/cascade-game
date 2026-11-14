@@ -1,0 +1,45 @@
+==========================================================================
+A. SURGE AS A CARD -- power and depth
+==========================================================================
+  seats swapped, 800 games; 50% is neutral
+  ability       holder win    used   depth
+  (none)             50.9%      --   68.2%
+  surge              69.4%   80.9%   65.2%
+  surge1             58.1%   42.6%   66.0%
+  arc                54.4%   21.8%   69.2%
+  gust               57.0%   56.8%   70.8%
+
+==========================================================================
+B. WHEN IS IT PLAYED?  the actual test of the merge
+==========================================================================
+  As a leader, PRINCE/TANTALUS fired on turn 9 in ~78% of games.
+  A card costs a placement, so the question is whether it still
+  wants to be last -- and P1's turn 9 is their last placement
+  anyway, so the fix should leak for P1 if it leaks at all.
+
+  SURGE -- share of uses on each of that seat's own placements:
+    P1 (places 5, last is turn 9)        0.0%    24.2%    29.3%    36.3%    10.2%
+                                    on its last placement:  10.2%
+    P2 (places 4, last is turn 8)        0.0%    19.4%    42.8%    37.7%
+                                    on its last placement:  37.7%
+
+  SURGE1 -- share of uses on each of that seat's own placements:
+    P1 (places 5, last is turn 9)        0.0%     0.0%     4.1%    21.3%    74.6%
+                                    on its last placement:  74.6%  <-- still a last-turn bomb
+    P2 (places 4, last is turn 8)        0.0%     0.0%    28.6%    71.4%
+                                    on its last placement:  71.4%  <-- still a last-turn bomb
+
+  ARC -- share of uses on each of that seat's own placements:
+    P1 (places 5, last is turn 9)        0.0%     0.0%     3.1%    39.8%    57.0%
+                                    on its last placement:  57.0%  <-- still a last-turn bomb
+    P2 (places 4, last is turn 8)        0.0%     0.0%    25.4%    74.6%
+                                    on its last placement:  74.6%  <-- still a last-turn bomb
+
+==========================================================================
+C. IS IT A LURE?
+==========================================================================
+  ability          never   can-t bias   together
+  surge            50.9%        68.4%      69.4%
+  surge1           50.9%        60.4%      58.1%
+
+  Rising with greed = fair. Falling = a lure.

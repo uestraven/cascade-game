@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768"><rect width="768" height="768" fill="#11131A"/>
+<!-- large triangular hood; not a generic human portrait -->
+<path d="M194 625 L213 383 Q244 239 336 138 Q448 176 495 351 L549 659 L192 659 Z" fill="#747A7F" stroke="#E7DECE" stroke-width="19" stroke-linejoin="round"/>
+<path d="M274 379 Q285 264 348 239 Q423 268 440 380 L424 467 L305 485 Z" fill="#11131A" stroke="#11131A" stroke-width="13"/>
+<!-- weak, gaunt facial fragments -->
+<path d="M326 341 L368 316 L402 351 L389 414 L352 433 L321 389 Z" fill="#E7DECE" stroke="#11131A" stroke-width="10"/>
+<path d="M330 359 L353 358 M381 357 L398 360" stroke="#11131A" stroke-width="14"/>
+<path d="M355 393 L375 402 L351 417" fill="#11131A"/>
+<path d="M252 347 L330 180 L390 217" fill="none" stroke="#88985A" stroke-width="17"/>
+<!-- long withered hand thrust into foreground -->
+<path d="M295 529 L379 490 L478 476 L525 502 L486 540 L417 556 L352 605 L306 622 Z" fill="#E7DECE" stroke="#11131A" stroke-width="17" stroke-linejoin="round"/>
+<path d="M454 483 L559 443 L591 454 L574 472 L505 514" fill="#E7DECE" stroke="#11131A" stroke-width="15" stroke-linejoin="round"/>
+<path d="M473 507 L583 493 L607 513 L583 526 L498 534" fill="#E7DECE" stroke="#11131A" stroke-width="15" stroke-linejoin="round"/>
+<path d="M459 532 L560 554 L574 578 L552 584 L465 562" fill="#747A7F" stroke="#11131A" stroke-width="14" stroke-linejoin="round"/>
+<path d="M308 600 L256 635 L240 660" fill="none" stroke="#88985A" stroke-width="18"/>
+</svg>

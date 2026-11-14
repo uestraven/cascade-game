@@ -1,0 +1,205 @@
+:root{
+  --bg:#11131a; --panel:#1a1d27; --line:#2b3040;
+  --p1:#4a9eff; --p1d:#1d3a5c; --p2:#ff7043; --p2d:#5c2c1d;
+  --text:#e6e9f0; --muted:#7b8294; --gold:#ffd84a;
+  --cell:104px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:14px/1.45 ui-sans-serif,system-ui,-apple-system,sans-serif}
+.page{display:flex;gap:22px;align-items:flex-start;padding:22px;
+  flex-wrap:wrap}
+.app{max-width:560px}
+h1{margin:0;font-size:26px;letter-spacing:.22em;text-transform:uppercase}
+.subtitle{margin:2px 0 14px;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted)}
+h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:16px 0 6px}
+
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.controls label{display:flex;gap:6px;align-items:center;
+  color:var(--muted);font-size:12px}
+select,button{background:var(--panel);color:var(--text);
+  border:1px solid var(--line);border-radius:6px;padding:4px 8px;
+  font:inherit;font-size:12px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--p1)}
+button:disabled{opacity:.4;cursor:default}
+.seed{color:var(--muted);font-size:11px;margin-left:auto}
+
+/* the whole comparison rule, stated once where it cannot be missed */
+.rule{margin:14px 0 4px;padding:8px 11px;border-radius:7px;
+  background:#16253a;border:1px solid var(--p1d);font-size:12.5px}
+.rule b{color:var(--p1)}
+
+/* the score is the victory condition but a poor in-play guide, so it is
+   present and quiet rather than the loudest thing on screen */
+.scoreline{display:flex;align-items:center;gap:12px;margin:12px 0 6px}
+.scoreline.quiet .chip{opacity:.62;font-size:11px}
+.scoreline.quiet:hover .chip{opacity:1}
+.chip{font-size:12px;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--line)}
+.p1c{color:var(--p1);border-color:var(--p1d)}
+.p2c{color:var(--p2);border-color:var(--p2d)}
+.strip{display:flex;gap:3px;flex:1}
+.seg{flex:1;height:5px;border-radius:2px;background:var(--line)}
+.seg.mine{background:var(--p1d)} .seg.theirs{background:var(--p2d)}
+.seg.mine.done{background:var(--p1)} .seg.theirs.done{background:var(--p2)}
+.seg.now{outline:1px solid var(--gold)}
+
+.board{display:grid;gap:6px;margin:12px 0}
+.cell{width:var(--cell);height:var(--cell);border:1px dashed var(--line);
+  border-radius:9px;display:grid;place-items:center;position:relative}
+.cell.placeable{border-color:var(--p1);cursor:pointer}
+.cell.target{border-style:solid;border-color:var(--gold);cursor:pointer}
+.cell.hovering{background:#1b2b42;box-shadow:inset 0 0 0 2px var(--p1)}
+.cell.cap-direct{background:#1d3a24;border-color:#52c272;border-style:solid}
+.cell.cap-cascade{background:#1c2f3d;border-color:#4a9eff;border-style:solid}
+.cellno{color:#2b3040;font-size:11px}
+
+/* --- the card ---------------------------------------------------------
+   Four sigils, one per edge, and nothing competing with them. The
+   ability is named in the centre rather than drawn, because the centre
+   is where a fifth icon would be easiest to mistake for an edge. */
+.pcard{position:relative;width:88px;height:88px;border-radius:8px;
+  border:1px solid var(--line);transition:background .25s,border-color .25s}
+.pcard.p1{background:#16293f;border-color:var(--p1)}
+.pcard.p2{background:#3a1f16;border-color:var(--p2)}
+.pcard.neutral{background:var(--panel)}
+.pcard.sm{width:62px;height:62px}
+.pcard.dim{opacity:.45}
+.pcard.flash{background:#4a3a0f;border-color:var(--gold)}
+
+.pedge{position:absolute;display:grid;place-items:center;
+  width:28px;height:28px}
+.pcard.sm .pedge{width:21px;height:21px}
+.pedge.n{top:2px;left:50%;transform:translateX(-50%)}
+.pedge.s{bottom:2px;left:50%;transform:translateX(-50%)}
+.pedge.w{left:2px;top:50%;transform:translateY(-50%)}
+.pedge.e{right:2px;top:50%;transform:translateY(-50%)}
+/* an exposed edge can be attacked next turn -- a fact, not a rating */
+.pedge.open::after{content:'';position:absolute;inset:-1px;
+  border-radius:50%;box-shadow:0 0 0 1px var(--gold);opacity:.45}
+.pedge.wild{filter:drop-shadow(0 0 4px var(--gold))}
+.sigil{display:block}
+
+.pability{position:absolute;inset:0;display:grid;place-items:center;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);pointer-events:none}
+.pabilitydot{position:absolute;top:50%;left:50%;width:4px;height:4px;
+  margin:-2px 0 0 -2px;border-radius:50%;background:var(--muted)}
+
+.hand{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.slot{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:5px;background:transparent;border:1px solid transparent}
+.slot.sel{border-color:var(--p1);border-radius:9px;background:#17243a}
+.slot small{font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted)}
+.slot small.live{color:var(--gold)}
+
+.rotstrip{display:flex;gap:6px;margin:8px 0 4px;flex-wrap:wrap}
+.rot{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 8px;background:var(--panel);border:1px solid var(--line);
+  border-radius:8px;min-width:84px}
+.rot.sel{border-color:var(--p1);background:#17243a}
+.rot .deg{font-size:10px;color:var(--muted);letter-spacing:.08em}
+.rotcaps{font-size:10px;white-space:nowrap;min-height:13px}
+
+.previewkey{display:flex;gap:10px;font-size:10px;color:var(--muted);
+  margin:4px 0 2px;flex-wrap:wrap}
+.previewkey i{display:inline-block;width:9px;height:9px;border-radius:2px;
+  margin-right:4px;vertical-align:middle}
+.previewkey .k-direct{background:#52c272}
+.previewkey .k-cascade{background:#4a9eff}
+.previewkey .k-open{box-shadow:0 0 0 1px var(--gold);background:transparent}
+
+.abilitybox{margin:8px 0;padding:8px 11px;border:1px solid var(--line);
+  border-radius:7px;background:var(--panel);font-size:12px}
+.abilitybox p{margin:5px 0 0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  font-size:11px;color:var(--muted)}
+.aff{margin:4px 0}
+.hint{font-size:12px;color:var(--gold);display:flex;gap:8px;
+  align-items:center}
+.status{font-size:12px;color:var(--muted);min-height:18px}
+.muted{color:var(--muted)} .small2{font-size:11px}
+
+.log{list-style:none;padding:0;margin:8px 0 0;font-size:11px;
+  color:var(--muted);max-height:190px;overflow:auto}
+.log .ln{padding:2px 0;border-bottom:1px solid #1d2130}
+
+.sigilmap{background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;padding:14px 16px;max-width:290px}
+.sigilmap ul{list-style:none;padding:0;margin:0}
+.sigilmap li{display:flex;gap:10px;align-items:center;padding:5px 0}
+.sigilmap .abilist li{display:block;padding:6px 0;
+  border-top:1px solid #1d2130}
+
+/* --- motion ------------------------------------------------------------
+   A captured card turns edge-on and back. The owner colour is swapped by
+   React at the same moment the card is narrowest, so the change happens
+   while the face is hidden -- which is what makes it read as the card
+   turning over rather than as a colour fade. prefers-reduced-motion
+   drops the rotation and keeps a plain tint change. */
+.pcard{transform-style:preserve-3d;backface-visibility:hidden}
+@keyframes cardflip{
+  0%{transform:rotateY(0deg)}
+  50%{transform:rotateY(90deg)}
+  100%{transform:rotateY(0deg)}
+}
+.pcard.flipping{animation:cardflip 300ms ease-in-out}
+
+@keyframes cardland{
+  0%{transform:scale(1.22);opacity:0}
+  60%{transform:scale(.97);opacity:1}
+  100%{transform:scale(1)}
+}
+.pcard.landing{animation:cardland 190ms cubic-bezier(.2,1.3,.4,1)}
+
+/* hover: lift the cell you would place into, and the card you are holding */
+.cell.placeable{transition:background .12s,box-shadow .12s,transform .12s}
+.cell.placeable:hover{transform:translateY(-2px)}
+.slot{transition:transform .12s}
+.slot:not(:disabled):hover{transform:translateY(-3px)}
+.rot{transition:transform .12s,border-color .12s}
+.rot:hover{transform:translateY(-2px)}
+.pedge{transition:filter .15s}
+.pcard:hover .pedge.open{filter:drop-shadow(0 0 4px var(--gold))}
+
+@media (prefers-reduced-motion: reduce){
+  .pcard.flipping,.pcard.landing{animation:none}
+  .cell.placeable:hover,.slot:not(:disabled):hover,.rot:hover{
+    transform:none}
+}
+
+/* hotseat: whose turn it is, stated loudly, because there is no "you" */
+.turnbanner{display:flex;align-items:center;gap:10px;margin:12px 0 4px;
+  padding:8px 12px;border-radius:7px;font-size:13px;font-weight:600}
+.turnbanner.p1{background:#16293f;border:1px solid var(--p1);color:var(--p1)}
+.turnbanner.p2{background:#3a1f16;border:1px solid var(--p2);color:var(--p2)}
+.turnbanner .pass{margin-left:auto;font-weight:400;font-size:11px;
+  color:var(--muted)}
+.handlabel{font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin:8px 0 2px}
+.mutebtn{margin-left:6px}
+
+/* --- artwork ----------------------------------------------------------
+   Two background layers per card: the frame above, the card art beneath.
+   The art ships at 40% opacity in the asset itself, so the sigils drawn
+   over it stay the highest-contrast marks at every size -- which matters
+   because the sigils are the rules and a misread is a misplay.
+
+   The owner tint that used to live on .pcard.p1/.p2 is gone: the frame
+   now carries ownership, and running both was redundant and muddy. The
+   border is kept as a thin fallback for the moment before the SVG
+   paints. */
+.pcard{background-repeat:no-repeat;background-position:center;
+  background-size:100% 100%,100% 100%}
+.pcard.p1{background-color:#101a26}
+.pcard.p2{background-color:#241410}
+.pcard.neutral{background-color:#15171f}
+.pcard.down{background-size:100% 100%;background-color:#15171f}
+
+.reserve{margin:10px 0 2px}
+.reservepile{display:flex;gap:4px;flex-wrap:wrap}
+.reservepile .pcard{width:34px;height:34px;opacity:.5}
+.reservepile .pcard .pedge{display:none}

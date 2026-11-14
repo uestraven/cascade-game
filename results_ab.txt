@@ -1,0 +1,44 @@
+============================================================================
+A. AFFINITY UPTIME  -- when does the curve actually turn on?
+============================================================================
+  share of games where a player already controls N of a sigil,
+  measured at the start of each turn:
+  turn     >=1 sigil   >=2 sigil
+  1             0.0%        0.0%
+  2             0.0%        0.0%
+  3             0.0%        0.0%
+  4             4.7%        0.1%
+  5            47.3%        0.0%
+  6            86.5%        1.8%
+  7            92.3%        4.6%
+  8            99.2%       19.7%
+  9            93.5%       18.1%
+
+============================================================================
+B. BASELINE (no abilities)
+============================================================================
+  greedy P1  45.3%  normal P1  51.9%  caps 17.10  depth  61.1%  draws   0.0%
+
+============================================================================
+C. PER-ABILITY  [bar: depth > 60%, power near 51.6%, no draws]
+============================================================================
+  ability     elem      cost     power   depth   caps   draws  verdict
+  scorch      Fire      -        62.2%   76.3%  18.19    0.0%  keep
+  current     Water     <>       44.1%   58.9%  17.17    0.0%  cut
+  tremor      Earth     <><>     44.6%   61.7%  17.15    0.0%  keep
+  gust        Air       -        67.0%   72.1%  18.96    0.0%  keep
+  conduit     Lightning <>       46.9%   62.8%  17.20    0.0%  keep
+  chainarc    Lightning <><>     47.1%   60.3%  17.20    0.0%  keep
+  eclipse     Shadow    <><>     44.8%   61.6%  17.20    0.0%  keep
+
+============================================================================
+D. NOT MEASURABLE BY THESE BOTS
+============================================================================
+  backdraft   Fire      <>    defensive or informational; greedy cannot value it
+  undertow    Water     <><>  removes a card from the board -- breaks the nine-cells-fill guarantee
+  bedrock     Earth     -     defensive or informational; greedy cannot value it
+  updraft     Air       <><>  removes a card from the board -- breaks the nine-cells-fill guarantee
+  rime        Ice       <>    defensive or informational; greedy cannot value it
+  sanctify    Light     <>    defensive or informational; greedy cannot value it
+  revelation  Light     <><>  defensive or informational; greedy cannot value it
+  pilfer      Shadow    <>    removes a card from the board -- breaks the nine-cells-fill guarantee

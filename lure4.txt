@@ -1,0 +1,15 @@
+======================================================================
+IS IT WEAK, OR IS IT A LURE?
+======================================================================
+  holder win rate, seats swapped, 1000 games per cell
+
+  ability              never         tie-break          greedy
+  upheaval   50.3% (used   0.0%) 50.3% (used   0.0%) 48.3% (used  61.7%)
+  glaciate   50.3% (used   0.0%) 50.3% (used   2.0%) 52.0% (used  40.9%)
+  conduit    50.3% (used   0.0%) 50.5% (used   1.2%) 51.3% (used   9.7%)
+  arc        50.3% (used   0.0%) 51.5% (used   5.3%) 53.8% (used  21.7%)
+  eclipse    50.3% (used   0.0%) 50.5% (used   1.8%) 52.1% (used  63.1%)
+
+  A lure looks like: never ~ 50%, and the win rate FALLS as the
+  ability is allowed more say in the placement.
+  A fair ability looks like: the win rate RISES with greed.

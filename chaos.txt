@@ -1,0 +1,48 @@
+============================================================================
+A. DID THE DEAL DECIDE IT, OR THE PLAY?
+============================================================================
+  450 deals, each played twice with the stronger bot in each
+  seat. 'seat' rows mean the same player won regardless of who
+  was playing well -- that is the deal deciding, not skill.
+
+  format                        play    anti  seat P1  seat P2
+  no abilities                 64.0%    1.6%     4.9%    29.6%
+  all 13, every card           48.2%    8.0%    22.9%    20.9%
+  the priced 5, every card     62.9%    5.6%    10.4%    21.1%
+  5 board-volatile             62.7%    4.4%    16.9%    16.0%
+  priced 5 + 3 sweeps          67.8%    4.0%     9.8%    18.4%
+
+  'play' + 'anti' is how often skill mattered at all; the rest
+  is the deal.
+
+============================================================================
+B. SPREAD, not averages
+============================================================================
+  no abilities
+    final margin:  1: 69.3%  3: 27.6%  5:  3.1%
+    biggest single turn: 2:  0.4%  3: 71.6%  4: 28.0%
+    per-turn captures:   0: 11.4%  1: 17.0%  2: 26.3%  3: 41.8%  4:  3.5%
+
+  all 13, every card
+    final margin:  1: 73.1%  3: 23.6%  5:  3.3%
+    biggest single turn: 3: 65.3%  4: 34.4%  5:  0.2%
+    per-turn captures:   0: 11.2%  1: 16.4%  2: 23.7%  3: 43.5%  4:  5.1%  5:  0.0%
+
+  5 board-volatile
+    final margin:  1: 74.2%  3: 24.7%  5:  1.1%
+    biggest single turn: 3: 65.1%  4: 34.4%  5:  0.4%
+    per-turn captures:   0: 11.2%  1: 15.6%  2: 23.6%  3: 44.9%  4:  4.6%  5:  0.0%
+
+============================================================================
+C. DO DIFFERENT ABILITIES COMBINE?
+============================================================================
+  holder win rate, seats swapped, 900 games
+
+  pool                     5 copies of one   5 different
+  all 13                             58.1%         57.2%
+  the priced 5                       54.4%         55.3%
+  board-volatile                     62.2%         62.8%
+
+  A gap means abilities interact -- which is what a deck of 28
+  individual ability cards would produce, and what measuring
+  one ability at a time could never show.

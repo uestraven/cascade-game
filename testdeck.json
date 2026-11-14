@@ -1,0 +1,1531 @@
+{
+  "format": "cascade-shared-12",
+  "generated_by": "gen_testdeck.py, verified against v3.py and v3_abilities.py",
+  "cells": "numbered 0-8, left to right then top to bottom: 0 1 2 / 3 4 5 / 6 7 8",
+  "how_to_use": {
+    "pick_a_deck": "Choose ONE of the decks below. Both players share it — you are building the scenario, not a side.",
+    "deal": "Shuffle the 12. Player 1 draws 5, Player 2 draws 6. One card stays in the deck, unseen. No drawing after that.",
+    "turn_order": "P1 P2 P1 P2 P1 P2 P1 P2 P1 — P1 places five, P2 places four and keeps two.",
+    "why_the_spare": "P2 keeping two cards is the only thing that pays for P1 moving first, moving last, and placing one more card. P1 must play every card dealt; P2 chooses four of six.",
+    "placing": "Any empty cell, turned any of four ways.",
+    "capturing": "Compare only the two facing elements. Beating it takes the card. Twins and equals do nothing. Your own cards never fight each other.",
+    "cascade": "A card you capture attacks its own neighbours once, then stops. The ninth card captures but starts no chain.",
+    "abilities": "Every card has one. Usable from your second placement onward, always optional, declared as you place the card.",
+    "winning": "Most cards owned when the board fills. Nine cells cannot split evenly, so there are no draws."
+  },
+  "wheel": {
+    "Fire": {
+      "beats": [
+        "Air",
+        "Earth",
+        "Ice"
+      ],
+      "twin": "Water"
+    },
+    "Water": {
+      "beats": [
+        "Air",
+        "Earth",
+        "Lightning"
+      ],
+      "twin": "Fire"
+    },
+    "Earth": {
+      "beats": [
+        "Ice",
+        "Light",
+        "Lightning"
+      ],
+      "twin": "Air"
+    },
+    "Air": {
+      "beats": [
+        "Ice",
+        "Lightning",
+        "Shadow"
+      ],
+      "twin": "Earth"
+    },
+    "Lightning": {
+      "beats": [
+        "Fire",
+        "Light",
+        "Shadow"
+      ],
+      "twin": "Ice"
+    },
+    "Ice": {
+      "beats": [
+        "Light",
+        "Shadow",
+        "Water"
+      ],
+      "twin": "Lightning"
+    },
+    "Light": {
+      "beats": [
+        "Air",
+        "Fire",
+        "Water"
+      ],
+      "twin": "Shadow"
+    },
+    "Shadow": {
+      "beats": [
+        "Earth",
+        "Fire",
+        "Water"
+      ],
+      "twin": "Light"
+    }
+  },
+  "decks": [
+    {
+      "name": "chainers",
+      "play_it_for": "Out-think your opponent. The most skill-rewarding deck measured, and the most even.",
+      "abilities_used": [
+        "arc",
+        "conduit"
+      ],
+      "measured": {
+        "depth": "70.2%",
+        "decided_by_play": "43.5%",
+        "close_finishes": "66.0%",
+        "p1_win": "47.5%"
+      },
+      "element_balance": {
+        "Fire": 6,
+        "Water": 6,
+        "Earth": 6,
+        "Air": 6,
+        "Lightning": 6,
+        "Ice": 6,
+        "Light": 6,
+        "Shadow": 6
+      },
+      "element_spread": 0,
+      "cards": [
+        {
+          "id": "01",
+          "edges": {
+            "n": "Ice",
+            "e": "Fire",
+            "s": "Air",
+            "w": "Earth"
+          },
+          "short": "Ic/Fi/Ai/Ea",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 7
+        },
+        {
+          "id": "02",
+          "edges": {
+            "n": "Ice",
+            "e": "Lightning",
+            "s": "Water",
+            "w": "Light"
+          },
+          "short": "Ic/Ln/Wa/Lt",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 7
+        },
+        {
+          "id": "03",
+          "edges": {
+            "n": "Earth",
+            "e": "Fire",
+            "s": "Lightning",
+            "w": "Air"
+          },
+          "short": "Ea/Fi/Ln/Ai",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 7
+        },
+        {
+          "id": "04",
+          "edges": {
+            "n": "Lightning",
+            "e": "Fire",
+            "s": "Earth",
+            "w": "Air"
+          },
+          "short": "Ln/Fi/Ea/Ai",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 7
+        },
+        {
+          "id": "05",
+          "edges": {
+            "n": "Shadow",
+            "e": "Light",
+            "s": "Earth",
+            "w": "Air"
+          },
+          "short": "Sh/Lt/Ea/Ai",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 8
+        },
+        {
+          "id": "06",
+          "edges": {
+            "n": "Earth",
+            "e": "Ice",
+            "s": "Water",
+            "w": "Shadow"
+          },
+          "short": "Ea/Ic/Wa/Sh",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 8
+        },
+        {
+          "id": "07",
+          "edges": {
+            "n": "Water",
+            "e": "Air",
+            "s": "Fire",
+            "w": "Shadow"
+          },
+          "short": "Wa/Ai/Fi/Sh",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 7
+        },
+        {
+          "id": "08",
+          "edges": {
+            "n": "Fire",
+            "e": "Water",
+            "s": "Light",
+            "w": "Shadow"
+          },
+          "short": "Fi/Wa/Lt/Sh",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 6
+        },
+        {
+          "id": "09",
+          "edges": {
+            "n": "Shadow",
+            "e": "Water",
+            "s": "Lightning",
+            "w": "Light"
+          },
+          "short": "Sh/Wa/Ln/Lt",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 7
+        },
+        {
+          "id": "10",
+          "edges": {
+            "n": "Light",
+            "e": "Fire",
+            "s": "Lightning",
+            "w": "Ice"
+          },
+          "short": "Lt/Fi/Ln/Ic",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 7
+        },
+        {
+          "id": "11",
+          "edges": {
+            "n": "Air",
+            "e": "Shadow",
+            "s": "Lightning",
+            "w": "Ice"
+          },
+          "short": "Ai/Sh/Ln/Ic",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 7
+        },
+        {
+          "id": "12",
+          "edges": {
+            "n": "Light",
+            "e": "Water",
+            "s": "Earth",
+            "w": "Ice"
+          },
+          "short": "Lt/Wa/Ea/Ic",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 8
+        }
+      ]
+    },
+    {
+      "name": "priced-mix",
+      "play_it_for": "The all-rounder. Five abilities that all measured within a few points of neutral.",
+      "abilities_used": [
+        "arc",
+        "conduit",
+        "eclipse",
+        "glaciate",
+        "umbra"
+      ],
+      "measured": {
+        "depth": "70.8%",
+        "decided_by_play": "44.0%",
+        "close_finishes": "70.5%",
+        "p1_win": "53.2%"
+      },
+      "element_balance": {
+        "Fire": 6,
+        "Water": 6,
+        "Earth": 6,
+        "Air": 6,
+        "Lightning": 6,
+        "Ice": 6,
+        "Light": 6,
+        "Shadow": 6
+      },
+      "element_spread": 0,
+      "cards": [
+        {
+          "id": "01",
+          "edges": {
+            "n": "Water",
+            "e": "Light",
+            "s": "Ice",
+            "w": "Lightning"
+          },
+          "short": "Wa/Lt/Ic/Ln",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 7
+        },
+        {
+          "id": "02",
+          "edges": {
+            "n": "Earth",
+            "e": "Ice",
+            "s": "Shadow",
+            "w": "Water"
+          },
+          "short": "Ea/Ic/Sh/Wa",
+          "ability": "umbra",
+          "ability_text": "One adjacent enemy card’s edges count as their twins this turn.",
+          "coverage": 8
+        },
+        {
+          "id": "03",
+          "edges": {
+            "n": "Fire",
+            "e": "Air",
+            "s": "Ice",
+            "w": "Lightning"
+          },
+          "short": "Fi/Ai/Ic/Ln",
+          "ability": "eclipse",
+          "ability_text": "All four of this card’s edges become their twins. Permanent.",
+          "coverage": 8
+        },
+        {
+          "id": "04",
+          "edges": {
+            "n": "Shadow",
+            "e": "Air",
+            "s": "Light",
+            "w": "Earth"
+          },
+          "short": "Sh/Ai/Lt/Ea",
+          "ability": "glaciate",
+          "ability_text": "All four of this card’s edges count as Ice this turn.",
+          "coverage": 8
+        },
+        {
+          "id": "05",
+          "edges": {
+            "n": "Fire",
+            "e": "Lightning",
+            "s": "Shadow",
+            "w": "Ice"
+          },
+          "short": "Fi/Ln/Sh/Ic",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 7
+        },
+        {
+          "id": "06",
+          "edges": {
+            "n": "Fire",
+            "e": "Air",
+            "s": "Earth",
+            "w": "Light"
+          },
+          "short": "Fi/Ai/Ea/Lt",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 8
+        },
+        {
+          "id": "07",
+          "edges": {
+            "n": "Air",
+            "e": "Light",
+            "s": "Earth",
+            "w": "Ice"
+          },
+          "short": "Ai/Lt/Ea/Ic",
+          "ability": "umbra",
+          "ability_text": "One adjacent enemy card’s edges count as their twins this turn.",
+          "coverage": 7
+        },
+        {
+          "id": "08",
+          "edges": {
+            "n": "Water",
+            "e": "Air",
+            "s": "Ice",
+            "w": "Fire"
+          },
+          "short": "Wa/Ai/Ic/Fi",
+          "ability": "eclipse",
+          "ability_text": "All four of this card’s edges become their twins. Permanent.",
+          "coverage": 7
+        },
+        {
+          "id": "09",
+          "edges": {
+            "n": "Shadow",
+            "e": "Earth",
+            "s": "Air",
+            "w": "Fire"
+          },
+          "short": "Sh/Ea/Ai/Fi",
+          "ability": "glaciate",
+          "ability_text": "All four of this card’s edges count as Ice this turn.",
+          "coverage": 8
+        },
+        {
+          "id": "10",
+          "edges": {
+            "n": "Light",
+            "e": "Water",
+            "s": "Lightning",
+            "w": "Earth"
+          },
+          "short": "Lt/Wa/Ln/Ea",
+          "ability": "conduit",
+          "ability_text": "Trigger this card’s cascade from an adjacent card you control instead of from this one.",
+          "coverage": 8
+        },
+        {
+          "id": "11",
+          "edges": {
+            "n": "Light",
+            "e": "Water",
+            "s": "Shadow",
+            "w": "Lightning"
+          },
+          "short": "Lt/Wa/Sh/Ln",
+          "ability": "arc",
+          "ability_text": "Trigger this card’s cascade from ANY card you control.",
+          "coverage": 7
+        },
+        {
+          "id": "12",
+          "edges": {
+            "n": "Shadow",
+            "e": "Fire",
+            "s": "Water",
+            "w": "Lightning"
+          },
+          "short": "Sh/Fi/Wa/Ln",
+          "ability": "umbra",
+          "ability_text": "One adjacent enemy card’s edges count as their twins this turn.",
+          "coverage": 8
+        }
+      ]
+    },
+    {
+      "name": "deniers",
+      "play_it_for": "Nothing resolves the way it looks. The deepest deck measured — every matchup can be turned inside out.",
+      "abilities_used": [
+        "eclipse",
+        "glaciate",
+        "umbra"
+      ],
+      "measured": {
+        "depth": "75.5%",
+        "decided_by_play": "36.0%",
+        "close_finishes": "70.0%",
+        "p1_win": "55.2%"
+      },
+      "element_balance": {
+        "Fire": 7,
+        "Water": 7,
+        "Earth": 5,
+        "Air": 6,
+        "Lightning": 6,
+        "Ice": 7,
+        "Light": 5,
+        "Shadow": 5
+      },
+      "element_spread": 2,
+      "cards": [
+        {
+          "id": "01",
+          "edges": {
+            "n": "Water",
+            "e": "Shadow",
+            "s": "Fire",
+            "w": "Air"
+          },
+          "short": "Wa/Sh/Fi/Ai",
+          "ability": "umbra",
+          "ability_text": "One adjacent enemy card’s edges count as their twins this turn.",
+          "coverage": 7
+        },
+        {
+          "id": "02",
+          "edges": {
+            "n": "Air",
+            "e": "Ice",
+            "s": "Lightning",
+            "w": "Water"
+          },
+          "short": "Ai/Ic/Ln/Wa",
+          "ability": "eclipse",
+          "ability_text": "All four of this card’s edges become their twins. Permanent.",
+          "coverage": 8
+        },
+        {
+          "id": "03",
+          "edges": {
+            "n": "Water",
+            "e": "Earth",
+            "s": "Fire",
+            "w": "Shadow"
+          },
+          "short": "Wa/Ea/Fi/Sh",
+          "ability": "glaciate",
+          "ability_text": "All four of this card’s edges count as Ice this turn.",
+          "coverage": 7
+        },
+        {
+          "id": "04",
+          "edges": {
+            "n": "Ice",
+            "e": "Earth",
+            "s": "Fire",
+            "w": "Lightning"
+          },
+          "short": "Ic/Ea/Fi/Ln",
+          "ability": "umbra",
+          "ability_text": "One adjacent enemy card’s edges count as their twins this turn.",
+          "coverage": 8
+        },
+        {
+          "id": "05",
+          "edges": {
+            "n": "Shadow",
+            "e": "Earth",
+            "s": "Ice",
+            "w": "Light"
+          },
+          "short": "Sh/Ea/Ic/Lt",
+          "ability": "eclipse",
+          "ability_text": "All four of this card’s edges become their twins. Permanent.",
+          "coverage": 8
+        },
+        {
+          "id": "06",
+          "edges": {
+            "n": "Shadow",
+            "e": "Air",
+            "s": "Lightning",
+            "w": "Fire"
+          },
+          "short": "Sh/Ai/Ln/Fi",
+          "ability": "glaciate",
+          "ability_text": "All four of this card’s edges count as Ice this turn.",
+          "coverage": 8
+        },
+        {
+          "id": "07",
+          "edges": {
+            "n": "Lightning",
+            "e": "Water",
+            "s": "Ice",
+            "w": "Shadow"
+          },
+          "short": "Ln/Wa/Ic/Sh",
+          "ability": "umbra",
+          "ability_text": "One adjacent enemy card’s edges count as their twins this turn.",
+          "coverage": 7
+        },
+        {
+          "id": "08",
+          "edges": {
+            "n": "Ice",
+            "e": "Lightning",
+            "s": "Fire",
+            "w": "Light"
+          },
+          "short": "Ic/Ln/Fi/Lt",
+          "ability": "eclipse",
+          "ability_text": "All four of this card’s edges become their twins. Permanent.",
+          "coverage": 7
+        },
+        {
+          "id": "09",
+          "edges": {
+            "n": "Water",
+            "e": "Fire",
+            "s": "Ice",
+            "w": "Air"
+          },
+          "short": "Wa/Fi/Ic/Ai",
+          "ability": "glaciate",
+          "ability_text": "All four of this card’s edges count as Ice this turn.",
+          "coverage": 7
+        },
+        {
+          "id": "10",
+          "edges": {
+            "n": "Air",
+            "e": "Ice",
+            "s": "Lightning",
+            "w": "Light"
+          },
+          "short": "Ai/Ic/Ln/Lt",
+          "ability": "umbra",
+          "ability_text": "One adjacent enemy card’s edges count as their twins this turn.",
+          "coverage": 7
+        },
+        {
+          "id": "11",
+          "edges": {
+            "n": "Air",
+            "e": "Light",
+            "s": "Water",
+            "w": "Earth"
+          },
+          "short": "Ai/Lt/Wa/Ea",
+          "ability": "eclipse",
+          "ability_text": "All four of this card’s edges become their twins. Permanent.",
+          "coverage": 8
+        },
+        {
+          "id": "12",
+          "edges": {
+            "n": "Water",
+            "e": "Earth",
+            "s": "Fire",
+            "w": "Light"
+          },
+          "short": "Wa/Ea/Fi/Lt",
+          "ability": "glaciate",
+          "ability_text": "All four of this card’s edges count as Ice this turn.",
+          "coverage": 7
+        }
+      ]
+    },
+    {
+      "name": "rotators",
+      "play_it_for": "The board will not hold still. Closest finishes of any deck.",
+      "abilities_used": [
+        "cyclone",
+        "gust",
+        "tremor",
+        "upheaval"
+      ],
+      "measured": {
+        "depth": "70.0%",
+        "decided_by_play": "33.0%",
+        "close_finishes": "76.8%",
+        "p1_win": "60.8%"
+      },
+      "element_balance": {
+        "Fire": 7,
+        "Water": 6,
+        "Earth": 5,
+        "Air": 5,
+        "Lightning": 6,
+        "Ice": 7,
+        "Light": 7,
+        "Shadow": 5
+      },
+      "element_spread": 2,
+      "cards": [
+        {
+          "id": "01",
+          "edges": {
+            "n": "Ice",
+            "e": "Lightning",
+            "s": "Shadow",
+            "w": "Earth"
+          },
+          "short": "Ic/Ln/Sh/Ea",
+          "ability": "gust",
+          "ability_text": "Rotate one adjacent card 90° clockwise — either player’s, including your own.",
+          "coverage": 7
+        },
+        {
+          "id": "02",
+          "edges": {
+            "n": "Ice",
+            "e": "Water",
+            "s": "Light",
+            "w": "Shadow"
+          },
+          "short": "Ic/Wa/Lt/Sh",
+          "ability": "tremor",
+          "ability_text": "Rotate every card adjacent to this one 180° — yours too.",
+          "coverage": 7
+        },
+        {
+          "id": "03",
+          "edges": {
+            "n": "Ice",
+            "e": "Air",
+            "s": "Light",
+            "w": "Earth"
+          },
+          "short": "Ic/Ai/Lt/Ea",
+          "ability": "cyclone",
+          "ability_text": "Rotate every card on the board 90° clockwise.",
+          "coverage": 7
+        },
+        {
+          "id": "04",
+          "edges": {
+            "n": "Fire",
+            "e": "Earth",
+            "s": "Lightning",
+            "w": "Water"
+          },
+          "short": "Fi/Ea/Ln/Wa",
+          "ability": "upheaval",
+          "ability_text": "Rotate this card and every adjacent card you control 90°.",
+          "coverage": 7
+        },
+        {
+          "id": "05",
+          "edges": {
+            "n": "Fire",
+            "e": "Shadow",
+            "s": "Lightning",
+            "w": "Ice"
+          },
+          "short": "Fi/Sh/Ln/Ic",
+          "ability": "gust",
+          "ability_text": "Rotate one adjacent card 90° clockwise — either player’s, including your own.",
+          "coverage": 7
+        },
+        {
+          "id": "06",
+          "edges": {
+            "n": "Air",
+            "e": "Fire",
+            "s": "Earth",
+            "w": "Water"
+          },
+          "short": "Ai/Fi/Ea/Wa",
+          "ability": "tremor",
+          "ability_text": "Rotate every card adjacent to this one 180° — yours too.",
+          "coverage": 6
+        },
+        {
+          "id": "07",
+          "edges": {
+            "n": "Ice",
+            "e": "Shadow",
+            "s": "Fire",
+            "w": "Light"
+          },
+          "short": "Ic/Sh/Fi/Lt",
+          "ability": "cyclone",
+          "ability_text": "Rotate every card on the board 90° clockwise.",
+          "coverage": 7
+        },
+        {
+          "id": "08",
+          "edges": {
+            "n": "Light",
+            "e": "Lightning",
+            "s": "Ice",
+            "w": "Fire"
+          },
+          "short": "Lt/Ln/Ic/Fi",
+          "ability": "upheaval",
+          "ability_text": "Rotate this card and every adjacent card you control 90°.",
+          "coverage": 7
+        },
+        {
+          "id": "09",
+          "edges": {
+            "n": "Ice",
+            "e": "Light",
+            "s": "Water",
+            "w": "Air"
+          },
+          "short": "Ic/Lt/Wa/Ai",
+          "ability": "gust",
+          "ability_text": "Rotate one adjacent card 90° clockwise — either player’s, including your own.",
+          "coverage": 8
+        },
+        {
+          "id": "10",
+          "edges": {
+            "n": "Shadow",
+            "e": "Fire",
+            "s": "Light",
+            "w": "Air"
+          },
+          "short": "Sh/Fi/Lt/Ai",
+          "ability": "tremor",
+          "ability_text": "Rotate every card adjacent to this one 180° — yours too.",
+          "coverage": 7
+        },
+        {
+          "id": "11",
+          "edges": {
+            "n": "Lightning",
+            "e": "Light",
+            "s": "Fire",
+            "w": "Water"
+          },
+          "short": "Ln/Lt/Fi/Wa",
+          "ability": "cyclone",
+          "ability_text": "Rotate every card on the board 90° clockwise.",
+          "coverage": 8
+        },
+        {
+          "id": "12",
+          "edges": {
+            "n": "Water",
+            "e": "Lightning",
+            "s": "Air",
+            "w": "Earth"
+          },
+          "short": "Wa/Ln/Ai/Ea",
+          "ability": "upheaval",
+          "ability_text": "Rotate this card and every adjacent card you control 90°.",
+          "coverage": 7
+        }
+      ]
+    },
+    {
+      "name": "reach",
+      "play_it_for": "Loose and grabby. The shallowest deck measured — captures come without having to read the board. Includes Scorch, which punishes greedy placement.",
+      "abilities_used": [
+        "backlash",
+        "beacon",
+        "scorch"
+      ],
+      "measured": {
+        "depth": "58.5%",
+        "decided_by_play": "32.5%",
+        "close_finishes": "63.7%",
+        "p1_win": "52.2%"
+      },
+      "element_balance": {
+        "Fire": 5,
+        "Water": 5,
+        "Earth": 6,
+        "Air": 5,
+        "Lightning": 7,
+        "Ice": 6,
+        "Light": 7,
+        "Shadow": 7
+      },
+      "element_spread": 2,
+      "cards": [
+        {
+          "id": "01",
+          "edges": {
+            "n": "Earth",
+            "e": "Ice",
+            "s": "Water",
+            "w": "Light"
+          },
+          "short": "Ea/Ic/Wa/Lt",
+          "ability": "beacon",
+          "ability_text": "Attack one adjacent enemy card with the edge of your choice. The defender still uses the edge facing you.",
+          "coverage": 8
+        },
+        {
+          "id": "02",
+          "edges": {
+            "n": "Shadow",
+            "e": "Light",
+            "s": "Lightning",
+            "w": "Water"
+          },
+          "short": "Sh/Lt/Ln/Wa",
+          "ability": "scorch",
+          "ability_text": "Also attack one diagonal neighbour, using your top edge for the two above and your bottom edge for the two below.",
+          "coverage": 7
+        },
+        {
+          "id": "03",
+          "edges": {
+            "n": "Water",
+            "e": "Light",
+            "s": "Shadow",
+            "w": "Fire"
+          },
+          "short": "Wa/Lt/Sh/Fi",
+          "ability": "backlash",
+          "ability_text": "Also attack in a straight line through one empty cell.",
+          "coverage": 6
+        },
+        {
+          "id": "04",
+          "edges": {
+            "n": "Ice",
+            "e": "Fire",
+            "s": "Air",
+            "w": "Light"
+          },
+          "short": "Ic/Fi/Ai/Lt",
+          "ability": "beacon",
+          "ability_text": "Attack one adjacent enemy card with the edge of your choice. The defender still uses the edge facing you.",
+          "coverage": 8
+        },
+        {
+          "id": "05",
+          "edges": {
+            "n": "Ice",
+            "e": "Light",
+            "s": "Lightning",
+            "w": "Shadow"
+          },
+          "short": "Ic/Lt/Ln/Sh",
+          "ability": "scorch",
+          "ability_text": "Also attack one diagonal neighbour, using your top edge for the two above and your bottom edge for the two below.",
+          "coverage": 6
+        },
+        {
+          "id": "06",
+          "edges": {
+            "n": "Fire",
+            "e": "Water",
+            "s": "Ice",
+            "w": "Light"
+          },
+          "short": "Fi/Wa/Ic/Lt",
+          "ability": "backlash",
+          "ability_text": "Also attack in a straight line through one empty cell.",
+          "coverage": 8
+        },
+        {
+          "id": "07",
+          "edges": {
+            "n": "Shadow",
+            "e": "Lightning",
+            "s": "Air",
+            "w": "Ice"
+          },
+          "short": "Sh/Ln/Ai/Ic",
+          "ability": "beacon",
+          "ability_text": "Attack one adjacent enemy card with the edge of your choice. The defender still uses the edge facing you.",
+          "coverage": 7
+        },
+        {
+          "id": "08",
+          "edges": {
+            "n": "Shadow",
+            "e": "Lightning",
+            "s": "Fire",
+            "w": "Earth"
+          },
+          "short": "Sh/Ln/Fi/Ea",
+          "ability": "scorch",
+          "ability_text": "Also attack one diagonal neighbour, using your top edge for the two above and your bottom edge for the two below.",
+          "coverage": 8
+        },
+        {
+          "id": "09",
+          "edges": {
+            "n": "Earth",
+            "e": "Shadow",
+            "s": "Water",
+            "w": "Lightning"
+          },
+          "short": "Ea/Sh/Wa/Ln",
+          "ability": "backlash",
+          "ability_text": "Also attack in a straight line through one empty cell.",
+          "coverage": 8
+        },
+        {
+          "id": "10",
+          "edges": {
+            "n": "Light",
+            "e": "Air",
+            "s": "Earth",
+            "w": "Lightning"
+          },
+          "short": "Lt/Ai/Ea/Ln",
+          "ability": "beacon",
+          "ability_text": "Attack one adjacent enemy card with the edge of your choice. The defender still uses the edge facing you.",
+          "coverage": 7
+        },
+        {
+          "id": "11",
+          "edges": {
+            "n": "Earth",
+            "e": "Lightning",
+            "s": "Air",
+            "w": "Ice"
+          },
+          "short": "Ea/Ln/Ai/Ic",
+          "ability": "scorch",
+          "ability_text": "Also attack one diagonal neighbour, using your top edge for the two above and your bottom edge for the two below.",
+          "coverage": 6
+        },
+        {
+          "id": "12",
+          "edges": {
+            "n": "Fire",
+            "e": "Earth",
+            "s": "Air",
+            "w": "Shadow"
+          },
+          "short": "Fi/Ea/Ai/Sh",
+          "ability": "backlash",
+          "ability_text": "Also attack in a straight line through one empty cell.",
+          "coverage": 8
+        }
+      ]
+    },
+    {
+      "name": "violent",
+      "play_it_for": "Deliberately unfair. Surge alone swings the seat 10.6 points toward Player 2. Play it for the spectacle, not for a fair match.",
+      "abilities_used": [
+        "cyclone",
+        "surge",
+        "tremor"
+      ],
+      "measured": {
+        "depth": "~65%",
+        "decided_by_play": "~34%",
+        "close_finishes": "~55%",
+        "p1_win": "39.4% with one Surge in twelve"
+      },
+      "element_balance": {
+        "Fire": 6,
+        "Water": 6,
+        "Earth": 6,
+        "Air": 6,
+        "Lightning": 6,
+        "Ice": 6,
+        "Light": 6,
+        "Shadow": 6
+      },
+      "element_spread": 0,
+      "cards": [
+        {
+          "id": "01",
+          "edges": {
+            "n": "Shadow",
+            "e": "Earth",
+            "s": "Air",
+            "w": "Light"
+          },
+          "short": "Sh/Ea/Ai/Lt",
+          "ability": "surge",
+          "ability_text": "The chain starts from EVERY card you control, not just this one.",
+          "coverage": 8
+        },
+        {
+          "id": "02",
+          "edges": {
+            "n": "Shadow",
+            "e": "Fire",
+            "s": "Ice",
+            "w": "Lightning"
+          },
+          "short": "Sh/Fi/Ic/Ln",
+          "ability": "cyclone",
+          "ability_text": "Rotate every card on the board 90° clockwise.",
+          "coverage": 7
+        },
+        {
+          "id": "03",
+          "edges": {
+            "n": "Light",
+            "e": "Shadow",
+            "s": "Water",
+            "w": "Ice"
+          },
+          "short": "Lt/Sh/Wa/Ic",
+          "ability": "tremor",
+          "ability_text": "Rotate every card adjacent to this one 180° — yours too.",
+          "coverage": 7
+        },
+        {
+          "id": "04",
+          "edges": {
+            "n": "Water",
+            "e": "Air",
+            "s": "Earth",
+            "w": "Lightning"
+          },
+          "short": "Wa/Ai/Ea/Ln",
+          "ability": "surge",
+          "ability_text": "The chain starts from EVERY card you control, not just this one.",
+          "coverage": 7
+        },
+        {
+          "id": "05",
+          "edges": {
+            "n": "Fire",
+            "e": "Light",
+            "s": "Earth",
+            "w": "Air"
+          },
+          "short": "Fi/Lt/Ea/Ai",
+          "ability": "cyclone",
+          "ability_text": "Rotate every card on the board 90° clockwise.",
+          "coverage": 8
+        },
+        {
+          "id": "06",
+          "edges": {
+            "n": "Fire",
+            "e": "Air",
+            "s": "Water",
+            "w": "Light"
+          },
+          "short": "Fi/Ai/Wa/Lt",
+          "ability": "tremor",
+          "ability_text": "Rotate every card adjacent to this one 180° — yours too.",
+          "coverage": 7
+        },
+        {
+          "id": "07",
+          "edges": {
+            "n": "Shadow",
+            "e": "Lightning",
+            "s": "Water",
+            "w": "Earth"
+          },
+          "short": "Sh/Ln/Wa/Ea",
+          "ability": "surge",
+          "ability_text": "The chain starts from EVERY card you control, not just this one.",
+          "coverage": 8
+        },
+        {
+          "id": "08",
+          "edges": {
+            "n": "Ice",
+            "e": "Light",
+            "s": "Lightning",
+            "w": "Fire"
+          },
+          "short": "Ic/Lt/Ln/Fi",
+          "ability": "cyclone",
+          "ability_text": "Rotate every card on the board 90° clockwise.",
+          "coverage": 7
+        },
+        {
+          "id": "09",
+          "edges": {
+            "n": "Earth",
+            "e": "Fire",
+            "s": "Lightning",
+            "w": "Shadow"
+          },
+          "short": "Ea/Fi/Ln/Sh",
+          "ability": "tremor",
+          "ability_text": "Rotate every card adjacent to this one 180° — yours too.",
+          "coverage": 8
+        },
+        {
+          "id": "10",
+          "edges": {
+            "n": "Earth",
+            "e": "Ice",
+            "s": "Water",
+            "w": "Air"
+          },
+          "short": "Ea/Ic/Wa/Ai",
+          "ability": "surge",
+          "ability_text": "The chain starts from EVERY card you control, not just this one.",
+          "coverage": 7
+        },
+        {
+          "id": "11",
+          "edges": {
+            "n": "Ice",
+            "e": "Fire",
+            "s": "Lightning",
+            "w": "Water"
+          },
+          "short": "Ic/Fi/Ln/Wa",
+          "ability": "cyclone",
+          "ability_text": "Rotate every card on the board 90° clockwise.",
+          "coverage": 8
+        },
+        {
+          "id": "12",
+          "edges": {
+            "n": "Ice",
+            "e": "Shadow",
+            "s": "Air",
+            "w": "Light"
+          },
+          "short": "Ic/Sh/Ai/Lt",
+          "ability": "tremor",
+          "ability_text": "Rotate every card adjacent to this one 180° — yours too.",
+          "coverage": 8
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "deck": "priced-mix",
+      "name": "rotation decides the turn",
+      "question": "Does aiming the card feel like the main decision?",
+      "setup": {
+        "board": [
+          null,
+          null,
+          {
+            "id": "11",
+            "short": "Lt/Wa/Sh/Ln",
+            "edges": {
+              "n": "Light",
+              "e": "Water",
+              "s": "Shadow",
+              "w": "Lightning"
+            },
+            "turn": "0° clockwise from the card as printed",
+            "cell": 2,
+            "owner": "P2"
+          },
+          null,
+          {
+            "id": "05",
+            "short": "Fi/Ln/Sh/Ic",
+            "edges": {
+              "n": "Fire",
+              "e": "Lightning",
+              "s": "Shadow",
+              "w": "Ice"
+            },
+            "turn": "0° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P2"
+          },
+          {
+            "id": "09",
+            "short": "Ai/Fi/Sh/Ea",
+            "edges": {
+              "n": "Air",
+              "e": "Fire",
+              "s": "Shadow",
+              "w": "Earth"
+            },
+            "turn": "180° clockwise from the card as printed",
+            "cell": 5,
+            "owner": "P2"
+          },
+          {
+            "id": "01",
+            "short": "Ln/Wa/Lt/Ic",
+            "edges": {
+              "n": "Lightning",
+              "e": "Water",
+              "s": "Light",
+              "w": "Ice"
+            },
+            "turn": "90° clockwise from the card as printed",
+            "cell": 6,
+            "owner": "P2"
+          },
+          null,
+          null
+        ],
+        "your_card": {
+          "id": "04",
+          "short": "Sh/Ai/Lt/Ea",
+          "edges": {
+            "n": "Shadow",
+            "e": "Air",
+            "s": "Light",
+            "w": "Earth"
+          },
+          "turn": "0° clockwise from the card as printed"
+        },
+        "place_on_cell": 8,
+        "note": "try all four turns of it on that one cell"
+      },
+      "verified": {
+        "0°": 0,
+        "90°": 0,
+        "180°": 0,
+        "270°": 3
+      },
+      "watch_for": "3 captures one way, 0 another"
+    },
+    {
+      "deck": "priced-mix",
+      "name": "your own wall is a fuse",
+      "question": "Is it obvious that clustering your cards is risky?",
+      "setup": {
+        "board": [
+          {
+            "id": "07",
+            "short": "Lt/Ea/Ic/Ai",
+            "edges": {
+              "n": "Light",
+              "e": "Earth",
+              "s": "Ice",
+              "w": "Air"
+            },
+            "turn": "270° clockwise from the card as printed",
+            "cell": 0,
+            "owner": "P1"
+          },
+          null,
+          null,
+          null,
+          {
+            "id": "11",
+            "short": "Lt/Wa/Sh/Ln",
+            "edges": {
+              "n": "Light",
+              "e": "Water",
+              "s": "Shadow",
+              "w": "Lightning"
+            },
+            "turn": "0° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "06",
+            "short": "Lt/Fi/Ai/Ea",
+            "edges": {
+              "n": "Light",
+              "e": "Fire",
+              "s": "Air",
+              "w": "Earth"
+            },
+            "turn": "90° clockwise from the card as printed",
+            "cell": 6,
+            "owner": "P1"
+          },
+          {
+            "id": "05",
+            "short": "Fi/Ln/Sh/Ic",
+            "edges": {
+              "n": "Fire",
+              "e": "Lightning",
+              "s": "Shadow",
+              "w": "Ice"
+            },
+            "turn": "0° clockwise from the card as printed",
+            "cell": 7,
+            "owner": "P1"
+          },
+          null
+        ],
+        "opponent_card": {
+          "id": "12",
+          "short": "Fi/Wa/Ln/Sh",
+          "edges": {
+            "n": "Fire",
+            "e": "Water",
+            "s": "Lightning",
+            "w": "Shadow"
+          },
+          "turn": "270° clockwise from the card as printed"
+        },
+        "opponent_places_on_cell": 1
+      },
+      "verified": {
+        "captures": 3,
+        "waves": 2
+      },
+      "watch_for": "one placement takes 3 of your four cards in 2 waves"
+    },
+    {
+      "deck": "priced-mix",
+      "name": "a twin deadlock",
+      "question": "Does a dead matchup read as a wall or as the game refusing to resolve?",
+      "setup": {
+        "board": [
+          null,
+          {
+            "id": "06",
+            "short": "Ai/Ea/Lt/Fi",
+            "edges": {
+              "n": "Air",
+              "e": "Earth",
+              "s": "Light",
+              "w": "Fire"
+            },
+            "turn": "270° clockwise from the card as printed",
+            "cell": 1,
+            "owner": "P1"
+          },
+          {
+            "id": "09",
+            "short": "Ai/Fi/Sh/Ea",
+            "edges": {
+              "n": "Air",
+              "e": "Fire",
+              "s": "Shadow",
+              "w": "Earth"
+            },
+            "turn": "180° clockwise from the card as printed",
+            "cell": 2,
+            "owner": "P2"
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "verified": {
+        "cells": [
+          1,
+          2
+        ],
+        "facing": [
+          "Earth",
+          "Earth"
+        ],
+        "resolves": false
+      },
+      "watch_for": "Earth against Earth across cells 1 and 2 can never resolve either way"
+    },
+    {
+      "deck": "violent",
+      "name": "surge is the unfair one",
+      "question": "Is a board-wide sweep exciting or just arbitrary?",
+      "setup": {
+        "board": [
+          {
+            "id": "04",
+            "short": "Wa/Ai/Ea/Ln",
+            "edges": {
+              "n": "Water",
+              "e": "Air",
+              "s": "Earth",
+              "w": "Lightning"
+            },
+            "turn": "0° clockwise from the card as printed",
+            "cell": 0,
+            "owner": "P2"
+          },
+          null,
+          null,
+          {
+            "id": "10",
+            "short": "Ai/Ea/Ic/Wa",
+            "edges": {
+              "n": "Air",
+              "e": "Earth",
+              "s": "Ice",
+              "w": "Water"
+            },
+            "turn": "90° clockwise from the card as printed",
+            "cell": 3,
+            "owner": "P2"
+          },
+          {
+            "id": "07",
+            "short": "Sh/Ln/Wa/Ea",
+            "edges": {
+              "n": "Shadow",
+              "e": "Lightning",
+              "s": "Water",
+              "w": "Earth"
+            },
+            "turn": "0° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P1"
+          },
+          {
+            "id": "08",
+            "short": "Ln/Fi/Ic/Lt",
+            "edges": {
+              "n": "Lightning",
+              "e": "Fire",
+              "s": "Ice",
+              "w": "Light"
+            },
+            "turn": "180° clockwise from the card as printed",
+            "cell": 5,
+            "owner": "P2"
+          },
+          {
+            "id": "05",
+            "short": "Ai/Fi/Lt/Ea",
+            "edges": {
+              "n": "Air",
+              "e": "Fire",
+              "s": "Light",
+              "w": "Earth"
+            },
+            "turn": "90° clockwise from the card as printed",
+            "cell": 6,
+            "owner": "P2"
+          },
+          {
+            "id": "09",
+            "short": "Ea/Fi/Ln/Sh",
+            "edges": {
+              "n": "Earth",
+              "e": "Fire",
+              "s": "Lightning",
+              "w": "Shadow"
+            },
+            "turn": "0° clockwise from the card as printed",
+            "cell": 7,
+            "owner": "P2"
+          },
+          null
+        ],
+        "your_card": {
+          "id": "12",
+          "short": "Lt/Ic/Sh/Ai",
+          "edges": {
+            "n": "Light",
+            "e": "Ice",
+            "s": "Shadow",
+            "w": "Air"
+          },
+          "turn": "90° clockwise from the card as printed",
+          "ability": "surge",
+          "ability_text": "The chain starts from EVERY card you control, not just this one."
+        },
+        "place_on_cell": 8
+      },
+      "verified": {
+        "captures_without_surge": 0,
+        "captures_with_surge": 3
+      },
+      "watch_for": "0 captures without it, 3 with it"
+    }
+  ],
+  "open_questions": [
+    "Does the deck you built change how the game feels, or just which cards appear?",
+    "Is the wheel learnable from play, without the reference?",
+    "Does the rotation choice carry the game?",
+    "Is Surge exciting or just unfair?",
+    "After five matches, do you want another?"
+  ]
+}

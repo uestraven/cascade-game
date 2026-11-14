@@ -1,0 +1,17 @@
+A. 12 placements, surplus given to P1 (who moves FIRST, and so is
+   the disadvantaged seat once both place six)
+
+  hands      draws     P1     P2  decisive P1  depth  frontier ch
+  (6, 6)     40.8%  25.5%  33.7%        43.1%  74.7%           37
+  (7, 6)     44.2%  37.7%  18.2%        67.5%  75.4%           42
+  (8, 6)     36.2%  47.8%  16.0%        74.9%  74.9%           47
+  (9, 6)     42.2%  46.0%  11.8%        79.5%  74.2%           52
+  (10, 6)    40.2%  50.8%   9.0%        85.0%  72.8%           58
+
+B. Could a TIEBREAKER rescue the 12-placement version?
+   On 3x4 the two interior cells are 5 and 6. Measuring how often
+   each candidate actually resolves a tie, since one that leaves
+   half of them unresolved is no use.
+
+  hands (6, 6)   draws   38.0%   interior ownership breaks  64.5% of them
+  hands (8, 6)   draws   45.7%   interior ownership breaks  83.2% of them

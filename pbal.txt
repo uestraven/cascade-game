@@ -1,0 +1,12 @@
+Prototype A: finding the deal.  P2 could always answer under
+matching, so (5,6) over-compensates.
+
+  deal     P2 spare     P1 win   seat   caps  margin 1   depth
+  (5, 4)   0             61.0%  11.0%   17.5     58.7%   80.0%
+  (5, 5)   1             47.2%   2.8%   18.1     68.3%   79.5%  <-- balanced
+  (5, 6)   2             39.2%  10.8%   18.3     70.3%   78.5%
+  (6, 5)   1             63.7%  13.7%   18.5     66.7%   78.8%
+  (6, 6)   2             53.2%   3.2%   18.9     75.5%   80.7%
+
+  'depth' here is the full bot against a cell-blind one, so higher
+  means positioning still matters at that deal.

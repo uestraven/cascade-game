@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768"><rect width="768" height="768" fill="#11131A"/>
+<!-- hunched raven/vulture silhouette; left half-furled wing -->
+<path d="M139 600 Q183 363 294 297 L370 339 Q334 413 278 471 Q269 584 219 661 Z" fill="#B66B43" stroke="#11131A" stroke-width="17"/>
+<path d="M177 579 L285 379 L245 551 L207 636 Z" fill="#747A7F"/>
+<path d="M250 647 Q273 458 350 329 Q425 276 500 344 L524 485 L575 649 Z" fill="#747A7F" stroke="#E7DECE" stroke-width="15"/>
+<path d="M285 547 L340 437 L371 545 L410 606 L363 662 Z" fill="#B66B43"/>
+<!-- sharp turned side-profile head with hooked beak -->
+<path d="M376 288 Q391 205 460 218 L529 254 L553 316 L613 342 L592 392 Q576 412 548 418 L560 383 L511 376 L466 400 L412 370 Z" fill="#E7DECE" stroke="#11131A" stroke-width="19" stroke-linejoin="round"/>
+<path d="M500 320 L611 351 L578 380 L540 381 Z" fill="#747A7F" stroke="#11131A" stroke-width="11"/>
+<path d="M416 265 L453 218 L493 247 L476 307" fill="#B66B43" stroke="#11131A" stroke-width="10"/>
+<circle cx="503" cy="303" r="17" fill="#B66B43" stroke="#11131A" stroke-width="10"/>
+<circle cx="507" cy="302" r="5" fill="#11131A"/>
+<path d="M346 379 L396 431 L369 489" fill="none" stroke="#E7DECE" stroke-width="15"/>
+</svg>

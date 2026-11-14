@@ -1,0 +1,12 @@
+CONTROL: is the centre strong, or is my bot just bad at answering it?
+  2000 games per cell. 'full' = exposure-aware bot (lambda=0.5),
+  'greedy' = pure capture-maximiser, no exposure term.
+
+  neither forced             both full   50.5% | both greedy   50.5% | P1 full vs P2 greedy   50.5%
+  P1 forced to the centre    both full   64.4% | both greedy   64.4% | P1 full vs P2 greedy   64.4%
+  P2 forced to the centre    both full   66.6% | both greedy   66.6% | P1 full vs P2 greedy   66.6%
+  P1 forced to a corner      both full   50.5% | both greedy   50.5% | P1 full vs P2 greedy   50.5%
+
+  If 'P2 forced to the centre' pushes P1's win rate DOWN by a
+  similar amount, the centre is genuinely strong for whoever
+  takes it. If only P1 benefits, it is a first-move effect.

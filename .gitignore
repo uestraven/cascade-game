@@ -1,0 +1,23 @@
+# Dependencies and build output -- reproducible from package-lock.json
+node_modules/
+web/dist/
+web/.wrangler/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# stderr dumps from crashed simulation runs; kept on disk as scratch only
+*.err
+
+.DS_Store
+
+# NOTE: test/fixtures/*.json ARE tracked on purpose. They are the
+# differential-test corpus -- the Python oracle's recorded outcomes that
+# the TypeScript port is replayed against. They are regenerable with the
+# gen_*_fixture.py scripts, but without them `npm test` cannot verify the
+# two implementations agree, which is the point of the suite.
+#
+# The *.txt files at the top level are also tracked on purpose: they are
+# the measurement record (win rates, ablations, lure tests) that the
+# design decisions in RULES.md were actually based on.

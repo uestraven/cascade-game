@@ -1,0 +1,53 @@
+==========================================================================
+A. SURGE AS A CARD -- power and depth
+==========================================================================
+  seats swapped, 1000 games; 50% is neutral
+  ability       holder win    used   depth
+  (none)             50.3%      --   70.0%
+  surge              68.7%   81.1%   66.6%
+  surge1             57.9%   42.8%   67.0%
+  surgesafe          62.7%   43.4%   70.6%
+  arc                53.8%   21.7%   70.4%
+  gust               58.3%   58.9%   70.6%
+
+==========================================================================
+B. WHEN IS IT PLAYED?  the actual test of the merge
+==========================================================================
+  As a leader, PRINCE/TANTALUS fired on turn 9 in ~78% of games.
+  A card costs a placement, so the question is whether it still
+  wants to be last -- and P1's turn 9 is their last placement
+  anyway, so the fix should leak for P1 if it leaks at all.
+
+  SURGESAFE -- share of uses on each of that seat's own placements:
+    P1 (places 5, last is turn 9)        0.0%     0.0%     0.8%    19.7%    79.5%
+                                    on its last placement:  79.5%  <-- still a last-turn bomb
+    P2 (places 4, last is turn 8)        0.0%     7.9%    40.0%    52.1%
+                                    on its last placement:  52.1%  <-- still a last-turn bomb
+
+  SURGE -- share of uses on each of that seat's own placements:
+    P1 (places 5, last is turn 9)        0.0%    23.8%    28.8%    37.7%     9.7%
+                                    on its last placement:   9.7%
+    P2 (places 4, last is turn 8)        0.0%    20.4%    42.8%    36.7%
+                                    on its last placement:  36.7%
+
+  SURGE1 -- share of uses on each of that seat's own placements:
+    P1 (places 5, last is turn 9)        0.0%     0.0%     4.5%    20.0%    75.5%
+                                    on its last placement:  75.5%  <-- still a last-turn bomb
+    P2 (places 4, last is turn 8)        0.0%     0.0%    27.6%    72.4%
+                                    on its last placement:  72.4%  <-- still a last-turn bomb
+
+  ARC -- share of uses on each of that seat's own placements:
+    P1 (places 5, last is turn 9)        0.0%     0.0%     2.5%    39.5%    58.0%
+                                    on its last placement:  58.0%  <-- still a last-turn bomb
+    P2 (places 4, last is turn 8)        0.0%     0.0%    22.9%    77.1%
+                                    on its last placement:  77.1%  <-- still a last-turn bomb
+
+==========================================================================
+C. IS IT A LURE?
+==========================================================================
+  ability          never   can-t bias   together
+  surgesafe        50.3%        59.4%      62.7%
+  surge            50.3%        67.3%      68.7%
+  surge1           50.3%        59.9%      57.9%
+
+  Rising with greed = fair. Falling = a lure.

@@ -1,0 +1,11 @@
+12-card shared deck, dealt 5 and 6, one card unseen
+
+  deck                       P1 win   seat   caps  margin 1   depth  play decides
+  priced mix (control)        51.8%   1.8%   19.1     70.4%   73.0%         41.2%
+  + surge, 1 in 12            39.4%  10.6%   19.8     54.6%   69.8%         51.6%
+  + surge, 2 in 12            39.4%  10.6%   19.7     59.0%   66.6%         40.0%
+  surge only                  44.8%   5.2%   21.6     47.2%   62.8%         47.6%
+
+  If 'surge only' stays near even, a shared deck absorbs it and
+  PRINCE can port as an instant ability. If it skews hard, the
+  merge needs the delayed version.

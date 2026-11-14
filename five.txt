@@ -1,0 +1,11 @@
+100% ability density, pool vs pool, seats swapped, 1200 games each
+
+  best 2 of the five vs the other 2      52.2%
+  best 2 of the five vs all five         50.7%
+  the five vs all thirteen               46.9%
+  the five vs the five (control)         51.7%
+  [old] hottest 4 vs priced 4            61.1%
+
+  depth and seat balance at 100% density with only the five:
+    P1  46.7%  seat edge   3.3%  depth  73.2%  caps 18.97  choices/turn 117
+    no abilities at all: P1  48.3%  depth  70.4%  choices/turn 88

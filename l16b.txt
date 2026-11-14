@@ -1,0 +1,29 @@
+liveness over 3000 random positions, 3x3
+
+ability     offers a choice  changes something  best gain
+------------------------------------------------------------
+shipped:
+  pivot                90.4%             99.6%          2
+  exchange             70.3%             99.9%          3
+  relay                70.3%             34.3%          3
+  prism               100.0%             47.4%          3
+edges:
+  mirror              100.0%             93.4%          2
+  echo                100.0%             98.3%          3
+  attune               70.3%             14.9%          3
+  converge            100.0%             29.5%          3
+geometry:
+  lance                12.7%             24.7%          1
+  corner               43.5%             52.6%          3
+  bridge               15.4%             23.2%          1
+  crossing            100.0%             18.5%          0
+cascade:
+  hinge                60.0%             30.6%          1
+  amplify              60.0%             17.9%          1
+  anchor              100.0%             93.5%          0
+  handoff              39.9%              6.9%          2
+aftermath:
+  fortify             100.0%            100.0%          0
+  withdraw             70.3%             85.6%          0
+  reorient             70.3%             99.3%          0
+  mend                 60.0%             30.6%          0

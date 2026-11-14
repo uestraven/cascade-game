@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768"><rect width="768" height="768" fill="#11131A"/>
+<!-- two interlocking rose crescents -->
+<path d="M314 146 C179 193 131 333 188 447 C204 479 239 513 292 530 C207 449 203 283 314 146 Z" fill="#B45D72"/>
+<path d="M454 146 C589 193 637 333 580 447 C564 479 529 513 476 530 C561 449 565 283 454 146 Z" fill="#B45D72"/>
+<!-- hair and shoulders -->
+<path d="M313 216 C302 165 366 153 405 173 C473 166 503 214 487 278 L513 483 L444 532 L310 531 L263 486 L286 277 Z" fill="#747A7F" stroke="#11131A" stroke-width="16"/>
+<path d="M218 629 L249 518 L325 458 L433 459 L510 520 L550 629 Z" fill="#E7DECE" stroke="#11131A" stroke-width="17"/>
+<!-- unmistakable face & neck -->
+<path d="M329 256 C326 226 352 214 384 210 C419 212 445 237 445 267 L436 358 Q385 432 332 360 Z" fill="#E7DECE" stroke="#11131A" stroke-width="17"/>
+<path d="M319 254 C323 194 355 185 383 189 C435 188 461 218 452 264 L428 254 L408 225 Q355 260 319 254 Z" fill="#747A7F"/>
+<path d="M360 308 L369 308 M406 308 L416 308" stroke="#11131A" stroke-width="11" stroke-linecap="round"/>
+<path d="M373 360 Q385 369 401 357" fill="none" stroke="#11131A" stroke-width="9"/>
+<!-- arms crossed over opposite shoulders, large graphic X -->
+<path d="M273 541 L469 466" stroke="#11131A" stroke-width="56" stroke-linecap="round"/>
+<path d="M273 541 L469 466" stroke="#E7DECE" stroke-width="36" stroke-linecap="round"/>
+<path d="M495 547 L299 467" stroke="#11131A" stroke-width="56" stroke-linecap="round"/>
+<path d="M495 547 L299 467" stroke="#E7DECE" stroke-width="36" stroke-linecap="round"/>
+<circle cx="299" cy="469" r="25" fill="#B45D72" stroke="#11131A" stroke-width="10"/>
+<circle cx="468" cy="469" r="25" fill="#B45D72" stroke="#11131A" stroke-width="10"/>
+</svg>

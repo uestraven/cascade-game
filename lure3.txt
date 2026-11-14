@@ -1,0 +1,15 @@
+======================================================================
+IS IT WEAK, OR IS IT A LURE?
+======================================================================
+  holder win rate, seats swapped, 1000 games per cell
+
+  ability              never         tie-break          greedy
+  scorchedge 50.3% (used   0.0%) 50.2% (used   1.8%) 50.0% (used  23.3%)
+  tremoredge 50.3% (used   0.0%) 50.3% (used   0.5%) 50.6% (used  22.3%)
+  cycloneedge 50.3% (used   0.0%) 50.6% (used   0.5%) 49.2% (used  25.9%)
+  gustnocap  50.3% (used   0.0%) 50.3% (used   0.0%) 50.0% (used  12.6%)
+  umbraone   50.3% (used   0.0%) 51.0% (used   2.3%) 53.4% (used  67.4%)
+
+  A lure looks like: never ~ 50%, and the win rate FALLS as the
+  ability is allowed more say in the placement.
+  A fair ability looks like: the win rate RISES with greed.

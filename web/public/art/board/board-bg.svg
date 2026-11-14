@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" preserveAspectRatio="none">
+<defs>
+<pattern id="grain" width="48" height="48" patternUnits="userSpaceOnUse">
+<path d="M0 0H48V48H0Z" fill="#17161a"/>
+<path d="M24 17L31 24L24 31L17 24Z" fill="#211e21"/>
+</pattern>
+</defs>
+<rect width="100%" height="100%" fill="url(#grain)"/>
+</svg>

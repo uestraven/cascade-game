@@ -1,0 +1,16 @@
+========================================================================
+ABILITY POWER UNDER THE SHIPPED RULES (seats swapped)
+========================================================================
+  hands (5, 6) dealt once, no draws, <=5 ability cards, live from placement 2
+  1200 games per row
+
+  ability     holder win  vs neutral    used   depth
+  (none)           49.9%          --      --   70.2%
+  cycloneedge       49.2%       -0.8%   25.3%   66.3%
+  tremoredge       51.2%        1.2%   22.2%   70.5%
+  beaconedge       55.1%        5.1%   59.2%   67.3%
+  tideedge         50.0%        0.0%    1.1%   70.8%
+  scorchedge       49.4%       -0.6%   23.2%   69.8%
+
+  holder win rate spans  49.2%- 55.1%; a neutral ability sits at 50%
+  baseline depth  70.2%; with abilities  66.3%- 70.8%

@@ -1,0 +1,28 @@
+============================================================================
+A. DENSITY SWEEP -- both players matched, all 13 abilities
+============================================================================
+  600 games per row, 600 more for depth
+  ability density     P1 win  seat edge   caps   1-card   depth  choices/turn
+    0.0%               48.3%       1.7%  18.73    69.2%   71.7%            88
+   25.0%               50.0%       0.0%  18.85    66.5%   70.0%            97
+   50.0%               50.5%       0.5%  18.94    73.2%   70.2%           106
+   75.0%               52.0%       2.0%  19.14    70.8%   66.8%           115
+  100.0%               55.0%       5.0%  19.41    75.0%   65.2%           125
+
+  Branching factor at 0% density is the floor: every turn you
+  still choose a card, a rotation and a cell.
+
+============================================================================
+B. DOES THE DECK SOLVE?  100% density, pool against pool
+============================================================================
+  If 'best abilities' beats 'all 13' by much, then making every
+  card an ability card hands the game to whoever reads this
+  table -- deckbuilding becomes real and immediately solved.
+
+  the 4 hottest vs all 13              59.4%
+  the 4 priced vs all 13               45.9%
+  the 4 hottest vs the 4 priced        61.1%
+  all 13 vs all 13 (control)           50.7%
+
+  hottest four: gust, beacon, tide, cyclone
+  priced four:  upheaval, conduit, glaciate, eclipse

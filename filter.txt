@@ -1,0 +1,9 @@
+Both hold 3 and refill. P2 compensates by FILTERING: draw n extra
+on each refill and keep the best, so the hand stays at 3.
+
+  P1 draws   P2 draws      P1 win   seat   depth  choices/turn
+  1          1              70.9%  20.9%   67.0%            90
+  1          2              71.9%  21.9%   66.1%            91
+  1          3              67.7%  17.7%   62.7%            91
+  1          4              72.9%  22.9%   63.0%            91
+  1          6              69.6%  19.6%   64.7%            91

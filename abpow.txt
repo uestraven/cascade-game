@@ -1,0 +1,19 @@
+========================================================================
+ABILITY POWER UNDER THE SHIPPED RULES (seats swapped)
+========================================================================
+  hands (5, 6) dealt once, no draws, <=5 ability cards, live from placement 2
+  1400 games per row
+
+  ability     holder win  vs neutral    used   depth
+  (none)           50.2%          --      --   70.0%
+  gust             58.9%        8.9%   59.5%   69.7%
+  scorch           45.6%       -4.4%   72.1%   56.0%
+  tremor           55.1%        5.1%   44.5%   70.6%
+  conduit          51.9%        1.9%   10.2%   69.3%
+  eclipse          51.9%        1.9%   62.8%   74.6%
+  tide             56.0%        6.0%   13.9%   62.3%
+  beacon           57.2%        7.2%   87.0%   68.9%
+  arc              52.6%        2.6%   23.1%   71.4%
+
+  holder win rate spans  45.6%- 58.9%; a neutral ability sits at 50%
+  baseline depth  70.0%; with abilities  56.0%- 74.6%

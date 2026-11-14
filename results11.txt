@@ -1,0 +1,70 @@
+================================================================================================
+BASELINE, no leaders
+================================================================================================
+   P1  49.6%   P2  50.4%   edge   0.8%
+
+================================================================================================
+CO-CAST ORDERING SWEEP: net value of firing BEFORE vs AFTER the placement
+================================================================================================
+leader     owner slot    fired B    net B  fired A    net A    best
+PRINCE     P1    T1       100.0%    12.8%   100.0%    13.2%   after
+PRINCE     P1    T2       100.0%    13.2%   100.0%    13.7%   after
+PRINCE     P1    T5       100.0%    12.7%   100.0%    10.6%  before
+PRINCE     P1    T6       100.0%    10.6%   100.0%     8.6%  before
+PRINCE     P1    T9       100.0%     8.6%   100.0%     1.7%  before
+
+PRINCE     P2    T3       100.0%     9.9%   100.0%     8.6%  before
+PRINCE     P2    T4       100.0%     8.6%   100.0%    10.0%   after
+PRINCE     P2    T7       100.0%     6.7%   100.0%     1.6%  before
+PRINCE     P2    T8       100.0%     1.6%   100.0%    -1.7%  before
+
+LOVER      P1    T1         0.0%     0.0%     0.0%     0.0%  before
+LOVER      P1    T2         0.0%     0.0%    32.5%     0.3%   after
+LOVER      P1    T5         0.4%     0.1%    99.6%     4.9%   after
+LOVER      P1    T6        99.6%     4.9%    99.7%     6.7%   after
+LOVER      P1    T9        54.3%    14.5%    90.1%    30.9%   after
+
+LOVER      P2    T3         0.0%     0.0%    99.6%    -0.9%  before
+LOVER      P2    T4        99.6%    -0.9%    99.8%    -1.1%  before
+LOVER      P2    T7        16.9%     1.6%    96.0%    17.5%   after
+LOVER      P2    T8        96.0%    17.5%    98.6%    18.3%   after
+
+TANTALUS   P1    T1         0.0%     0.0%     0.0%     0.0%  before
+TANTALUS   P1    T2         0.0%     0.0%     0.0%     0.0%  before
+TANTALUS   P1    T5       100.0%    -1.0%    81.3%     3.0%   after
+TANTALUS   P1    T6        81.3%     3.0%    49.2%     2.8%  before
+TANTALUS   P1    T9       100.0%    17.5%    99.3%    22.7%   after
+
+TANTALUS   P2    T3       100.0%    -1.1%    48.4%     0.6%   after
+TANTALUS   P2    T4        48.4%     0.6%     9.0%     0.1%  before
+TANTALUS   P2    T7       100.0%     2.6%    97.6%    11.7%   after
+TANTALUS   P2    T8        97.6%    11.7%    92.7%    13.0%   after
+
+DISRUPTER  P1    T1       100.0%     0.7%   100.0%    -1.6%  before
+DISRUPTER  P1    T2       100.0%    -1.6%   100.0%    -0.3%   after
+DISRUPTER  P1    T5       100.0%    -0.5%   100.0%    -1.4%  before
+DISRUPTER  P1    T6       100.0%    -1.4%   100.0%    -0.8%   after
+DISRUPTER  P1    T9         0.0%     0.0%     0.0%     0.0%  before
+
+DISRUPTER  P2    T3       100.0%    -1.3%   100.0%    -0.1%   after
+DISRUPTER  P2    T4       100.0%    -0.1%   100.0%     1.1%   after
+DISRUPTER  P2    T7       100.0%    -4.0%   100.0%    -4.1%  before
+DISRUPTER  P2    T8       100.0%    -4.1%   100.0%    -4.6%  before
+
+================================================================================================
+OPTIMAL FIRING SLOT PER LEADER (Model 1, co-cast)
+================================================================================================
+leader       P1 slot  P1 cast   P1 net   P2 slot  P2 cast   P2 net    asym
+PRINCE            T2    after    13.7%        T4    after    10.0%    3.7%
+LOVER             T9    after    30.9%        T8    after    18.3%   12.6%
+TANTALUS          T9    after    22.7%        T8    after    13.0%    9.7%
+DISRUPTER         T1   before     0.7%        T4    after     1.1%   -0.4%
+
+================================================================================================
+MIRROR MATCHES at the optimal slots and orderings
+================================================================================================
+leader     config               P1 win   P2 win     edge   vs base
+PRINCE     T2/T4 after           55.4%    44.6%   -10.7%    -11.4%
+LOVER      T9/T8 after           62.9%    37.1%   -25.8%    -26.6%
+TANTALUS   T9/T8 after           56.7%    43.3%   -13.3%    -14.1%
+DISRUPTER  T1/T4 before          51.2%    48.8%    -2.4%     -3.1%

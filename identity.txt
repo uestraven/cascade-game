@@ -1,0 +1,59 @@
+============================================================================
+A. TUNING THE REFERENCE BOT -- how much should it fear exposure?
+============================================================================
+  each lambda plays lambda=0, seats swapped, 800 games
+  lambda       win vs no-defence
+  0.0                      50.0%
+  0.25                     70.6%
+  0.5                      71.8%
+  0.75                     69.8%
+  1.0                      57.5%
+  -> using lambda = 0.5
+
+============================================================================
+B. ABLATION -- what is each faculty worth?
+============================================================================
+  each cripple plays the full bot, seats swapped, 800 games
+  50% = the faculty is free; lower = it matters that much
+
+  faculty removed     cripple win     cost
+  no rotation               12.0%    38.0%
+  no cell choice            15.2%    34.8%
+  no defence                28.4%    21.6%
+  no hand choice            36.9%    13.1%
+  no chain sight            40.4%     9.6%
+
+  Biggest single loss: no rotation ( 38.0% of win rate).
+
+============================================================================
+C. FIRST-PLAYER ADVANTAGE AT MATCHED SKILL
+============================================================================
+  both seats run the same bot, 1200 games each
+  bot                  P1 win   seat edge
+  full                  50.6%        0.6%
+  no hand choice        55.8%        5.8%
+  no cell choice        56.5%        6.5%
+  no rotation           33.7%       16.3%
+  no chain sight        29.3%       20.7%
+  no defence            50.2%        0.2%
+
+============================================================================
+D. COMEBACK POTENTIAL -- can you recover from behind?
+============================================================================
+  full bot both seats, 1200 games
+
+  the lead changed hands this many times per game:
+    5x    1.4%  #
+    6x    2.2%  #
+    7x   44.8%  ##################
+    8x   51.6%  #####################
+    mean 7.47
+
+  the eventual winner was behind at some point: 100.0%
+  the eventual winner was behind going into the final placement:  53.4%
+  the lead never changed hands at all:   0.0%
+
+  P1 behind by d before placing the ninth card -- P1 still wins:
+    behind by      P1 wins    games
+    -2               98.9%      190
+    -4               45.4%      997

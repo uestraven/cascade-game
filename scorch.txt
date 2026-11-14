@@ -1,0 +1,13 @@
+======================================================================
+IS IT WEAK, OR IS IT A LURE?
+======================================================================
+  holder win rate, seats swapped, 700 games per cell
+
+  ability              never         tie-break          greedy
+  scorch     50.4% (used   0.0%) 52.0% (used  10.7%) 45.1% (used  73.3%)
+  gust       50.4% (used   0.0%) 52.0% (used   6.3%) 56.7% (used  57.3%)
+  eclipse    50.4% (used   0.0%) 50.6% (used   1.9%) 52.0% (used  62.0%)
+
+  A lure looks like: never ~ 50%, and the win rate FALLS as the
+  ability is allowed more say in the placement.
+  A fair ability looks like: the win rate RISES with greed.

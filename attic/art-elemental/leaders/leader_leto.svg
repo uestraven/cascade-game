@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768"><rect width="768" height="768" fill="#11131A"/>
+<!-- broad strong veil, angular as an icon -->
+<path d="M207 663 L225 343 Q238 187 383 157 Q541 193 551 341 L568 663 L469 643 L310 645 Z" fill="#747A7F" stroke="#E7DECE" stroke-width="20" stroke-linejoin="round"/>
+<path d="M261 349 Q266 219 383 209 Q499 229 507 354 L484 516 Q453 575 383 588 Q314 570 281 513 Z" fill="#E7DECE" stroke="#11131A" stroke-width="17"/>
+<!-- petrified right face with a clearly visible straight fracture -->
+<path d="M385 218 Q498 239 504 360 L481 514 Q443 578 385 588 Z" fill="#B9B7A8"/>
+<path d="M383 221 L380 337 L405 379 L375 420 L398 467 L383 584" stroke="#11131A" stroke-width="15" fill="none" stroke-linejoin="bevel"/>
+<path d="M404 381 L458 346 L443 313 M397 468 L448 483 L462 532" stroke="#11131A" stroke-width="11" fill="none"/>
+<!-- serene living eye and closed stone eye -->
+<path d="M307 378 Q334 360 359 378 Q330 391 307 378 Z" fill="#11131A"/>
+<path d="M408 378 L462 378" stroke="#11131A" stroke-width="15" stroke-linecap="round"/>
+<path d="M352 470 Q379 488 410 469" stroke="#11131A" stroke-width="10" fill="none"/>
+<!-- the veil overlaps the sides; one face stays stark -->
+<path d="M226 357 L282 237 L286 531 L243 627 Z" fill="#747A7F"/>
+<path d="M546 355 L492 240 L485 532 L531 629 Z" fill="#747A7F"/>
+<path d="M248 330 Q267 219 331 187 M520 332 Q494 218 429 183" fill="none" stroke="#E7DECE" stroke-width="12"/>
+</svg>

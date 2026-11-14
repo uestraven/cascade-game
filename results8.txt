@@ -1,0 +1,50 @@
+==========================================================================================
+A. BASELINE  (no leader used, board fills, 5/4)
+==========================================================================================
+   greedy   P1  50.4%  draw   0.0%  P2  49.6%  edge  -0.8%
+   1-ply    P1  53.2%  draw   0.0%  P2  46.8%  edge  -6.3%
+
+==========================================================================================
+B. THE COST ENGINE: one player spends a placement on their leader
+==========================================================================================
+   The forfeited slot is removed from the turn order. 8 cards on
+   9 cells => a 4-4 split is reachable => draws return.
+
+who forfeits    slot    cards         P1    DRAW      P2    edge   draw after power TB
+P1              T1      4/4        46.8%   23.7%   29.6%  -17.2%                  0.5%
+P1              T2      4/4        46.8%   23.7%   29.6%  -17.2%                  0.5%
+P1              T5      4/4        38.3%   25.4%   36.3%   -2.0%                  0.8%
+P1              T6      4/4        38.3%   25.4%   36.3%   -2.0%                  0.8%
+P1              T9      4/4         5.3%   11.5%   83.2%   77.8%                  0.2%
+
+P2              T3      5/3        48.4%   23.5%   28.1%  -20.2%                  0.7%
+P2              T4      5/3        48.4%   23.5%   28.1%  -20.2%                  0.7%
+P2              T7      5/3        69.3%   17.2%   13.4%  -55.9%                  0.5%
+P2              T8      5/3        69.3%   17.2%   13.4%  -55.9%                  0.5%
+
+   Both players forfeit one placement (7 cards, odd -> no draws):
+      order AABABBA  4/3  P1  64.2%  draw   0.0%  P2  35.8%  edge -28.4%
+
+==========================================================================================
+C. CONSTRUCTED CUBES: does the weak-flank rule cap power?
+==========================================================================================
+   Strongest legal card: (3, 10, 10, 10) (sum 33), min face 3 satisfies the rule.
+   A 15-card optimised cube totals 484 face points.
+   A random 15-card cube averages 301 face points.
+
+P1 cube     P2 cube     budget      P1 win    draw   P2 win  <- P2 holds the optimised cube
+random      random      -            50.4%    0.0%    49.6%
+random      power       -            19.1%    0.0%    80.9%
+power       power       -            49.0%    0.0%    51.0%
+random      budget      300          54.7%    0.0%    45.3%
+budget      budget      300          52.5%    0.0%    47.5%
+
+==========================================================================================
+D. TANTALUS ENCODING HAZARD
+==========================================================================================
+   'reduce all faces by 1' with no floor: a 1/1/1/1 card becomes
+   0/0/0/0. With element 0 the packed card is 0, which engine.py
+   uses as the EMPTY-CELL sentinel. The card would vanish.
+   make_card(1,1,1,1, no element) packs to 4369 -> distinct
+   faces 1/1/1/1 count in the legal pool: 1
+   => Tantalus needs an explicit floor of 1 per face.

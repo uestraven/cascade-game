@@ -1,0 +1,19 @@
+================================================================================
+SHAPES.  'fills' = every cell gets a card; 'one empty' = one
+fewer placement, which forces the margin odd so a draw cannot
+happen.
+================================================================================
+  500 games per row.
+
+  board  cells  hands    mode         draws     P1   seat  caps  margin 1  depth  front  clust  frontier ch
+  3x3    9      (5, 6)   once          0.0%  52.2%   2.2%  18.7     91.4%  73.2%    2.2  88.9%           35
+  3x4    12     (6, 6)   once         41.0%  25.2%  24.8%  26.9      0.0%  75.7%    2.5  91.7%           37
+  3x4    12     (6, 5)   once, 1 empty   0.0%  70.2%  20.2%  23.8     67.0%  63.0%    2.7  90.9%           34
+  3x4    12     (3, 3)   refill       56.8%  23.2%  26.8%  27.6      0.0%  79.5%    2.5  91.7%           31
+  3x4    12     (3, 3)   refill, 1 empty   0.0%  83.4%  33.4%  24.7     62.4%  68.4%    2.7  90.9%           33
+  4x4    16     (8, 8)   once         34.4%  34.2%  15.8%  38.9      0.0%  63.0%    3.1  93.8%           57
+  4x4    16     (8, 7)   once, 1 empty   0.0%  72.2%  22.2%  35.6     68.8%  63.2%    3.2  93.3%           55
+  4x4    16     (3, 3)   refill, 1 empty   0.0%  77.8%  27.8%  36.1     75.6%  68.2%    3.2  93.3%           40
+
+  The 3x3 (5,6) row anchors everything: it should read P1 ~51%,
+  0% draws, ~18.7 captures.

@@ -1,0 +1,15 @@
+======================================================================
+IS IT WEAK, OR IS IT A LURE?
+======================================================================
+  holder win rate, seats swapped, 800 games per cell
+
+  ability              never         tie-break          greedy
+  scorchprior 50.9% (used   0.0%) 58.1% (used  17.4%) 55.1% (used  56.0%)
+  scorchsafe 50.9% (used   0.0%) 53.6% (used  13.4%) 54.4% (used  39.5%)
+  beacon2    50.9% (used   0.0%) 52.4% (used   4.6%) 54.4% (used  81.8%)
+  beaconopp  50.9% (used   0.0%) 52.4% (used   4.6%) 54.0% (used  73.8%)
+  gustown    50.9% (used   0.0%) 50.9% (used   0.0%) 51.9% (used   4.5%)
+
+  A lure looks like: never ~ 50%, and the win rate FALLS as the
+  ability is allowed more say in the placement.
+  A fair ability looks like: the win rate RISES with greed.

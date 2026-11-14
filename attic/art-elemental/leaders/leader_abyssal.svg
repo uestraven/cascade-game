@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768"><rect width="768" height="768" fill="#11131A"/>
+<!-- unmistakable feline pointed ears -->
+<path d="M194 299 L218 163 L341 241 Q388 224 430 241 L551 163 L580 299 Q606 454 521 573 Q383 680 245 573 Q160 450 194 299 Z" fill="#747A7F" stroke="#E7DECE" stroke-width="20" stroke-linejoin="round"/>
+<path d="M242 224 L231 312 L319 285 Z M526 224 L537 312 L450 285 Z" fill="#11131A"/>
+<!-- central forehead and broad cheek planes -->
+<path d="M353 286 L383 262 L414 286 L403 409 L383 448 L363 409 Z" fill="#11131A"/>
+<path d="M219 371 L303 398 L332 479 L285 537 L239 460 Z" fill="#11131A"/>
+<path d="M547 371 L465 398 L437 479 L483 537 L528 460 Z" fill="#11131A"/>
+<!-- the eyes are the sole bright accent -->
+<path d="M250 361 L342 383 L303 406 L260 395 Z" fill="#9864CC" stroke="#11131A" stroke-width="11" stroke-linejoin="round"/>
+<path d="M516 361 L424 383 L463 406 L506 395 Z" fill="#9864CC" stroke="#11131A" stroke-width="11" stroke-linejoin="round"/>
+<path d="M328 491 L383 456 L440 491 L416 528 L351 528 Z" fill="#11131A" stroke="#E7DECE" stroke-width="10"/>
+<path d="M383 525 L383 574 M383 571 L354 591 M383 571 L414 591" fill="none" stroke="#E7DECE" stroke-width="12" stroke-linecap="round"/>
+<path d="M251 509 L325 526 M247 554 L322 544 M516 509 L441 526 M518 554 L444 544" stroke="#E7DECE" stroke-width="11" stroke-linecap="round"/>
+</svg>

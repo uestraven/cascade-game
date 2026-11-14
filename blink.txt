@@ -1,0 +1,14 @@
+======================================================================
+IS IT WEAK, OR IS IT A LURE?
+======================================================================
+  holder win rate, seats swapped, 1000 games per cell
+
+  ability              never         tie-break          greedy
+  tide       50.3% (used   0.0%) 50.5% (used   0.8%) 55.3% (used  13.8%)
+  blink      50.3% (used   0.0%) 51.8% (used   5.2%) 57.2% (used  34.0%)
+  umbra      50.3% (used   0.0%) 52.9% (used   6.6%) 53.4% (used  70.8%)
+  gust       50.3% (used   0.0%) 52.6% (used   7.1%) 58.3% (used  58.9%)
+
+  A lure looks like: never ~ 50%, and the win rate FALLS as the
+  ability is allowed more say in the placement.
+  A fair ability looks like: the win rate RISES with greed.

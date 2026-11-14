@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768"><rect width="768" height="768" fill="#11131A"/>
+<!-- angled sword: high and legible even when tiny -->
+<path d="M215 417 L239 442 L566 129 L545 106 Z" fill="#E7DECE" stroke="#747A7F" stroke-width="11" stroke-linejoin="round"/>
+<path d="M212 351 L305 445" fill="none" stroke="#C9A04B" stroke-width="24" stroke-linecap="square"/>
+<path d="M190 445 L242 493" fill="none" stroke="#747A7F" stroke-width="32" stroke-linecap="round"/>
+<!-- angular cloak & leading shoulder -->
+<path d="M204 629 L234 493 L310 443 L406 453 L511 527 L571 664 L204 664 Z" fill="#747A7F" stroke="#11131A" stroke-width="17" stroke-linejoin="round"/>
+<path d="M262 630 L323 502 L400 477 L477 542 L512 649 Z" fill="#E7DECE" stroke="#11131A" stroke-width="16"/>
+<path d="M183 613 L233 510 L296 480 L321 508 L264 649 Z" fill="#747A7F" stroke="#E7DECE" stroke-width="11"/>
+<!-- head profile with striking pointed nose -->
+<path d="M317 292 L343 225 L417 212 L472 244 L488 307 L511 332 L482 348 L476 388 L448 427 L390 436 L339 400 L315 354 Z" fill="#E7DECE" stroke="#11131A" stroke-width="17" stroke-linejoin="round"/>
+<path d="M312 312 L317 250 L373 199 L433 218 L467 260 L415 261 L370 285 L352 356 L318 362 Z" fill="#747A7F" stroke="#11131A" stroke-width="12"/>
+<!-- iconic triple crown peaks -->
+<path d="M307 250 L318 177 L352 213 L383 152 L413 209 L447 173 L453 247 Z" fill="#C9A04B" stroke="#11131A" stroke-width="16" stroke-linejoin="round"/>
+<path d="M306 255 L459 255" stroke="#E7DECE" stroke-width="15"/>
+<path d="M423 329 L454 327 L438 339 Z" fill="#11131A"/>
+<path d="M453 389 L474 380" stroke="#11131A" stroke-width="9"/>
+<!-- raised arm and gripping fist -->
+<path d="M224 512 L174 459 L192 400 L245 390 L270 428 L255 476 L297 523 Z" fill="#E7DECE" stroke="#11131A" stroke-width="17" stroke-linejoin="round"/>
+<path d="M183 405 L194 367 L235 356 L261 382 L258 419 L218 434 Z" fill="#747A7F" stroke="#E7DECE" stroke-width="11"/>
+</svg>

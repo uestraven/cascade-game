@@ -1,0 +1,994 @@
+{
+  "format": "cascade-proto-a-deck",
+  "generated_by": "gen_protodeck.py, verified against proto.py",
+  "the_whole_rule": "Matching facing sigils capture. Different sigils do nothing. Only the card you place attacks.",
+  "sigils": {
+    "halo": "a ring",
+    "ward": "a cut diamond",
+    "crux": "a four-pointed star",
+    "gyre": "a four-armed pinwheel"
+  },
+  "cells": "numbered left to right then top to bottom, starting at 0",
+  "boards": {
+    "3x3": {
+      "use_cards": "01-12",
+      "deal": "5 and 5",
+      "unseen": 2,
+      "placements": 9,
+      "note": "nine cells, all filled",
+      "measured_p1_win": "45.4%"
+    },
+    "3x4": {
+      "use_cards": "01-16",
+      "deal": "6 and 7",
+      "unseen": 3,
+      "placements": 11,
+      "note": "one cell stays empty, which forbids a draw",
+      "measured_p1_win": "46.6%"
+    },
+    "4x4": {
+      "use_cards": "01-20",
+      "deal": "8 and 8",
+      "unseen": 4,
+      "placements": 15,
+      "note": "one cell stays empty, which forbids a draw",
+      "measured_p1_win": "45.1%"
+    }
+  },
+  "how_to_use": {
+    "pick_a_board": "The board is still an open decision. Cut all twenty cards and the first 12 / 16 / 20 each hold an equal number of every ability, so the same deck plays all three.",
+    "placing": "Any empty cell, turned any of four ways.",
+    "abilities": "Every card has one. Usable from your second placement onward, always optional, declared as you place the card.",
+    "cascade": "Each card you capture attacks its own neighbours once, then stops. The final placement captures but starts no chain.",
+    "winning": "Most cards owned at the end. The placement count is always odd, so there are no draws."
+  },
+  "card_shapes": {
+    "versatile": "four different sigils — some rotation answers any single exposed edge, but it can never take two at once",
+    "focused": "one sigil twice — fewer answers, but it can take two cards showing that sigil",
+    "specialized": "two pairs — narrowest, and strongest against a wall of one sigil"
+  },
+  "shape_counts": {
+    "versatile": 7,
+    "focused": 7,
+    "specialized": 6
+  },
+  "cards": [
+    {
+      "id": "01",
+      "sigils": {
+        "n": "gyre",
+        "e": "crux",
+        "s": "ward",
+        "w": "halo"
+      },
+      "short": "G/C/W/H",
+      "shape": "versatile",
+      "ability": "pivot",
+      "ability_text": "Rotate one adjacent card 90° clockwise — either player’s — before attacking. (changes orientation)"
+    },
+    {
+      "id": "02",
+      "sigils": {
+        "n": "halo",
+        "e": "crux",
+        "s": "gyre",
+        "w": "halo"
+      },
+      "short": "H/C/G/H",
+      "shape": "focused",
+      "ability": "exchange",
+      "ability_text": "Swap this card with one adjacent card you control. It attacks from its destination. (changes position)"
+    },
+    {
+      "id": "03",
+      "sigils": {
+        "n": "halo",
+        "e": "gyre",
+        "s": "halo",
+        "w": "gyre"
+      },
+      "short": "H/G/H/G",
+      "shape": "specialized",
+      "ability": "relay",
+      "ability_text": "Instead of this card attacking, an adjacent card you control attacks from its own position. (changes attack origin)"
+    },
+    {
+      "id": "04",
+      "sigils": {
+        "n": "crux",
+        "e": "halo",
+        "s": "ward",
+        "w": "gyre"
+      },
+      "short": "C/H/W/G",
+      "shape": "versatile",
+      "ability": "prism",
+      "ability_text": "Choose one edge of this card. For this placement, that edge matches any sigil. (changes matching)"
+    },
+    {
+      "id": "05",
+      "sigils": {
+        "n": "halo",
+        "e": "ward",
+        "s": "gyre",
+        "w": "gyre"
+      },
+      "short": "H/W/G/G",
+      "shape": "focused",
+      "ability": "pivot",
+      "ability_text": "Rotate one adjacent card 90° clockwise — either player’s — before attacking. (changes orientation)"
+    },
+    {
+      "id": "06",
+      "sigils": {
+        "n": "halo",
+        "e": "halo",
+        "s": "gyre",
+        "w": "gyre"
+      },
+      "short": "H/H/G/G",
+      "shape": "specialized",
+      "ability": "exchange",
+      "ability_text": "Swap this card with one adjacent card you control. It attacks from its destination. (changes position)"
+    },
+    {
+      "id": "07",
+      "sigils": {
+        "n": "halo",
+        "e": "ward",
+        "s": "gyre",
+        "w": "crux"
+      },
+      "short": "H/W/G/C",
+      "shape": "versatile",
+      "ability": "relay",
+      "ability_text": "Instead of this card attacking, an adjacent card you control attacks from its own position. (changes attack origin)"
+    },
+    {
+      "id": "08",
+      "sigils": {
+        "n": "ward",
+        "e": "crux",
+        "s": "ward",
+        "w": "gyre"
+      },
+      "short": "W/C/W/G",
+      "shape": "focused",
+      "ability": "prism",
+      "ability_text": "Choose one edge of this card. For this placement, that edge matches any sigil. (changes matching)"
+    },
+    {
+      "id": "09",
+      "sigils": {
+        "n": "ward",
+        "e": "gyre",
+        "s": "gyre",
+        "w": "ward"
+      },
+      "short": "W/G/G/W",
+      "shape": "specialized",
+      "ability": "pivot",
+      "ability_text": "Rotate one adjacent card 90° clockwise — either player’s — before attacking. (changes orientation)"
+    },
+    {
+      "id": "10",
+      "sigils": {
+        "n": "ward",
+        "e": "gyre",
+        "s": "halo",
+        "w": "crux"
+      },
+      "short": "W/G/H/C",
+      "shape": "versatile",
+      "ability": "exchange",
+      "ability_text": "Swap this card with one adjacent card you control. It attacks from its destination. (changes position)"
+    },
+    {
+      "id": "11",
+      "sigils": {
+        "n": "halo",
+        "e": "gyre",
+        "s": "crux",
+        "w": "crux"
+      },
+      "short": "H/G/C/C",
+      "shape": "focused",
+      "ability": "relay",
+      "ability_text": "Instead of this card attacking, an adjacent card you control attacks from its own position. (changes attack origin)"
+    },
+    {
+      "id": "12",
+      "sigils": {
+        "n": "ward",
+        "e": "halo",
+        "s": "halo",
+        "w": "ward"
+      },
+      "short": "W/H/H/W",
+      "shape": "specialized",
+      "ability": "prism",
+      "ability_text": "Choose one edge of this card. For this placement, that edge matches any sigil. (changes matching)"
+    },
+    {
+      "id": "13",
+      "sigils": {
+        "n": "crux",
+        "e": "ward",
+        "s": "halo",
+        "w": "gyre"
+      },
+      "short": "C/W/H/G",
+      "shape": "versatile",
+      "ability": "pivot",
+      "ability_text": "Rotate one adjacent card 90° clockwise — either player’s — before attacking. (changes orientation)"
+    },
+    {
+      "id": "14",
+      "sigils": {
+        "n": "gyre",
+        "e": "gyre",
+        "s": "crux",
+        "w": "ward"
+      },
+      "short": "G/G/C/W",
+      "shape": "focused",
+      "ability": "exchange",
+      "ability_text": "Swap this card with one adjacent card you control. It attacks from its destination. (changes position)"
+    },
+    {
+      "id": "15",
+      "sigils": {
+        "n": "gyre",
+        "e": "crux",
+        "s": "crux",
+        "w": "gyre"
+      },
+      "short": "G/C/C/G",
+      "shape": "specialized",
+      "ability": "relay",
+      "ability_text": "Instead of this card attacking, an adjacent card you control attacks from its own position. (changes attack origin)"
+    },
+    {
+      "id": "16",
+      "sigils": {
+        "n": "halo",
+        "e": "crux",
+        "s": "ward",
+        "w": "gyre"
+      },
+      "short": "H/C/W/G",
+      "shape": "versatile",
+      "ability": "prism",
+      "ability_text": "Choose one edge of this card. For this placement, that edge matches any sigil. (changes matching)"
+    },
+    {
+      "id": "17",
+      "sigils": {
+        "n": "halo",
+        "e": "gyre",
+        "s": "gyre",
+        "w": "ward"
+      },
+      "short": "H/G/G/W",
+      "shape": "focused",
+      "ability": "pivot",
+      "ability_text": "Rotate one adjacent card 90° clockwise — either player’s — before attacking. (changes orientation)"
+    },
+    {
+      "id": "18",
+      "sigils": {
+        "n": "halo",
+        "e": "halo",
+        "s": "ward",
+        "w": "ward"
+      },
+      "short": "H/H/W/W",
+      "shape": "specialized",
+      "ability": "exchange",
+      "ability_text": "Swap this card with one adjacent card you control. It attacks from its destination. (changes position)"
+    },
+    {
+      "id": "19",
+      "sigils": {
+        "n": "ward",
+        "e": "gyre",
+        "s": "crux",
+        "w": "halo"
+      },
+      "short": "W/G/C/H",
+      "shape": "versatile",
+      "ability": "relay",
+      "ability_text": "Instead of this card attacking, an adjacent card you control attacks from its own position. (changes attack origin)"
+    },
+    {
+      "id": "20",
+      "sigils": {
+        "n": "halo",
+        "e": "ward",
+        "s": "halo",
+        "w": "crux"
+      },
+      "short": "H/W/H/C",
+      "shape": "focused",
+      "ability": "prism",
+      "ability_text": "Choose one edge of this card. For this placement, that edge matches any sigil. (changes matching)"
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "rotation decides the turn",
+      "question": "Does aiming the card feel like the main decision?",
+      "setup": {
+        "board": [
+          null,
+          null,
+          null,
+          {
+            "id": "07",
+            "short": "W/G/C/H",
+            "sigils": {
+              "n": "ward",
+              "e": "gyre",
+              "s": "crux",
+              "w": "halo"
+            },
+            "ability": "relay",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 3,
+            "owner": "P2"
+          },
+          null,
+          null,
+          {
+            "id": "06",
+            "short": "H/H/G/G",
+            "sigils": {
+              "n": "halo",
+              "e": "halo",
+              "s": "gyre",
+              "w": "gyre"
+            },
+            "ability": "exchange",
+            "turn": "0° clockwise from the card as printed",
+            "cell": 6,
+            "owner": "P2"
+          },
+          {
+            "id": "05",
+            "short": "H/W/G/G",
+            "sigils": {
+              "n": "halo",
+              "e": "ward",
+              "s": "gyre",
+              "w": "gyre"
+            },
+            "ability": "pivot",
+            "turn": "0° clockwise from the card as printed",
+            "cell": 7,
+            "owner": "P2"
+          },
+          null
+        ],
+        "your_card": {
+          "id": "11",
+          "short": "H/G/C/C",
+          "sigils": {
+            "n": "halo",
+            "e": "gyre",
+            "s": "crux",
+            "w": "crux"
+          },
+          "ability": "relay",
+          "turn": "0° clockwise from the card as printed"
+        },
+        "place_on_cell": 4,
+        "note": "ignore the ability here; try all four turns"
+      },
+      "verified": {
+        "0°": 0,
+        "90°": 0,
+        "180°": 2,
+        "270°": 0
+      },
+      "watch_for": "2 captures one way, 0 another"
+    },
+    {
+      "name": "a repeated sigil takes what a versatile card cannot",
+      "question": "Is it clear why you would ever want a narrower card?",
+      "setup": {
+        "board": [
+          null,
+          {
+            "id": "12",
+            "short": "W/W/H/H",
+            "sigils": {
+              "n": "ward",
+              "e": "ward",
+              "s": "halo",
+              "w": "halo"
+            },
+            "ability": "prism",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 1,
+            "owner": "P2"
+          },
+          null,
+          {
+            "id": "06",
+            "short": "G/G/H/H",
+            "sigils": {
+              "n": "gyre",
+              "e": "gyre",
+              "s": "halo",
+              "w": "halo"
+            },
+            "ability": "exchange",
+            "turn": "180° clockwise from the card as printed",
+            "cell": 3,
+            "owner": "P2"
+          },
+          {
+            "id": "03",
+            "short": "G/H/G/H",
+            "sigils": {
+              "n": "gyre",
+              "e": "halo",
+              "s": "gyre",
+              "w": "halo"
+            },
+            "ability": "relay",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P2"
+          },
+          null,
+          null,
+          null,
+          {
+            "id": "11",
+            "short": "H/G/C/C",
+            "sigils": {
+              "n": "halo",
+              "e": "gyre",
+              "s": "crux",
+              "w": "crux"
+            },
+            "ability": "relay",
+            "turn": "0° clockwise from the card as printed",
+            "cell": 8,
+            "owner": "P2"
+          }
+        ],
+        "your_card": {
+          "id": "02",
+          "short": "C/G/H/H",
+          "sigils": {
+            "n": "crux",
+            "e": "gyre",
+            "s": "halo",
+            "w": "halo"
+          },
+          "ability": "exchange",
+          "turn": "270° clockwise from the card as printed"
+        },
+        "place_on_cell": 5
+      },
+      "verified": {
+        "captures": 2,
+        "shape": "focused",
+        "best_any_versatile_card_could_do": 1
+      },
+      "watch_for": "this focused card takes 2; the best ANY four-different-sigil card could do on this cell is 1"
+    },
+    {
+      "name": "your own wall is a fuse",
+      "question": "Is it obvious that clustering your cards is risky?",
+      "setup": {
+        "board": [
+          null,
+          {
+            "id": "03",
+            "short": "G/H/G/H",
+            "sigils": {
+              "n": "gyre",
+              "e": "halo",
+              "s": "gyre",
+              "w": "halo"
+            },
+            "ability": "relay",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 1,
+            "owner": "P1"
+          },
+          {
+            "id": "07",
+            "short": "W/G/C/H",
+            "sigils": {
+              "n": "ward",
+              "e": "gyre",
+              "s": "crux",
+              "w": "halo"
+            },
+            "ability": "relay",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 2,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "06",
+            "short": "G/H/H/G",
+            "sigils": {
+              "n": "gyre",
+              "e": "halo",
+              "s": "halo",
+              "w": "gyre"
+            },
+            "ability": "exchange",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "10",
+            "short": "G/H/C/W",
+            "sigils": {
+              "n": "gyre",
+              "e": "halo",
+              "s": "crux",
+              "w": "ward"
+            },
+            "ability": "exchange",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 6,
+            "owner": "P1"
+          },
+          null,
+          null
+        ],
+        "opponent_card": {
+          "id": "05",
+          "short": "W/G/G/H",
+          "sigils": {
+            "n": "ward",
+            "e": "gyre",
+            "s": "gyre",
+            "w": "halo"
+          },
+          "ability": "pivot",
+          "turn": "270° clockwise from the card as printed"
+        },
+        "opponent_places_on_cell": 3
+      },
+      "verified": {
+        "direct": 2,
+        "with_chain": 3
+      },
+      "watch_for": "2 taken directly, 3 once the chain runs"
+    },
+    {
+      "name": "pivot earns its slot",
+      "question": "Is it clear why you would use PIVOT, and does it feel worth a card?",
+      "setup": {
+        "board": [
+          {
+            "id": "06",
+            "short": "G/G/H/H",
+            "sigils": {
+              "n": "gyre",
+              "e": "gyre",
+              "s": "halo",
+              "w": "halo"
+            },
+            "ability": "exchange",
+            "turn": "180° clockwise from the card as printed",
+            "cell": 0,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "03",
+            "short": "G/H/G/H",
+            "sigils": {
+              "n": "gyre",
+              "e": "halo",
+              "s": "gyre",
+              "w": "halo"
+            },
+            "ability": "relay",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 2,
+            "owner": "P2"
+          },
+          {
+            "id": "05",
+            "short": "G/G/H/W",
+            "sigils": {
+              "n": "gyre",
+              "e": "gyre",
+              "s": "halo",
+              "w": "ward"
+            },
+            "ability": "pivot",
+            "turn": "180° clockwise from the card as printed",
+            "cell": 3,
+            "owner": "P2"
+          },
+          {
+            "id": "08",
+            "short": "G/W/C/W",
+            "sigils": {
+              "n": "gyre",
+              "e": "ward",
+              "s": "crux",
+              "w": "ward"
+            },
+            "ability": "prism",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P2"
+          },
+          {
+            "id": "12",
+            "short": "H/H/W/W",
+            "sigils": {
+              "n": "halo",
+              "e": "halo",
+              "s": "ward",
+              "w": "ward"
+            },
+            "ability": "prism",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 5,
+            "owner": "P1"
+          },
+          null,
+          null,
+          {
+            "id": "02",
+            "short": "H/H/C/G",
+            "sigils": {
+              "n": "halo",
+              "e": "halo",
+              "s": "crux",
+              "w": "gyre"
+            },
+            "ability": "exchange",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 8,
+            "owner": "P2"
+          }
+        ],
+        "your_card": {
+          "id": "01",
+          "short": "W/H/G/C",
+          "sigils": {
+            "n": "ward",
+            "e": "halo",
+            "s": "gyre",
+            "w": "crux"
+          },
+          "ability": "pivot",
+          "turn": "180° clockwise from the card as printed"
+        },
+        "place_on_cell": 7,
+        "use": {
+          "kind": "pivot",
+          "cell": 4
+        }
+      },
+      "verified": {
+        "captures_declining": 0,
+        "captures_using_it": 1
+      },
+      "watch_for": "0 captures without it, 1 with it"
+    },
+    {
+      "name": "exchange earns its slot",
+      "question": "Is it clear why you would use EXCHANGE, and does it feel worth a card?",
+      "setup": {
+        "board": [
+          null,
+          {
+            "id": "12",
+            "short": "H/H/W/W",
+            "sigils": {
+              "n": "halo",
+              "e": "halo",
+              "s": "ward",
+              "w": "ward"
+            },
+            "ability": "prism",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 1,
+            "owner": "P2"
+          },
+          {
+            "id": "07",
+            "short": "C/H/W/G",
+            "sigils": {
+              "n": "crux",
+              "e": "halo",
+              "s": "ward",
+              "w": "gyre"
+            },
+            "ability": "relay",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 2,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "06",
+            "short": "H/G/G/H",
+            "sigils": {
+              "n": "halo",
+              "e": "gyre",
+              "s": "gyre",
+              "w": "halo"
+            },
+            "ability": "exchange",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P2"
+          },
+          null,
+          null,
+          {
+            "id": "02",
+            "short": "H/H/C/G",
+            "sigils": {
+              "n": "halo",
+              "e": "halo",
+              "s": "crux",
+              "w": "gyre"
+            },
+            "ability": "exchange",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 7,
+            "owner": "P1"
+          },
+          null
+        ],
+        "your_card": {
+          "id": "10",
+          "short": "G/H/C/W",
+          "sigils": {
+            "n": "gyre",
+            "e": "halo",
+            "s": "crux",
+            "w": "ward"
+          },
+          "ability": "exchange",
+          "turn": "270° clockwise from the card as printed"
+        },
+        "place_on_cell": 8,
+        "use": {
+          "kind": "exchange",
+          "cell": 7
+        }
+      },
+      "verified": {
+        "captures_declining": 0,
+        "captures_using_it": 1
+      },
+      "watch_for": "0 captures without it, 1 with it"
+    },
+    {
+      "name": "relay earns its slot",
+      "question": "Is it clear why you would use RELAY, and does it feel worth a card?",
+      "setup": {
+        "board": [
+          {
+            "id": "02",
+            "short": "C/G/H/H",
+            "sigils": {
+              "n": "crux",
+              "e": "gyre",
+              "s": "halo",
+              "w": "halo"
+            },
+            "ability": "exchange",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 0,
+            "owner": "P1"
+          },
+          {
+            "id": "12",
+            "short": "W/H/H/W",
+            "sigils": {
+              "n": "ward",
+              "e": "halo",
+              "s": "halo",
+              "w": "ward"
+            },
+            "ability": "prism",
+            "turn": "0° clockwise from the card as printed",
+            "cell": 1,
+            "owner": "P2"
+          },
+          {
+            "id": "01",
+            "short": "G/C/W/H",
+            "sigils": {
+              "n": "gyre",
+              "e": "crux",
+              "s": "ward",
+              "w": "halo"
+            },
+            "ability": "pivot",
+            "turn": "0° clockwise from the card as printed",
+            "cell": 2,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "06",
+            "short": "H/H/G/G",
+            "sigils": {
+              "n": "halo",
+              "e": "halo",
+              "s": "gyre",
+              "w": "gyre"
+            },
+            "ability": "exchange",
+            "turn": "0° clockwise from the card as printed",
+            "cell": 4,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "03",
+            "short": "G/H/G/H",
+            "sigils": {
+              "n": "gyre",
+              "e": "halo",
+              "s": "gyre",
+              "w": "halo"
+            },
+            "ability": "relay",
+            "turn": "90° clockwise from the card as printed",
+            "cell": 6,
+            "owner": "P1"
+          },
+          null,
+          {
+            "id": "04",
+            "short": "H/W/G/C",
+            "sigils": {
+              "n": "halo",
+              "e": "ward",
+              "s": "gyre",
+              "w": "crux"
+            },
+            "ability": "prism",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 8,
+            "owner": "P1"
+          }
+        ],
+        "your_card": {
+          "id": "11",
+          "short": "G/C/C/H",
+          "sigils": {
+            "n": "gyre",
+            "e": "crux",
+            "s": "crux",
+            "w": "halo"
+          },
+          "ability": "relay",
+          "turn": "270° clockwise from the card as printed"
+        },
+        "place_on_cell": 7,
+        "use": {
+          "kind": "relay",
+          "cell": 4
+        }
+      },
+      "verified": {
+        "captures_declining": 0,
+        "captures_using_it": 1
+      },
+      "watch_for": "0 captures without it, 1 with it"
+    },
+    {
+      "name": "prism earns its slot",
+      "question": "Is it clear why you would use PRISM, and does it feel worth a card?",
+      "setup": {
+        "board": [
+          {
+            "id": "06",
+            "short": "H/H/G/G",
+            "sigils": {
+              "n": "halo",
+              "e": "halo",
+              "s": "gyre",
+              "w": "gyre"
+            },
+            "ability": "exchange",
+            "turn": "0° clockwise from the card as printed",
+            "cell": 0,
+            "owner": "P1"
+          },
+          {
+            "id": "05",
+            "short": "G/G/H/W",
+            "sigils": {
+              "n": "gyre",
+              "e": "gyre",
+              "s": "halo",
+              "w": "ward"
+            },
+            "ability": "pivot",
+            "turn": "180° clockwise from the card as printed",
+            "cell": 1,
+            "owner": "P1"
+          },
+          {
+            "id": "04",
+            "short": "W/G/C/H",
+            "sigils": {
+              "n": "ward",
+              "e": "gyre",
+              "s": "crux",
+              "w": "halo"
+            },
+            "ability": "prism",
+            "turn": "180° clockwise from the card as printed",
+            "cell": 2,
+            "owner": "P2"
+          },
+          null,
+          null,
+          null,
+          null,
+          {
+            "id": "10",
+            "short": "G/H/C/W",
+            "sigils": {
+              "n": "gyre",
+              "e": "halo",
+              "s": "crux",
+              "w": "ward"
+            },
+            "ability": "exchange",
+            "turn": "270° clockwise from the card as printed",
+            "cell": 7,
+            "owner": "P2"
+          },
+          null
+        ],
+        "your_card": {
+          "id": "08",
+          "short": "G/W/C/W",
+          "sigils": {
+            "n": "gyre",
+            "e": "ward",
+            "s": "crux",
+            "w": "ward"
+          },
+          "ability": "prism",
+          "turn": "90° clockwise from the card as printed"
+        },
+        "place_on_cell": 8,
+        "use": {
+          "kind": "prism",
+          "edge": "left"
+        }
+      },
+      "verified": {
+        "captures_declining": 0,
+        "captures_using_it": 1
+      },
+      "watch_for": "0 captures without it, 1 with it"
+    }
+  ],
+  "open_questions": [
+    "Which board feels best — 9, 11 or 15 placements?",
+    "Are four abilities enough variety, or does it get samey?",
+    "Does the matching rule stay obvious once a chain runs?",
+    "Do you ever want a focused or specialized card, or is versatile always right?",
+    "Is PRISM too strong? It makes one direction a guaranteed capture."
+  ]
+}

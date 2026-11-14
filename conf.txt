@@ -1,0 +1,6 @@
+  ability     holder win    used   depth  (2400 games/row)
+  (none)           50.9%      --   70.9%
+  scorch           46.2%   72.8%   57.1%
+  beacon           56.6%   87.7%   70.6%
+  gust             60.0%   60.2%   69.2%
+  eclipse          53.2%   62.5%   73.1%

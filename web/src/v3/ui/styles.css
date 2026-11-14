@@ -1,0 +1,188 @@
+:root {
+  --bg:#11131a; --panel:#1a1d27; --line:#2b3040;
+  --p1:#4a9eff; --p1d:#1d3a5c; --p2:#ff7043; --p2d:#5c2c1d;
+  --text:#e6e9f0; --muted:#7b8294; --gold:#ffd84a;
+  --cell:112px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:14px/1.45 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  display:flex;justify-content:center}
+.app{width:min(600px,100vw);padding:20px 16px 56px}
+h1{margin:0;font-size:15px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.controls label{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:12px}
+select,button{background:var(--panel);color:var(--text);border:1px solid var(--line);
+  border-radius:6px;padding:5px 9px;font:inherit;font-size:12px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--p1)}
+button:disabled{opacity:.45;cursor:default}
+.seed{color:var(--muted);font-size:11px;margin-left:auto}
+
+.scoreline{display:flex;align-items:center;gap:12px;margin:18px 0 8px}
+.chip{font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--line)}
+.p1c{color:var(--p1);border-color:var(--p1d)} .p2c{color:var(--p2);border-color:var(--p2d)}
+.strip{display:flex;gap:3px;flex:1}
+.seg{flex:1;height:5px;border-radius:2px;background:var(--line)}
+.seg.mine{background:var(--p1d)} .seg.theirs{background:var(--p2d)}
+.seg.mine.done{background:var(--p1)} .seg.theirs.done{background:var(--p2)}
+.seg.now{box-shadow:0 0 6px currentColor}
+.seg.mine.now{background:var(--p1)} .seg.theirs.now{background:var(--p2)}
+
+.board{display:grid;grid-template-columns:repeat(3,var(--cell));gap:6px;
+  justify-content:center;margin:12px 0}
+.cell{width:var(--cell);height:var(--cell);border:1px dashed var(--line);
+  border-radius:8px;display:grid;place-items:center;position:relative}
+.cell.placeable{border-color:var(--p1);cursor:pointer}
+.cell.placeable:hover{background:#18263a}
+.cell.target{border-style:solid;border-color:var(--gold);cursor:pointer}
+.cell.target:hover{box-shadow:inset 0 0 0 2px var(--gold)}
+.cellno{color:#333a4d;font-size:11px}
+
+.card3{width:100%;height:100%;border-radius:7px;position:relative;
+  border:1px solid var(--line);transition:background .25s,border-color .25s}
+.card3.p1{background:#16293f;border-color:var(--p1)}
+.card3.p2{background:#3a1f16;border-color:var(--p2)}
+.card3.neutral{background:var(--panel)}
+.card3.dim{opacity:.45}
+.edge{position:absolute;width:26px;height:26px;background-color:currentColor;
+  -webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat}
+.card3.sm .edge{width:19px;height:19px}
+.edge.n{top:2px;left:50%;transform:translateX(-50%)}
+.edge.s{bottom:2px;left:50%;transform:translateX(-50%)}
+.edge.w{left:2px;top:50%;transform:translateY(-50%)}
+.edge.e{right:2px;top:50%;transform:translateY(-50%)}
+[data-el="1"]{color:#ff6b4a}[data-el="2"]{color:#4ab8ff}[data-el="3"]{color:#b08a4a}
+[data-el="4"]{color:#a0e8d0}[data-el="5"]{color:#ffd84a}[data-el="6"]{color:#9fdcff}
+[data-el="7"]{color:#fff4c0}[data-el="8"]{color:#9a7ac0}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.09);
+  box-shadow:0 0 18px rgba(255,255,255,.55)}100%{transform:scale(1)}}
+.card3.flash{animation:pop .32s ease-out;z-index:2}
+
+.hand{display:flex;gap:8px;justify-content:center;margin-top:16px;min-height:92px;flex-wrap:wrap}
+.slot{width:84px;padding:0;border-radius:8px;border:1px solid transparent;background:none;
+  display:grid;gap:3px;justify-items:center}
+.slot .card3{width:84px;height:84px}
+.slot.sel{border-color:#fff;transform:translateY(-5px)}
+.slot small{font-size:9.5px;color:var(--muted);letter-spacing:.06em}
+.slot small.live{color:var(--gold)}
+
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.hint{font-size:11.5px;color:var(--gold);display:flex;gap:10px;align-items:center}
+.abilitybox{border:1px solid var(--line);border-radius:7px;padding:8px 10px;
+  background:var(--panel);font-size:11.5px}
+.abilitybox b{letter-spacing:.08em}
+.abilitybox p{margin:4px 0 0;color:var(--muted)}
+.aff{display:flex;gap:5px;align-items:center;font-size:10.5px;color:var(--muted)}
+.affpip{width:16px;height:16px;background-color:currentColor;opacity:.8;
+  -webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat}
+.status{text-align:center;color:var(--muted);min-height:20px;margin-top:14px}
+.log{list-style:none;padding:0;margin:14px 0 0;color:var(--muted);font-size:11.5px}
+.log li{padding:2px 0;border-top:1px solid #1d2130}
+.muted{color:var(--muted)}
+
+/* ---- element map ---- */
+.page{display:flex;gap:22px;align-items:flex-start;justify-content:center;
+  width:100%}
+.map{width:238px;flex:0 0 238px;position:sticky;top:20px;
+  border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  padding:12px 13px;margin-top:20px}
+.map h2{margin:0 0 10px;font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);font-weight:600}
+.map table{width:100%;border-collapse:collapse}
+.map tr{transition:opacity .12s}
+.map tr.on th,.map tr.on td{background:#1f2433}
+.map th{width:30px;padding:3px 2px;text-align:left}
+.map td{padding:3px 2px;white-space:nowrap}
+.map tr+tr th,.map tr+tr td{border-top:1px solid #1d2130}
+.lbl{font-size:8.5px;letter-spacing:.07em;text-transform:uppercase;
+  margin-right:4px;color:#5a6076}
+.lbl.lose{color:#4a4f61}
+.pip{display:inline-block;width:15px;height:15px;vertical-align:middle;
+  margin-right:2px;background-color:currentColor;
+  -webkit-mask:var(--icon) center/contain no-repeat;
+  mask:var(--icon) center/contain no-repeat}
+.pip.big{width:21px;height:21px;margin-right:0}
+.pip.faded{opacity:.45}
+.twins{display:flex;flex-wrap:wrap;gap:7px;align-items:center;
+  padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid #1d2130}
+.twinpair{display:inline-flex;align-items:center;gap:1px}
+.twinpair i{color:#4a4f61;font-style:normal;font-size:10px;margin:0 1px}
+.map small{display:block;color:#5a6076;font-size:9.5px;line-height:1.5}
+.map small.foot{margin-top:9px}
+@media (max-width:900px){
+  .page{flex-direction:column;align-items:center}
+  .map{position:static;width:min(600px,100vw);flex:none;margin-top:0}
+}
+
+.small2{font-size:10.5px}
+.controls input[type=checkbox]{accent-color:var(--p1)}
+
+/* ---- narration log ---- */
+.turnlabel{text-align:center;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:#5a6076;margin:14px 0 2px}
+.log .ln{display:flex;gap:7px;align-items:baseline;padding:3px 0;
+  border-top:1px solid #1d2130;font-size:11.5px;line-height:1.45}
+.tag{flex:0 0 52px;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:#4a4f61;padding-top:1px}
+.ln.place{color:#9aa1b4}
+.ln.capture{color:var(--p1)}
+.ln.capture .tag{color:var(--p1d)}
+.ln.chain{color:#ffd84a}
+.ln.chain .tag{color:#6b5a14}
+.ln.ability{color:#a0e8d0}
+.ln.ability .tag{color:#3d5a4f}
+.ln.result{color:#5a6076}
+
+/* ---------------------------------------------------------------------------
+   Readability of the position.
+
+   Measured: the lead changes hands 7.47 times per game out of 8 chances,
+   and the eventual winner was behind going into the final placement 53.4%
+   of the time -- so the ownership count is a poor in-play guide. Positional
+   control, meanwhile, is worth 38% + 35% + 22% of win rate across its three
+   facets and had nothing on screen at all. These styles surface facts the
+   player could derive by hand. No placement is scored or recommended: the
+   exposure axis is the game's main skill, so rating it would replace the
+   skill rather than teach it.
+   --------------------------------------------------------------------------- */
+
+/* the score is still the victory condition, just no longer the loudest
+   thing in the room */
+.scoreline.quiet .chip{opacity:.62;font-size:11px}
+.scoreline.quiet:hover .chip{opacity:1}
+
+/* an edge facing an empty cell: attackable on the next placement */
+.edge.open{filter:drop-shadow(0 0 3px var(--gold))}
+.edge.open::after{content:'';position:absolute;inset:-5px;border-radius:50%;
+  box-shadow:0 0 0 1px var(--gold);opacity:.5}
+
+/* a cell where the opponent could place to reach one of my cards */
+.cell.at-risk{border-color:#4a4330}
+
+/* capture preview, split by how the card would be taken */
+.cell.cap-direct{background:#1d3a24;border-color:#52c272;border-style:solid}
+.cell.cap-cascade{background:#1c2f3d;border-color:#4a9eff;border-style:solid}
+.cell.cap-reach{background:#3a2f16;border-color:var(--gold);border-style:solid}
+.cell.hovering{background:#1b2b42;box-shadow:inset 0 0 0 2px var(--p1)}
+
+/* rotation preview: all four turns of the selected card at once */
+.rotstrip{display:flex;gap:6px;margin:10px 0 4px;flex-wrap:wrap}
+.rot{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 8px;background:var(--panel);border:1px solid var(--line);
+  border-radius:8px;cursor:pointer;min-width:96px}
+.rot.sel{border-color:var(--p1);background:#17243a}
+.rot .deg{font-size:10px;color:var(--muted);letter-spacing:.08em}
+.rotcaps{font-size:10px;color:var(--text);white-space:nowrap}
+.rotexp{font-size:10px;color:var(--gold);opacity:.8;white-space:nowrap}
+
+.previewkey{display:flex;gap:10px;font-size:10px;color:var(--muted);
+  margin:2px 0 6px;flex-wrap:wrap}
+.previewkey i{display:inline-block;width:9px;height:9px;border-radius:2px;
+  margin-right:4px;vertical-align:middle}
+.previewkey .k-direct{background:#52c272}
+.previewkey .k-cascade{background:#4a9eff}
+.previewkey .k-reach{background:var(--gold)}
+.previewkey .k-open{box-shadow:0 0 0 1px var(--gold);background:transparent}
+.subtitle{margin:-10px 0 0;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted)}
