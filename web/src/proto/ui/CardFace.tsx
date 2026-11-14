@@ -9,7 +9,8 @@ const ART_COUNT = 20;
  *
  * Painted, photoreal art cannot be SVG, so the card artwork is raster
  * while the frames and sigils stay vector. Set to 'webp' once the
- * realistic set lands; 'svg' is the emblematic placeholder set.
+ * painted set is installed; it was 'svg' for the emblematic
+ * placeholder set, which is no longer on disk.
  *
  * This is one constant rather than a per-card field because all twenty
  * are delivered together as one set in one format -- a mixed deck where
@@ -17,7 +18,7 @@ const ART_COUNT = 20;
  * difference in grain between cards, which is exactly the kind of tell
  * that lets a player identify a card by its art instead of its sigils.
  */
-const ART_EXT = 'svg';
+const ART_EXT = 'webp';
 
 /** Frame carries ownership; it is far more legible across a table than a
  *  background tint, so the tint was dropped rather than run alongside. */

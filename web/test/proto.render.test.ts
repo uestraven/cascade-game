@@ -73,7 +73,7 @@ describe('the app renders', () => {
 
   it('asks for a frame, card art and at least one of each sigil', () => {
     expect(html).toMatch(/\/art\/frame-(p1|p2|neutral)\.svg/);
-    expect(html).toMatch(/\/art\/cards\/card-\d\d\.svg/);
+    expect(html).toMatch(/\/art\/cards\/card-\d\d\.webp/);
   });
 });
 
@@ -82,7 +82,7 @@ describe('the whole installed art set is reachable', () => {
      + 'are present', () => {
     const art = resolve(__dirname, '..', 'public', 'art');
     for (let i = 1; i <= 20; i++) {
-      const f = `card-${String(i).padStart(2, '0')}.svg`;
+      const f = `card-${String(i).padStart(2, '0')}.webp`;
       expect(existsSync(resolve(art, 'cards', f)), f).toBe(true);
     }
     for (const f of ['frame-p1.svg', 'frame-p2.svg', 'frame-neutral.svg',
@@ -108,7 +108,11 @@ describe('the whole installed art set is reachable', () => {
       }
     };
     walk(art);
-    expect(files.length).toBeGreaterThan(25);
+    // 3 frames + back + 4 ability marks + 4 sigils + 2 board = 14. This
+    // was >25 when the twenty card artworks were SVG too; they are raster
+    // now and audited separately below, so the count dropped rather than
+    // the coverage.
+    expect(files.length).toBeGreaterThanOrEqual(14);
     for (const f of files) {
       const src = readFileSync(f, 'utf8');
       expect(src, f).not.toMatch(/<script|foreignObject|javascript:/i);
@@ -120,6 +124,40 @@ describe('the whole installed art set is reachable', () => {
         .filter((u) => u !== 'http://www.w3.org/2000/svg');
       expect(urls, f).toEqual([]);
     }
+  });
+
+  it('every card painting is a real WebP of the declared size', () => {
+    // The paintings arrive as an archive from outside the project, get
+    // served to browsers, and are the only binary assets here. Checking
+    // the container rather than trusting the extension catches a file
+    // that is secretly something else, and catches a re-export at the
+    // wrong resolution -- which is silent otherwise, because a wrongly
+    // sized image still renders, just worse.
+    const cards = resolve(__dirname, '..', 'public', 'art', 'cards');
+    const files = readdirSync(cards).sort();
+    expect(files).toHaveLength(20);
+    let total = 0;
+    for (const name of files) {
+      expect(name, name).toMatch(/^card-\d\d\.webp$/);
+      const b = readFileSync(resolve(cards, name));
+      total += b.length;
+      expect(b.subarray(0, 4).toString('latin1'), name).toBe('RIFF');
+      expect(b.subarray(8, 12).toString('latin1'), name).toBe('WEBP');
+      expect(b.subarray(12, 16).toString('latin1'), name).toBe('VP8 ');
+      // lossy VP8: 3-byte frame tag, then the 9d 01 2a start code, then
+      // width and height as 14-bit little-endian fields
+      expect(b.subarray(23, 26).toString('hex'), name).toBe('9d012a');
+      expect(b.readUInt16LE(26) & 0x3fff, `${name} width`).toBe(1024);
+      expect(b.readUInt16LE(28) & 0x3fff, `${name} height`).toBe(1024);
+      // ART.md budgets ~180KB a card; a little headroom for a re-encode
+      expect(b.length, `${name} bytes`).toBeLessThan(200 * 1024);
+      // a polyglot that is both a valid image and a script is unlikely
+      // here, but it costs one scan to refuse one
+      const head = b.subarray(0, 4096).toString('latin1');
+      expect(head, name).not.toMatch(/<script|javascript:|<\?php|<html/i);
+    }
+    // the whole set is the page weight; fail if it doubles unnoticed
+    expect(total, 'total card art bytes').toBeLessThan(5 * 1024 * 1024);
   });
 });
 
