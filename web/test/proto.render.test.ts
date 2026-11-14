@@ -129,6 +129,30 @@ describe('the whole installed art set is reachable', () => {
     }
   });
 
+  it('no .pcard rule uses the background shorthand', () => {
+    // This is a silent failure, which is why it is a test.
+    //
+    // `.pcard.p1{background:#16293f}` has specificity 0,2,0 and the
+    // shorthand resets background-size to `auto`, beating
+    // `.pcard{background-size:100% 100%}` at 0,1,0. The card art then
+    // draws at its intrinsic 1024x1024 inside an 88px box, so a player
+    // sees the top-left 88x88 pixels of each painting -- a flat crop of
+    // one corner, which looks like the artwork simply failing to load.
+    //
+    // It went unnoticed while the art was SVG because the frame had an
+    // opaque fill covering the art completely, so there was nothing
+    // visible to be cropped.
+    const css = readFileSync(
+      resolve(__dirname, '..', 'src', 'proto', 'ui', 'styles.css'), 'utf8');
+    const offenders = css.split('\n')
+      .filter((l) => /^\s*\.pcard[.a-z0-9-]*\s*\{/.test(l)
+                  && /[{;]\s*background\s*:/.test(l));
+    expect(offenders, 'use background-color, not the shorthand')
+      .toEqual([]);
+    // and the longhand that actually scales the art must still be there
+    expect(css).toMatch(/\.pcard\s*\{[^}]*background-size/s);
+  });
+
   it('every card painting is a real WebP of the declared size', () => {
     // The paintings arrive as an archive from outside the project, get
     // served to browsers, and are the only binary assets here. Checking

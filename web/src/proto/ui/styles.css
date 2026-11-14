@@ -61,13 +61,13 @@ button:disabled{opacity:.4;cursor:default}
    ability is named in the centre rather than drawn, because the centre
    is where a fifth icon would be easiest to mistake for an edge. */
 .pcard{position:relative;width:88px;height:88px;border-radius:8px;
-  border:1px solid var(--line);transition:background .25s,border-color .25s}
-.pcard.p1{background:#16293f;border-color:var(--p1)}
-.pcard.p2{background:#3a1f16;border-color:var(--p2)}
-.pcard.neutral{background:var(--panel)}
+  border:1px solid var(--line);transition:background-color .25s,border-color .25s}
+.pcard.p1{background-color:#16293f;border-color:var(--p1)}
+.pcard.p2{background-color:#3a1f16;border-color:var(--p2)}
+.pcard.neutral{background-color:var(--panel)}
 .pcard.sm{width:62px;height:62px}
 .pcard.dim{opacity:.45}
-.pcard.flash{background:#4a3a0f;border-color:var(--gold)}
+.pcard.flash{background-color:#4a3a0f;border-color:var(--gold)}
 
 .pedge{position:absolute;display:grid;place-items:center;
   width:28px;height:28px}
