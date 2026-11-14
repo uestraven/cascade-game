@@ -301,13 +301,68 @@ for f in card-*.webp; do
 done
 ```
 
+```sh
+# the fuller check: mean, contrast, and whether the painting still has
+# true blacks and true whites in it somewhere
+for f in card-*.webp; do
+  convert "$f" -colorspace Gray -format \
+    "$f mean=%[fx:int(100*mean)] sd=%[fx:int(100*standard_deviation)] \
+min=%[fx:int(100*minima)] max=%[fx:int(100*maxima)]\n" info:
+done
+```
+
 Pass conditions:
 
 - Every card within ±6 of its assigned band in the table above
 - The twenty values spanning at least 50 points end to end. The first
-  set spanned 31 to 51, a 20-point range, which is the whole problem
+  set spanned 31 to 51, a 20-point range, which was the whole problem
 - Not more than 13 of 20 warmer than neutral. In the first set all 20
   had red above blue and 19 of 20 had red above green
+
+**And these three, which exist because the brightness bands alone turned
+out to be a bad target.** The second delivery hit every band dead on the
+midpoint — all twenty landed on exactly 23, 35, 50, 63 or 75 — which
+means the mean was being adjusted globally to hit the number rather than
+painted to. On the light cards that lifted the blacks until the image
+went milky: `card-11` came in at contrast 8 with its darkest pixel at 23
+out of 100, and reads at 88px as a lavender blur. That is this
+document's fault, not the painter's, so the target is now specified
+properly:
+
+- **Contrast at least 15.** Below that a card has no read at 88px
+- **Darkest pixel at or below 8, brightest at or above 92.** Every
+  painting must contain a true black and a true white *somewhere*, even
+  a high-key one — a small deep accent and a specular highlight are
+  enough. This is what stops a bright card from going pale all over
+- **Hit the band by composition, not by exposure.** A high-key card
+  should be bright because most of its *subject* is pale, not because
+  the whole canvas was lifted. Landing on 71 or 79 instead of exactly 75
+  is a sign you did it the right way
+
+### Third delivery: thirteen cards, not twenty
+
+The second delivery got the hard part right. Subject classes, palette
+families and the retired motifs are all correct, and the concepts are
+good — the clockwork-horned ram on `card-05`, the paired hand mirrors
+for Exchange on `card-14`, the current arcing between standing stones on
+`card-11`. **Keep every composition.** This is a grading pass, not a
+redesign.
+
+Seven cards already pass everything and must not be touched:
+`01`, `02`, `05`, `12`, `16`, `18`, `19`.
+
+The other thirteen need their values reworked, same painting, same
+subject, same palette:
+
+| cards | what is wrong | what to do |
+|---|---|---|
+| `08` `09` `10` `11` `14` | flat *and* no blacks (contrast 8–12, darkest pixel 17–23) | restore deep accents: a shadow side, a dark aperture, a silhouetted element. These are the five worst |
+| `04` `06` `07` `15` | flat (contrast 13–14) | deepen the shadows or strengthen the light; `15` is dark *and* flat, which is the muddiest state of all |
+| `03` `13` `17` `20` | blacks lifted only (darkest pixel 13–25) | one small genuinely black accent somewhere is enough |
+
+The five in the first row are the urgent ones. `card-11` is contrast 8
+with its darkest pixel at 23: a lavender blur at playing size, however
+good it looks at full resolution.
 
 ### 5.4 Ability marks — 4 pieces
 
