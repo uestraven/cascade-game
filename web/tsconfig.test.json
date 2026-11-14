@@ -1,0 +1,27 @@
+{
+  // Typechecking for the test suite, kept separate from the build.
+  //
+  // `npm run build` deliberately typechecks `src` only. The tests read
+  // fixtures off disk, so they use node:fs, node:path and __dirname, which
+  // need @types/node -- and a production deploy should not fail because a
+  // test file's types are unresolved. The tests themselves are verified by
+  // running them: vitest transpiles without typechecking, so `npm test`
+  // is unaffected by anything in here.
+  //
+  // This config needs a dependency that is not installed yet:
+  //     npm i -D @types/node
+  // Until then `npm run typecheck:test` will report the node builtins as
+  // missing. `npm run build`, `npm run typecheck` and `npm test` all pass
+  // without it.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "vitest/globals",
+      "node"
+    ]
+  },
+  "include": [
+    "src",
+    "test"
+  ]
+}
