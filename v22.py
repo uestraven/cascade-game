@@ -54,8 +54,16 @@ from collections import Counter
 
 import proto as P
 
-ACTIVES = ('plain', 'usurp', 'transpose', 'reclaim')
-PASSIVES = (None, 'sanctuary', 'retribution')
+# Two slots, not one list. A character has a Convergence TRAIT and a
+# Dominion COMMAND, and they are different kinds of thing: a trait is
+# passive or deployment-triggered and expires when Convergence ends, a
+# command is an action chosen on your turn. Either slot may be empty.
+TRAITS = (None, 'sanctuary', 'retribution')
+COMMANDS_SET = ('plain', 'usurp', 'transpose', 'reclaim',
+                'reclaim_recent')
+
+#: a roster entry is (trait, command); decks cycle through one
+Roster = tuple
 
 BOARD = (3, 4, (6, 6), 12)
 HANDS = (6, 6)
@@ -175,10 +183,12 @@ def convergence(cards, own, hands, passive, active, rng, prov):
 # ---------------------------------------------------------------------------
 # Dominion
 # ---------------------------------------------------------------------------
-def command_options(cards, own, passive, active, player, src, prov):
+def command_options(cards, own, passive, active, player, src, prov,
+                    recent=None):
     """Every command available from `src`, as (kind, *args)."""
     opp = 1 - player
     act = active.get(src)
+    recent = recent or {}
     out = []
     if act in (None, 'plain'):
         out.append(('plain',))
@@ -205,15 +215,23 @@ def command_options(cards, own, passive, active, player, src, prov):
                     continue
                 if a < b:
                     out.append(('transpose', a, b))
-    elif act == 'reclaim':
+    elif act in ('reclaim', 'reclaim_recent'):
         out.append(('plain',))
         for t in range(P.NCELLS):
             if cards[t] is None or not (own[opp] >> t) & 1:
                 continue
-            if player not in prov.get(t, set()):
-                continue
+            if act == 'reclaim':
+                # full ownership history: every player who ever held it
+                if player not in prov.get(t, set()):
+                    continue
+            else:
+                # physically representable: only a card the opponent took
+                # from you on their LAST command, which on a table is one
+                # temporary marker rather than a log of allegiances
+                if t not in recent.get(player, ()):
+                    continue
             if friends_adj(own, cards, t, player) >= 1:
-                out.append(('reclaim', t))
+                out.append((act, t))
     return out
 
 
@@ -265,7 +283,7 @@ def run_command(cards, own, passive, active, player, src, opt, rng, prov,
         if pa is not None or pb is not None:
             prov[a], prov[b] = pb or set(), pa or set()
         return 0
-    elif kind == 'reclaim':
+    elif kind in ('reclaim', 'reclaim_recent'):
         return seize(own, player, [opt[1]], prov)
 
     n = seize(own, player, got, prov)
@@ -296,6 +314,7 @@ def dominion(cards, own, passive, active, rng, prov, *, commands=COMMANDS,
              p2_first=True, track=None, no_abilities=False):
     caps = 0
     retrib_used = {}
+    recent = {0: set(), 1: set()}
     for k in range(commands):
         player = (1 - (k % 2)) if p2_first else (k % 2)
         mine = [c for c in range(P.NCELLS)
@@ -305,7 +324,7 @@ def dominion(cards, own, passive, active, rng, prov, *, commands=COMMANDS,
         best, ties = None, []
         for src in mine:
             opts = [('plain',)] if no_abilities else command_options(
-                cards, own, passive, active, player, src, prov)
+                cards, own, passive, active, player, src, prov, recent)
             for opt in opts:
                 c2 = [x for x in cards]
                 o2 = own[:]
@@ -329,8 +348,14 @@ def dominion(cards, own, passive, active, rng, prov, *, commands=COMMANDS,
                 elif s == best:
                     ties.append((src, opt))
         src, opt = rng.choice(ties)
+        before = own[1 - player]
         n = run_command(cards, own, passive, active, player, src, opt, rng,
                         prov, retrib_used)
+        # what this command took from the opponent is what they may
+        # reclaim on their next command, and nothing older
+        lost = before & ~own[1 - player]
+        recent[1 - player] = {c for c in range(P.NCELLS)
+                              if (lost >> c) & 1}
         caps += n
         if track is not None:
             track[opt[0]] += 1
@@ -340,19 +365,25 @@ def dominion(cards, own, passive, active, rng, prov, *, commands=COMMANDS,
 # ---------------------------------------------------------------------------
 # a whole game
 # ---------------------------------------------------------------------------
-def build_deck(rng, size, passive_kind, active_kind):
+def build_deck(rng, size, roster):
+    """`roster` is a list of (trait, command) pairs, cycled. Passing a
+    single pair makes a uniform deck, which is how one ability is
+    isolated for measurement."""
     deck = []
-    for _ in range(size):
-        deck.append((rng.choice(P.BY_SHAPE['versatile']),
-                     passive_kind, active_kind))
+    for i in range(size):
+        trait, command = roster[i % len(roster)]
+        deck.append((rng.choice(P.BY_SHAPE['versatile']), trait, command))
     rng.shuffle(deck)
     return deck
 
 
-def play(rng, *, passive_kind=None, active_kind='plain', commands=COMMANDS,
-         p2_first=True, track=None, no_abilities=False):
+def play(rng, *, roster=None, passive_kind=None, active_kind='plain',
+         commands=COMMANDS, p2_first=True, track=None,
+         no_abilities=False):
     P.set_board(*BOARD)
-    deck = build_deck(rng, sum(HANDS) + 2, passive_kind, active_kind)
+    if roster is None:
+        roster = [(passive_kind, active_kind)]
+    deck = build_deck(rng, sum(HANDS) + 2, roster)
     hands = [list(deck[:HANDS[0]]), list(deck[HANDS[0]:sum(HANDS)])]
     cards = [None] * P.NCELLS
     own = [0, 0]

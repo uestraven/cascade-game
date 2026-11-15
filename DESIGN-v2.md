@@ -405,6 +405,91 @@ nothing, and cannot judge abilities whose payoff is deferred.** Usurp,
 Reclaim, Sanctuary and Retribution are the measurable kind and all four
 are live. Transpose needs a human.
 
+## 3e. Usurp diagnosed, Reclaim made physical
+
+### Usurp: the skew is in the ability, not the turn order
+
+Each row compared against its own seat-matched baseline, since command
+order alone is worth ~15 points on a full board.
+
+| deck | opens | P1 | P2 | draw | dom | reversed |
+|---|---|---|---|---|---|---|
+| plain (control) | P2 | 47.7% | 44.9% | 7.4% | 15.7 | 45.3% |
+| plain (control) | P1 | 40.5% | 39.3% | 20.2% | 17.0 | 43.8% |
+| usurp | P2 | 43.4% | 54.0% | 2.6% | 20.9 | 26.2% |
+| usurp | P1 | **8.8%** | **89.5%** | 1.8% | 33.2 | 15.4% |
+
+Adding Usurp moves P2 **+9.1** when P2 opens and **+50.2** when P1
+opens. Same sign both ways, so this is not a turn-order artifact — the
+caution was right. With P1 opening, Usurp alone takes P2 to 89.5%.
+
+The likely mechanism: Usurp's value scales with how clustered the
+*opponent's* cards are, because it turns their formation against itself.
+P1 deploys first and so lays the initial cluster that P2 then builds
+around, leaving P1's shape more usurpable. Unconfirmed.
+
+**Usurp is a snowball, which reinterprets its best-looking number.**
+P1 win rate by the lead P1 held entering Dominion:
+
+| P1 lead | plain | usurp | delta |
+|---|---|---|---|
+| −4 | 40.6% | 21.6% | **−19.0** |
+| −2 | 44.7% | 29.5% | −15.2 |
+| 0 | 53.5% | 64.0% | +10.5 |
+| +2 | 53.4% | 75.0% | **+21.6** |
+
+Usurp helps whoever is already ahead and hurts whoever is behind. So the
+fall in reversals from 44.5% to 26.2% is **not** deployment mattering
+more in a good way — it is the leader compounding. That reading of the
+earlier number was wrong.
+
+**And it does crowd out alternatives.** Over 2,895 commands, Usurp was
+*strictly* best 69.3% of the time and merely tied 9.7%. The concern that
+players would stop considering anything else is justified, and a line in
+`exp_usurp.py` that reads "chosen often while rarely strictly best means
+the 72% is a tie" is printed unconditionally and is contradicted by its
+own output — the interpretation was written before the data existed and
+is wrong here.
+
+Usurp is a redesign, on three independent counts: an intrinsic seat
+skew, a snowball gradient, and option crowding. It remains the most
+distinctive ability produced so far and is worth fixing rather than
+dropping.
+
+### Reclaim: the physical rule is the better rule
+
+Full ownership history needs a log of changing allegiances on a table —
+the memory burden the elemental wheel was abandoned for. The restricted
+rule needs one temporary marker: only a card the opponent took from you
+on their *last* command.
+
+| rule | used | P1 | P2 | draw | reversed |
+|---|---|---|---|---|---|
+| plain (control) | — | 46.7% | 45.6% | 7.7% | 44.5% |
+| full history | 28.2% | 49.7% | 41.2% | 9.1% | 46.8% |
+| **recent only** | 24.9% | 44.5% | 48.3% | 7.1% | 42.6% |
+
+Nearly identical engagement, a *smaller* seat gap (3.8 against 8.5), and
+a draw rate closer to the control. The physically representable version
+costs nothing and is adopted. No ability should need invisible state a
+human has to memorise.
+
+### Two slots, not one ability list
+
+`v22.py` now models a Convergence **trait** and a Dominion **command**
+as separate fields, with decks built from a roster of (trait, command)
+pairs. Either slot may be empty. Treating Sanctuary as interchangeable
+with three Dominion actions was a category error.
+
+### A concession on Transpose
+
+The claim that "more simulation will never settle it" was overstated.
+Dominion is six commands deep, so forward search or rollouts are
+tractable and would evaluate deferred payoff properly. The sensitivity
+sweep shows the *greedy* bot cannot, not that the question is
+unanswerable. Making it playable now and improving the bot later are
+both open.
+
 ## 4. Test plan
 
 | Prototype | Rules | Question |
