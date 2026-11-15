@@ -188,6 +188,8 @@ export interface CardDef {
   trait: TraitId | null;
   command: CmdId;
   art: number;
+  /** identity colour, for telling twelve characters apart at a glance */
+  accent?: string;
 }
 
 export type EffectStatus = 'pending' | 'resolved' | 'failed' | 'skipped';

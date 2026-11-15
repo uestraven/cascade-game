@@ -25,6 +25,9 @@ const S = (n: number, e: number, s: number, w: number): Card =>
 
 interface Entry {
   id: string;
+  /** this character's identity colour, authored rather than hashed so
+   *  the twelve are actually distinguishable from each other */
+  accent: string;
   name: string;
   epithet: string;
   flavour: string;
@@ -37,21 +40,21 @@ interface Entry {
 export const ROSTER: Entry[] = [
   // ---- established, art already approved -----------------------------
   {
-    id: 'equinox', name: 'The Veiled Equinox',
+    id: 'equinox', accent: '#8f7bff', name: 'The Veiled Equinox',
     epithet: 'Keeper of Two Truths',
     flavour: 'All things cast a shadow. Even the light that reveals them.',
     sigils: S(0, 1, 3, 2), trait: 'sanctuary', command: 'transpose',
     art: 1,
   },
   {
-    id: 'stormgrave', name: 'Stormgrave Empress',
+    id: 'stormgrave', accent: '#3fb6d8', name: 'Stormgrave Empress',
     epithet: 'Sovereign of the Drowned Throne',
     flavour: 'The storm does not obey me. It remembers who crowned it.',
     sigils: S(2, 0, 1, 3), trait: 'pact', command: 'usurpOne',
     art: 8,
   },
   {
-    id: 'shepherd', name: 'The Hollow Shepherd',
+    id: 'shepherd', accent: '#d8a23f', name: 'The Hollow Shepherd',
     epithet: 'Warden of the Returning',
     flavour: 'Nothing of mine stays lost. It only wanders.',
     sigils: S(1, 3, 0, 2), trait: 'rally', command: 'reclaimRecent',
@@ -60,63 +63,63 @@ export const ROSTER: Entry[] = [
 
   // ---- provisional ---------------------------------------------------
   {
-    id: 'bastion', name: 'The Gilded Bastion',
+    id: 'bastion', accent: '#c9b26a', name: 'The Gilded Bastion',
     epithet: 'Who Does Not Step Aside',
     flavour: 'Move the river. I will still be here.',
     sigils: S(1, 1, 2, 3), trait: 'anchor', command: 'plain',
     art: 5,
   },
   {
-    id: 'cantor', name: 'The Drowned Cantor',
+    id: 'cantor', accent: '#4fd1b0', name: 'The Drowned Cantor',
     epithet: 'Singer of the Second Tide',
     flavour: 'Every verse returns. That is what makes it a verse.',
     sigils: S(3, 2, 0, 1), trait: 'rally', command: 'plain',
     art: 19,
   },
   {
-    id: 'cartwright', name: 'The Pale Cartwright',
+    id: 'cartwright', accent: '#b06ad8', name: 'The Pale Cartwright',
     epithet: 'Who Turns the Wheel of Others',
     flavour: 'I do not decide where you go. Only that you go.',
     sigils: S(2, 3, 1, 0), trait: 'harbinger', command: 'transpose',
     art: 17,
   },
   {
-    id: 'magistrate', name: 'The Rimewood Magistrate',
+    id: 'magistrate', accent: '#6fa8ff', name: 'The Rimewood Magistrate',
     epithet: 'Arbiter of Borders',
     flavour: 'Exile is not cruelty. It is bookkeeping.',
     sigils: S(0, 2, 1, 3), trait: 'exile', command: 'plain',
     art: 11,
   },
   {
-    id: 'oathkeeper', name: 'The Sunken Oathkeeper',
+    id: 'oathkeeper', accent: '#5fd96f', name: 'The Sunken Oathkeeper',
     epithet: 'Holder of the Unbroken Line',
     flavour: 'Two shields are a wall. Three are a country.',
     sigils: S(1, 0, 3, 2), trait: 'sanctuary', command: 'plain',
     art: 3,
   },
   {
-    id: 'ferryman', name: 'The Ashen Ferryman',
+    id: 'ferryman', accent: '#d86a6a', name: 'The Ashen Ferryman',
     epithet: 'Who Names the Price After',
     flavour: 'You may cross. Someone must stay.',
     sigils: S(3, 1, 2, 0), trait: 'pact', command: 'usurp',
     art: 20,
   },
   {
-    id: 'herald', name: 'The Brass Herald',
+    id: 'herald', accent: '#e0954a', name: 'The Brass Herald',
     epithet: 'First of the Turning Court',
     flavour: 'I announce nothing. I rearrange.',
     sigils: S(2, 1, 0, 3), trait: 'harbinger', command: 'plain',
     art: 6,
   },
   {
-    id: 'warden', name: 'The Stonefast Warden',
+    id: 'warden', accent: '#8ba3c7', name: 'The Stonefast Warden',
     epithet: 'Rooted Against the Hour',
     flavour: 'Let them come around. They always do.',
     sigils: S(0, 3, 2, 1), trait: 'anchor', command: 'usurpOne',
     art: 13,
   },
   {
-    id: 'cartographer', name: 'The Severed Cartographer',
+    id: 'cartographer', accent: '#d85fa8', name: 'The Severed Cartographer',
     epithet: 'Who Redraws the Living',
     flavour: 'The map was wrong. I corrected the land.',
     sigils: S(1, 2, 3, 0), trait: 'exile', command: 'reclaimRecent',
@@ -128,6 +131,7 @@ export const CARD_DEFS: Record<string, CardDef> = Object.fromEntries(
   ROSTER.map((e) => [e.id, {
     id: e.id, name: e.name, epithet: e.epithet, flavour: e.flavour,
     sigils: e.sigils, trait: e.trait, command: e.command, art: e.art,
+    accent: e.accent,
   }]),
 );
 

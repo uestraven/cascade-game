@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CardFace } from '../proto/ui/CardFace';
-import { CardInfo } from './CardInfo';
+import { BattleCard } from './BattleCard';
 import { isMuted, loadMuted, primeAudio, setMuted, sfx }
   from '../proto/ui/sound';
 import { mulberry32, randomSeed } from '../rng';
@@ -361,10 +361,7 @@ export function V23App() {
                      }}>
                   {def ? (
                     <>
-                      <CardFace sigils={def.sigils} owner={owner}
-                                art={def.art}
-                                flash={flash.has(cell)} />
-                      <CardInfo g={game} id={id!} />
+                      <BattleCard g={game} id={id!} owner={owner} />
                       {canCmd && <span className="cmddot" />}
                     </>
                   ) : <span className="cellno">{cell}</span>}

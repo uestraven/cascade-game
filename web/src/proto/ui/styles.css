@@ -628,3 +628,157 @@ button:disabled{opacity:.4;cursor:default}
 /* the event list is a window, so let it scroll rather than silently
    truncating -- a line that scrolls away is not evidence of anything */
 .rail .log{max-height:34vh;overflow-y:auto}
+
+/* ---------------------------------------------------------------------
+   THE BATTLE CARD (v2.3)
+
+   A layout for playing, not for display. The collectible face put a
+   full-bleed illustration behind four 27% sigils and crammed the text
+   underneath; here the portrait is a bounded band, the sigils are ~17%
+   and supporting, and each ability gets its own row.
+
+   Everything scales from --cell (172-402px across supported viewports),
+   so nothing is pinned in pixels the way the old 8px overlay was.
+   ------------------------------------------------------------------ */
+.bcard{position:absolute;inset:0;display:grid;
+  grid-template-rows:minmax(0,1fr) auto auto auto;
+  border-radius:8px;overflow:hidden;background:#0f1117;
+  border:2px solid var(--line);
+  /* 2 · ownership is the loudest structural cue after identity */
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.bcard.p1{border-color:var(--p1)}
+.bcard.p2{border-color:var(--p2)}
+
+/* 1 · identity: a bounded portrait with the character's accent under it */
+.bc-portrait{position:relative;background-size:cover;
+  background-position:center top;min-height:0;
+  border-bottom:2px solid var(--accent)}
+
+/* 5 · sigils: still on their four edges, because the edge IS the rule,
+   but no longer the focal point of the card */
+.bc-sigil{position:absolute;display:grid;place-items:center;
+  width:17%;height:17%;min-width:11px;min-height:11px;
+  border-radius:50%;background:rgba(6,8,12,.74);
+  box-shadow:0 0 0 1px rgba(255,255,255,.10)}
+.bc-sigil > .sigil{width:74%;height:74%}
+.bc-sigil.n{top:2.5%;left:50%;transform:translateX(-50%)}
+.bc-sigil.s{bottom:2.5%;left:50%;transform:translateX(-50%)}
+.bc-sigil.w{left:2.5%;top:50%;transform:translateY(-50%)}
+.bc-sigil.e{right:2.5%;top:50%;transform:translateY(-50%)}
+
+/* 1 + 2 · the name bar, carrying the accent and the owner */
+.bc-name{display:flex;align-items:center;gap:calc(var(--cell)*.022);
+  padding:calc(var(--cell)*.022) calc(var(--cell)*.03);
+  background:linear-gradient(90deg,
+    color-mix(in srgb, var(--accent) 34%, #0f1117) 0%, #0f1117 78%)}
+.bc-who{flex:none;font-weight:800;
+  font-size:clamp(8px, calc(var(--cell)*.040), 13px);
+  padding:0 calc(var(--cell)*.022);border-radius:3px;
+  background:rgba(6,8,12,.8);color:#fff}
+.bcard.p1 .bc-who{box-shadow:0 0 0 1px var(--p1);color:#bcd9ff}
+.bcard.p2 .bc-who{box-shadow:0 0 0 1px var(--p2);color:#ffc6ae}
+.bc-title{flex:1;min-width:0;font-weight:700;letter-spacing:.01em;
+  font-size:clamp(9px, calc(var(--cell)*.055), 18px);line-height:1.15;
+  color:#f4f7fc;text-shadow:0 1px 3px #05070b;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 3 and 4 · one row per ability, each with its own tag */
+.bc-row{display:flex;gap:calc(var(--cell)*.022);
+  padding:calc(var(--cell)*.016) calc(var(--cell)*.03);
+  border-top:1px solid rgba(255,255,255,.055);align-items:baseline}
+.bc-tag{flex:none;width:calc(var(--cell)*.055);text-align:center;
+  font-size:clamp(7px, calc(var(--cell)*.034), 11px);font-weight:800;
+  letter-spacing:.04em;opacity:.85}
+.bc-body{min-width:0;display:block}
+.bc-body b{display:block;letter-spacing:.055em;
+  font-size:clamp(7px, calc(var(--cell)*.040), 13px);line-height:1.2;
+  text-transform:uppercase;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc-body em{display:block;font-style:normal;color:#ccd4e2;
+  font-size:clamp(6px, calc(var(--cell)*.036), 12px);line-height:1.25;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.bc-row.i{background:rgba(18,40,33,.62)}
+.bc-row.i .bc-tag,.bc-row.i .bc-body b{color:#6fd3a8}
+.bc-row.ii{background:rgba(42,34,10,.62)}
+.bc-row.ii .bc-tag,.bc-row.ii .bc-body b{color:var(--gold)}
+
+/* 5 · Convergence active / inactive, without opening the rail */
+.bc-row.i.live{background:rgba(26,66,52,.92);
+  box-shadow:inset 3px 0 0 #6fd3a8}
+.bc-row.i.live .bc-body b{color:#9dffcf}
+.bc-row.i.expired{opacity:.38}
+.bc-row.i.expired .bc-body b{text-decoration:line-through}
+.bc-row.ii.emphasis{box-shadow:inset 3px 0 0 var(--gold)}
+.bcard.convergence .bc-row.ii{opacity:.62}
+
+/* state chips sit in their own strip so they never displace a label */
+.bc-state{display:flex;gap:calc(var(--cell)*.018);flex-wrap:wrap;
+  padding:0 calc(var(--cell)*.03) calc(var(--cell)*.022);
+  min-height:0}
+.bc-chip{font-size:clamp(6px, calc(var(--cell)*.034), 11px);
+  padding:0 calc(var(--cell)*.026);border-radius:99px;font-weight:600;
+  white-space:nowrap}
+.bc-chip.sanctuary{background:rgba(10,38,28,.95);color:#9dffcf;
+  box-shadow:0 0 0 1px #6fd3a8}
+.bc-chip.champion{background:rgba(40,30,8,.95);color:#ffe98a;
+  box-shadow:0 0 0 1px var(--gold)}
+.bc-chip.inert{background:rgba(14,16,22,.9);color:#8b93a6;
+  box-shadow:0 0 0 1px #343b4d}
+.bc-chip.anchored{background:rgba(14,20,30,.95);color:#a9c0e0;
+  box-shadow:0 0 0 1px #6b84a8}
+
+.bc-bound{position:absolute;top:3%;right:3%;z-index:2;
+  font-size:clamp(6px, calc(var(--cell)*.034), 11px);font-weight:700;
+  padding:0 calc(var(--cell)*.024);border-radius:99px;
+  background:rgba(40,30,8,.95);color:#ffe98a;
+  box-shadow:0 0 0 1px var(--gold)}
+.bc-bound.spent{background:rgba(20,20,24,.9);color:#7c7a6a;
+  box-shadow:0 0 0 1px #4a452f;text-decoration:line-through}
+
+/* the cell's own states still read over the top of all this */
+.v23 .cell.chosen .bcard{border-color:var(--gold)}
+.v23 .cell.commandable .bcard{box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),
+  0 0 0 2px rgba(255,216,74,.55)}
+
+/* ---------------------------------------------------------------------
+   Keeping the battle card legible on a small screen.
+
+   At 1366x768 the cell is 172px, and name + two labels + two effect
+   lines computed down to 6-7px. Shrinking text until it stops being
+   readable is not a solution, so instead:
+
+     1  the rails give up width below 1500px, so the board grows
+     2  the type floors are raised, so nothing renders under 9px
+     3  under ~840px of viewport height the effect lines are dropped
+        and the ability NAMES stay -- the names are the identity, the
+        one-liners are the elaboration, and the hover card still has
+        the full rules text
+
+   The height threshold mirrors the --cell formula: cell drops below
+   about 200px once the viewport is shorter than ~840px.
+   ------------------------------------------------------------------ */
+@media (max-width: 1500px) {
+  :root{--railL:210px; --railR:252px}
+}
+@media (max-width: 1280px) {
+  :root{--railL:186px; --railR:224px}
+}
+
+.bc-title{font-size:clamp(11px, calc(var(--cell)*.055), 18px)}
+.bc-body b{font-size:clamp(9px, calc(var(--cell)*.042), 13px)}
+.bc-body em{font-size:clamp(8px, calc(var(--cell)*.038), 12px)}
+.bc-who{font-size:clamp(9px, calc(var(--cell)*.040), 13px)}
+.bc-chip,.bc-bound{font-size:clamp(8px, calc(var(--cell)*.034), 11px)}
+
+@media (max-height: 840px) {
+  /* names only: an unreadable one-liner is worse than none */
+  .bc-body em{display:none}
+  .bc-row{padding:calc(var(--cell)*.022) calc(var(--cell)*.03)}
+  .bc-portrait{border-bottom-width:3px}
+}
+@media (max-height: 700px) {
+  /* and at this point the portrait yields its share to the text */
+  .bcard{grid-template-rows:minmax(0,.8fr) auto auto auto}
+  .bc-state{padding-bottom:calc(var(--cell)*.014)}
+}

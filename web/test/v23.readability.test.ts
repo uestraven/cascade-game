@@ -19,7 +19,7 @@ import {
   type Player, type V23State, CELLS, CMD_INFO, TRAITS, TRAIT_INFO, apply,
   deployments, dominionCommands, isOver, mustPass, newGame, toMove,
 } from '../src/v23/rules';
-import { CardInfo } from '../src/v23/CardInfo';
+import { BattleCard } from '../src/v23/BattleCard';
 import { ROSTER } from '../src/v23/roster';
 
 const css = readFileSync(
@@ -58,22 +58,25 @@ describe('every card states both of its abilities', () => {
     // render each real card from the real board
     for (const id of g.cells) {
       const html = renderToStaticMarkup(
-        createElement(CardInfo, { g, id: id! }));
+        createElement(BattleCard, { g, id: id!, owner: g.owner[id!] }));
       const def = g.defs[id!];
-      expect(html, `${def.name}: name`).toContain(def.name);
-      expect(html, `${def.name}: slot I`).toContain('I ·');
-      expect(html, `${def.name}: slot II`).toContain('II ·');
+      expect(html, `${def.name}: name`)
+        .toContain(def.name.replace(/^The /, ''));
+      // the two rows are tagged I and II
+      expect(html, `${def.name}: slot I`).toContain('bc-row i');
+      expect(html, `${def.name}: slot II`).toContain('bc-row ii');
+      expect(html, `${def.name}: owner shown`).toContain('bc-who');
       expect(html, `${def.name}: command`)
-        .toContain(CMD_INFO[def.command].name.toUpperCase());
+        .toContain(CMD_INFO[def.command].name);
       if (def.trait) {
         expect(html, `${def.name}: trait name`)
-          .toContain(TRAIT_INFO[def.trait].name.toUpperCase());
+          .toContain(TRAIT_INFO[def.trait].name);
         // the one-line effect, allowing for HTML entity escaping
         expect(html.replace(/&#x27;|&quot;|&amp;/g, "'"),
                `${def.name}: trait effect`)
           .toContain(TRAIT_INFO[def.trait].short.replace(/'/g, "'"));
       } else {
-        expect(html).toContain('NONE');
+        expect(html).toContain('No trait');
       }
       expect(html, `${def.name}: owner`).toContain(`P${g.owner[id!] + 1}`);
     }
@@ -96,8 +99,8 @@ describe('every card states both of its abilities', () => {
 
 describe('text is sized from the cell, not in fixed pixels', () => {
   it('every on-card text rule scales with --cell', () => {
-    for (const sel of ['.ci-name', '.ci-slot b', '.ci-slot em',
-                       '.statechip']) {
+    for (const sel of ['.bc-title', '.bc-body b', '.bc-body em',
+                       '.bc-chip']) {
       const i = css.indexOf(sel + '{');
       expect(i, `${sel} should exist`).toBeGreaterThan(-1);
       const block = css.slice(i, css.indexOf('}', i));
@@ -106,33 +109,59 @@ describe('text is sized from the cell, not in fixed pixels', () => {
   });
 
   it('nothing on the v2.3 card face is pinned at 8px any more', () => {
-    const i = css.indexOf('.cardinfo{');
-    const section = css.slice(i);
-    const head = section.slice(0, section.indexOf('.bigcard'));
+    const i = css.indexOf('.bcard{');
+    const head = css.slice(i);
     expect(head).not.toMatch(/font-size:\s*8px/);
   });
 
-  it('the computed text size is legible at every supported viewport',
-     () => {
-    // mirrors the CSS: clamp(9px, cell*0.062, 20px) for the name and
-    // clamp(7px, cell*0.042, 13px) for an ability label
+  it('nothing renders below 9px at any supported viewport', () => {
+    // mirrors the CSS, including the rails narrowing on small screens
+    // and the effect lines dropping out under 840px of height
     const cell = (vw: number, vh: number) => {
-      const h = vh - 210, w = vw - 258 - 310 - 5 * 16;
+      const railL = vw <= 1280 ? 186 : vw <= 1500 ? 210 : 258;
+      const railR = vw <= 1280 ? 224 : vw <= 1500 ? 252 : 310;
+      const h = vh - 210, w = vw - railL - railR - 5 * 16;
       return Math.min((h - 3 * 8) / 3, (w - 4 * 8) / 4);
     };
-    for (const [vw, vh] of [[2560, 1440], [1920, 1080], [1440, 900],
-                            [1366, 768]]) {
+    const clamp = (lo: number, v: number, hi: number) =>
+      Math.min(Math.max(lo, v), hi);
+    for (const [vw, vh] of [[2560, 1440], [1920, 1080], [1512, 982],
+                            [1440, 900], [1366, 768], [1280, 720]]) {
       const c = cell(vw, vh);
-      const name = Math.min(Math.max(9, c * 0.062), 20);
-      const label = Math.min(Math.max(7, c * 0.042), 13);
-      expect(name, `${vw}x${vh} name`).toBeGreaterThanOrEqual(9);
-      expect(label, `${vw}x${vh} label`).toBeGreaterThanOrEqual(7);
-      // and the old overlay would have been this, for comparison
-      expect(label).toBeGreaterThan(7 - 0.01);
+      const where = `${vw}x${vh}`;
+      expect(clamp(11, c * 0.055, 18), `${where} name`)
+        .toBeGreaterThanOrEqual(11);
+      expect(clamp(9, c * 0.042, 13), `${where} ability name`)
+        .toBeGreaterThanOrEqual(9);
+      if (vh > 840) {
+        expect(clamp(8, c * 0.038, 12), `${where} effect`)
+          .toBeGreaterThanOrEqual(8);
+      }
+      // sigils are supporting information now, not the focal point
+      expect(c * 0.17, `${where} sigil`).toBeLessThan(c * 0.27);
     }
-    // on a 1080p screen the labels should be comfortably above 8px
-    const c = cell(1920, 1080);
-    expect(Math.min(Math.max(7, c * 0.042), 13)).toBeGreaterThan(10);
+  });
+
+  it('sigils shrank but stay on their four edges, which is the rule',
+     () => {
+    for (const side of ['.bc-sigil.n', '.bc-sigil.e', '.bc-sigil.s',
+                        '.bc-sigil.w']) {
+      expect(css, side).toContain(side);
+    }
+    const block = css.slice(css.indexOf('.bc-sigil{'),
+                            css.indexOf('.bc-sigil.n{'));
+    expect(block, 'about 17% of the card, down from 27%')
+      .toMatch(/width:17%/);
+  });
+
+  it('drops the one-line effects rather than rendering them unreadably',
+     () => {
+    expect(css).toMatch(/@media \(max-height: 840px\)/);
+    const q = css.slice(css.indexOf('@media (max-height: 840px)'));
+    expect(q.slice(0, 200), 'the effect line is hidden, not shrunk')
+      .toContain('.bc-body em{display:none}');
+    // but the ability NAME is never hidden
+    expect(q.slice(0, 300)).not.toMatch(/\.bc-body b\{[^}]*display:none/);
   });
 });
 
@@ -141,28 +170,30 @@ describe('identity and state are separate', () => {
     // the state chips are their own elements, so a label is never
     // swapped out for a highlight
     expect(css).toContain('.statechip');
-    expect(css).toMatch(/\.ci-slot\.ci-i\.active/);
+    expect(css).toMatch(/\.bc-row\.i\.live/);
     const g = fullBoard();
     const html = renderToStaticMarkup(
-      createElement(CardInfo, { g, id: g.cells.find(Boolean)! }));
-    expect(html).toContain('ci-slot');
-    expect(html).toContain('ci-name');
+      createElement(BattleCard, { g, id: g.cells.find(Boolean)!,
+        owner: 0 }));
+    expect(html).toContain('bc-row');
+    expect(html).toContain('bc-title');
   });
 
   it('phase emphasis subdues the other phase without removing it', () => {
-    expect(css).toMatch(/\.cardinfo\.convergence \.ci-ii\{opacity:\.?\d/);
-    expect(css).toMatch(/\.cardinfo\.dominion \.ci-i\{opacity:\.?\d/);
-    // neither is display:none -- the future power stays readable
-    const conv = css.slice(css.indexOf('.cardinfo.convergence .ci-ii{'));
+    expect(css).toMatch(/\.bcard\.convergence \.bc-row\.ii\{opacity:\.?\d/);
+    expect(css).toMatch(/\.bc-row\.i\.expired\{opacity:\.?\d/);
+    // neither is display:none -- the other phase's power stays readable
+    const conv = css.slice(css.indexOf('.bcard.convergence .bc-row.ii{'));
     expect(conv.slice(0, 60)).not.toContain('display:none');
   });
 
   it('the enlargement is supplementary, not the only source', () => {
     const g = fullBoard();
     const html = renderToStaticMarkup(
-      createElement(CardInfo, { g, id: g.cells.find(Boolean)! }));
+      createElement(BattleCard, { g, id: g.cells.find(Boolean)!,
+        owner: 0 }));
     // on-card info exists with no hover having happened
-    expect(html).toContain('cardinfo');
+    expect(html).toContain('bcard');
     const app = renderToStaticMarkup(createElement(V23App));
     expect(app).not.toContain('bigcard');
     expect(css).toContain('.bigcard');
