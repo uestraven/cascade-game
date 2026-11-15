@@ -383,7 +383,7 @@ export function V23App() {
                    style={{ left: `${left}px`, top: `${Math.max(8, top)}px` }}>
                 <div className="bc-art"
                      style={{ backgroundImage:
-                       `url(/art/cards/card-${String(bd.art)
+                       `url(/art/portraits/card-${String(bd.art)
                          .padStart(2, '0')}.webp)` }} />
                 <h3>{bd.name}</h3>
                 {bd.epithet && <p className="bc-ep">{bd.epithet}</p>}

@@ -23,7 +23,12 @@ drawn by the app over an opaque background. Art never sits behind text.
 | **Filenames** | `card-01.webp` … `card-12.webp` (§8 maps them) |
 | **Lettering** | none anywhere in the image |
 
-Delivery path: `web/public/art/cards/`
+Delivery path: **`web/public/art/portraits/`**
+
+> Not `art/cards/`. That directory holds the square 1024×1024 set that
+> v1 and v2.2 still serve with a stretch-to-fit background, where a 16:9
+> image renders distorted. The first delivery used `art/cards/` and was
+> relocated on install.
 
 ---
 
@@ -162,7 +167,7 @@ done
 
 | requirement | why |
 |---|---|
-| The twelve mean values **spanning at least 45 points** | a set clustered in one band is indistinguishable on a crowded board |
+| At least **four cards above mean 40**, and the twelve spanning ≥ 45 points | *Revised.* "Span ≥ 45" alone was gameable and got gamed: the first delivery put ten cards at 17–26 and two at 55 and 63, which satisfies a 46-point span with a median of 21. A span is not a spread. |
 | **Contrast (std dev) ≥ 15** on every card | below that a card has no read at 84px |
 | **Darkest pixel ≤ 8, brightest ≥ 92** on every card | a small true black and a specular highlight; this is what stops a bright card going pale all over |
 | No more than **8 of 12** warmer than neutral | the last set was 20 of 20 warm |

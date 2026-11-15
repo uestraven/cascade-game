@@ -33,7 +33,12 @@ export function BattleCard({ g, id, owner }: {
   const bound = isChampion(g, id);
   const accent = def.accent ?? '#8b93a6';
   const live = blocked?.source === 'sanctuary';
-  const art = `/art/cards/card-${String(def.art).padStart(2, '0')}.webp`;
+  // v2.3 portraits are 16:9 and live in their own directory. The square
+  // 1024x1024 set in /art/cards stays put: v1 and v2.2 still serve it
+  // with a stretch-to-fit background, and a letterbox image there would
+  // render distorted.
+  const art = `/art/portraits/card-${String(def.art)
+    .padStart(2, '0')}.webp`;
   const side = ['n', 'e', 's', 'w'] as const;
 
   return (

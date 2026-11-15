@@ -10,7 +10,7 @@
  * the live game.
  */
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
@@ -210,6 +210,58 @@ describe('identity and state are separate', () => {
     const html = renderToStaticMarkup(createElement(V23App));
     expect(html).toContain('the six convergence traits');
     expect(html).toContain(TRAIT_INFO.sanctuary.text.slice(0, 24));
+  });
+});
+
+describe('the v2.3 portraits', () => {
+  it('are the twelve the roster asks for, 16:9 at 1600x900, under '
+     + '110KB', () => {
+    const dir = resolve(__dirname, '..', 'public', 'art', 'portraits');
+    const want = ROSTER.map((e) =>
+      `card-${String(e.art).padStart(2, '0')}.webp`).sort();
+    const got = readdirSync(dir).sort();
+    expect(got, 'one portrait per character').toEqual(want);
+    let total = 0;
+    for (const name of got) {
+      const b = readFileSync(resolve(dir, name));
+      total += b.length;
+      expect(b.subarray(0, 4).toString('latin1'), name).toBe('RIFF');
+      expect(b.subarray(8, 12).toString('latin1'), name).toBe('WEBP');
+      expect(b.subarray(12, 16).toString('latin1'), name).toBe('VP8 ');
+      expect(b.subarray(23, 26).toString('hex'), name).toBe('9d012a');
+      const w = b.readUInt16LE(26) & 0x3fff;
+      const h = b.readUInt16LE(28) & 0x3fff;
+      expect(w, `${name} width`).toBe(1600);
+      expect(h, `${name} height`).toBe(900);
+      // 16:9 exactly, which is what makes the cover crop predictable
+      expect(w / h).toBeCloseTo(16 / 9, 3);
+      expect(b.length, `${name} bytes`).toBeLessThan(110 * 1024);
+      const head = b.subarray(0, 4096).toString('latin1');
+      expect(head, name).not.toMatch(/<script|javascript:|<\?php|<html/i);
+    }
+    expect(total, 'the set is the page weight')
+      .toBeLessThan(1.3 * 1024 * 1024);
+  });
+
+  it('do not disturb the square card set the older rulesets serve',
+     () => {
+    // v1 and v2.2 stretch /art/cards to a square face, so a 16:9 image
+    // there would render distorted
+    const cards = resolve(__dirname, '..', 'public', 'art', 'cards');
+    const files = readdirSync(cards);
+    expect(files).toHaveLength(20);
+    for (const name of files) {
+      const b = readFileSync(resolve(cards, name));
+      expect(b.readUInt16LE(26) & 0x3fff, `${name} stays square`)
+        .toBe(1024);
+    }
+  });
+
+  it('the battle card reads its art from the portrait directory', () => {
+    const src = readFileSync(
+      resolve(__dirname, '..', 'src', 'v23', 'BattleCard.tsx'), 'utf8');
+    expect(src).toContain('/art/portraits/card-');
+    expect(src).not.toContain('/art/cards/card-');
   });
 });
 
