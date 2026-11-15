@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CardFace } from '../proto/ui/CardFace';
+import { SIGIL_NAMES, SIGIL_PALETTE, Sigil } from '../proto/ui/Sigil';
 import { BattleCard } from './BattleCard';
 import { isMuted, loadMuted, primeAudio, setMuted, sfx }
   from '../proto/ui/sound';
@@ -564,6 +565,32 @@ export function V23App() {
               ))}
             </div>
           )}
+
+          <h2>the four sigils</h2>
+          <ul className="sigillegend">
+            {SIGIL_NAMES.map((n, i) => (
+              <li key={n}>
+                <span className="sl-disc"
+                      style={{ color: SIGIL_PALETTE[n].color }}>
+                  <Sigil sigil={i as 0 | 1 | 2 | 3} size={16} />
+                </span>
+                <span>
+                  <b style={{ color: SIGIL_PALETTE[n].color }}>
+                    {SIGIL_PALETTE[n].arcane}
+                  </b>
+                  <br />
+                  <span className="muted small2">
+                    {SIGIL_PALETTE[n].tone} · {SIGIL_PALETTE[n].shape}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="muted small2">
+            A sigil's colour means only which symbol it is. It never
+            changes with ownership or phase, and matching still decides
+            captures in Dominion.
+          </p>
 
           <h2>the six convergence traits</h2>
           <ul className="log">

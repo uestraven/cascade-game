@@ -21,6 +21,35 @@
 export const SIGIL_NAMES = ['halo', 'ward', 'crux', 'gyre'] as const;
 export type SigilName = typeof SIGIL_NAMES[number];
 
+/**
+ * The arcane palette, one permanent colour per symbol.
+ *
+ * A sigil's colour means ONE thing: which symbol it is. It never
+ * changes with ownership, with the controlling character, or with the
+ * phase, and it is never dimmed when a Convergence trait expires —
+ * sigil matching still decides captures in Dominion.
+ *
+ * Light and slightly desaturated on purpose: fully saturated colours
+ * would stand out more but compete with the portraits behind them.
+ *
+ * The arcane names are the designer's; the shapes are the existing
+ * approved artwork, mapped by silhouette.
+ */
+export const SIGIL_PALETTE = {
+  halo: { color: '#7BD8B5', arcane: 'Ouroboros',
+          tone: 'Eldritch Verdigris', shape: 'ring / circular serpent' },
+  ward: { color: '#99CEFF', arcane: 'Crystal',
+          tone: 'Astral Moonstone', shape: 'cut diamond / faceted' },
+  crux: { color: '#F1D79E', arcane: 'Cross Potent',
+          tone: 'Consecrated Electrum', shape: 'four-pointed, '
+              + 'terminated arms' },
+  gyre: { color: '#C9AAFF', arcane: 'Fleur-de-lis',
+          tone: 'Arcane Amethyst', shape: 'four-armed heraldic device' },
+} as const;
+
+export const sigilColor = (i: number): string =>
+  SIGIL_PALETTE[SIGIL_NAMES[i] ?? 'halo'].color;
+
 export const SIGIL_COLOUR: Record<SigilName, string> = {
   halo: '#4ea3ff',   // blue
   ward: '#f0a53a',   // orange

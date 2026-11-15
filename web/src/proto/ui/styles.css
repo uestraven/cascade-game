@@ -660,11 +660,18 @@ button:disabled{opacity:.4;cursor:default}
    predictable diameter. Percentages of the portrait band gave 17% of
    width by 17% of height on a ~1.8:1 band -- a squashed ellipse, and a
    size the artwork could not be specified against. */
+/* The medallion guarantees contrast on its own.
+   74% opacity let a pale portrait tint the disc and shift the sigil's
+   apparent colour; at 94% the socket looks the same over a near-black
+   portrait and a bright one. The 1px rim separates it from busy art,
+   and the drop shadow seats it in the card rather than pasting it on. */
 .bc-sigil{position:absolute;display:grid;place-items:center;
   width:calc(var(--cell)*.115);aspect-ratio:1;min-width:15px;
-  border-radius:50%;background:rgba(6,8,12,.74);
-  box-shadow:0 0 0 1px rgba(255,255,255,.10)}
-.bc-sigil > .sigil{width:74%;height:74%}
+  border-radius:50%;background:rgba(13,20,36,.94);
+  box-shadow:0 0 0 1px #8995AD, 0 2px 3px rgba(0,0,0,.65)}
+/* glyph at 78% of the socket: inside the 75-80% band, and the rim stays
+   visible all the way round */
+.bc-sigil > .sigil{width:78%;height:78%}
 .bc-sigil.n{top:2.5%;left:50%;transform:translateX(-50%)}
 .bc-sigil.s{bottom:2.5%;left:50%;transform:translateX(-50%)}
 .bc-sigil.w{left:2.5%;top:50%;transform:translateY(-50%)}
@@ -807,3 +814,13 @@ button:disabled{opacity:.4;cursor:default}
   --cell:min(var(--cellw), var(--cellh));
 }
 .board.v23 .cell{width:var(--cellw);height:var(--cellh)}
+
+/* the sigil legend, drawn from SIGIL_PALETTE so it cannot drift from
+   what the board renders */
+.sigillegend{list-style:none;margin:4px 0 6px;padding:0;display:grid;
+  gap:5px}
+.sigillegend li{display:flex;gap:8px;align-items:center;font-size:11px}
+.sl-disc{flex:none;width:26px;height:26px;border-radius:50%;
+  display:grid;place-items:center;background:rgba(13,20,36,.94);
+  box-shadow:0 0 0 1px #8995AD, 0 2px 3px rgba(0,0,0,.65)}
+.sigillegend b{font-size:11px;letter-spacing:.04em}

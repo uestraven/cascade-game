@@ -1,4 +1,4 @@
-import { Sigil } from '../proto/ui/Sigil';
+import { Sigil, sigilColor } from '../proto/ui/Sigil';
 import {
   type CardId, type V23State, CMD_INFO, TRAIT_INFO, alliesAdjacent,
   captureBlocked, isChampion, moveBlocked,
@@ -49,7 +49,8 @@ export function BattleCard({ g, id, owner }: {
         {/* 5 · sigils stay on their edges, which is where the rule lives,
             but at supporting size */}
         {side.map((p, i) => (
-          <span key={p} className={`bc-sigil ${p}`}>
+          <span key={p} className={`bc-sigil ${p}`}
+                style={{ color: sigilColor(def.sigils[i]) }}>
             <Sigil sigil={def.sigils[i]} size={13} />
           </span>
         ))}

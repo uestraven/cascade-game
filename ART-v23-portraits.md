@@ -111,12 +111,21 @@ symbols, so they are opaque and they are not moving.
   on screen, which is **11.6–11.8% of the band width** and **18.7–22.1%
   of the band height**
 - **Inset 2.5% from each band edge**
-- Backed with a 74%-opaque near-black disc, so whatever is beneath them
-  is substantially hidden
+- Backed with a **94%-opaque** `#0D1424` disc with a 1px `#8995AD` rim
+  and a 2px drop shadow, so whatever is beneath them is **effectively
+  hidden**. Measured: across portraits from near-black to a white
+  blowout the disc varies only from `rgb(13,19,35)` to `rgb(28,34,49)`,
+  and the glyph holds at least 8.1:1 contrast. At the previous 74% a
+  pale portrait pushed the disc to `rgb(71,72,75)` and contrast fell to
+  4.6:1.
 
 > **Treat four discs — each ~12% of the width — at top-centre,
 > right-centre, bottom-centre and left-centre as occupied.** No face, no
 > focal detail, no signature element under them.
+
+**Do not paint sigils or medallions into a portrait.** The app draws
+them, in fixed colours that mean "which symbol this is" and nothing
+else. The art's only job is to keep those four zones clear.
 
 On a 1600 × 900 delivery each socket is roughly **184px across**, centred
 at (800, 36), (1564, 450), (800, 864) and (36, 450) — the left and right
