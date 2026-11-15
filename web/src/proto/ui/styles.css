@@ -424,7 +424,7 @@ button:disabled{opacity:.4;cursor:default}
    one line. The trait is dimmed once Convergence ends, because it has
    expired and an expired power that still looks live is a misread.
    ------------------------------------------------------------------ */
-.slots{position:absolute;left:0;right:0;bottom:16%;z-index:3;
+.v22only-slots,.slots{position:absolute;left:0;right:0;bottom:16%;z-index:3;
   display:flex;flex-direction:column;align-items:center;gap:2px;
   pointer-events:none}
 .slots span{font-size:8px;letter-spacing:.06em;text-transform:uppercase;
@@ -493,3 +493,106 @@ button:disabled{opacity:.4;cursor:default}
 .ev-trigger{color:var(--gold)}
 .ev-move,.ev-swap{color:#9fb4d8}
 .ev-phase{color:var(--gold);font-weight:600}
+
+/* ---------------------------------------------------------------------
+   v2.3 card face: both abilities, readable at playing size.
+
+   The previous overlay was font-size:8px on a cell that is 172-402px
+   depending on the viewport, so ability text was about 3% of the card
+   and effectively unreadable. Everything here is sized from --cell, so
+   it scales with the board instead of ignoring it.
+
+   Identity (name, both ability names, both one-line effects) is
+   PERSISTENT. State (protection, immovability, ownership, targets,
+   selection) is drawn as separate chips and outlines, so a glow never
+   replaces a label.
+   ------------------------------------------------------------------ */
+.cardinfo{position:absolute;inset:0;z-index:3;display:flex;
+  flex-direction:column;justify-content:flex-end;gap:calc(var(--cell)*.012);
+  padding:calc(var(--cell)*.055) calc(var(--cell)*.05)
+          calc(var(--cell)*.10);
+  pointer-events:none;
+  /* the illustration stays visible but stops competing with the text */
+  background:linear-gradient(to bottom,
+    rgba(6,8,12,0) 0%, rgba(6,8,12,.18) 26%,
+    rgba(6,8,12,.72) 52%, rgba(6,8,12,.90) 100%)}
+
+.ci-name{font-size:clamp(9px, calc(var(--cell)*.062), 20px);
+  font-weight:600;letter-spacing:.01em;line-height:1.15;
+  color:#f2f5fb;text-shadow:0 1px 3px #05070b;
+  margin-bottom:calc(var(--cell)*.02)}
+
+.ci-slot{display:block;line-height:1.2;
+  border-left:2px solid transparent;padding-left:calc(var(--cell)*.022)}
+.ci-slot b{display:block;
+  font-size:clamp(7px, calc(var(--cell)*.042), 13px);
+  letter-spacing:.07em;font-weight:700}
+.ci-slot em{display:block;font-style:normal;
+  font-size:clamp(7px, calc(var(--cell)*.040), 13px);
+  color:#dfe5ef;text-shadow:0 1px 2px #05070b}
+
+.ci-i b{color:#6fd3a8}
+.ci-i{border-left-color:rgba(111,211,168,.5)}
+.ci-ii b{color:var(--gold)}
+.ci-ii{border-left-color:rgba(255,216,74,.45)}
+
+/* Phase-aware emphasis. The future phase's power is never removed --
+   you still need to plan around it -- only subdued. */
+.cardinfo.convergence .ci-ii{opacity:.52}
+.cardinfo.convergence .ci-i{border-left-width:3px}
+.cardinfo.dominion .ci-i{opacity:.40;text-decoration:line-through;
+  text-decoration-thickness:1px;text-decoration-color:rgba(111,211,168,.5)}
+.cardinfo.dominion .ci-ii{border-left-width:3px}
+.cardinfo.over .ci-i{opacity:.4}
+
+/* a trait that is actually doing something right now */
+.ci-slot.ci-i.active b{color:#9dffcf}
+.ci-slot.ci-i.active{border-left-color:#6fd3a8;
+  box-shadow:-2px 0 10px -2px rgba(111,211,168,.7)}
+
+/* dynamic state, as chips rather than as a glow replacing a label */
+.statechip{position:absolute;top:calc(var(--cell)*.035);
+  left:50%;transform:translateX(-50%);z-index:4;
+  font-size:clamp(7px, calc(var(--cell)*.038), 12px);
+  padding:1px calc(var(--cell)*.03);border-radius:99px;
+  white-space:nowrap;font-weight:600;letter-spacing:.03em}
+.statechip.warded{background:rgba(10,38,28,.94);color:#9dffcf;
+  box-shadow:0 0 0 1px #6fd3a8}
+.statechip.anchored{background:rgba(14,20,30,.94);color:#a9c0e0;
+  box-shadow:0 0 0 1px #6b84a8}
+
+.cell .crest{font-size:clamp(8px, calc(var(--cell)*.042), 13px);
+  top:calc(var(--cell)*.035);left:calc(var(--cell)*.035)}
+.cell .cmddot{width:calc(var(--cell)*.055);height:calc(var(--cell)*.055);
+  min-width:7px;min-height:7px}
+
+/* sigils need a touch more room now that text sits beneath them */
+.v23 .cell .pcard .pedge{width:27%;height:27%}
+.v23 .cell .pcard .pability{display:none}
+
+/* ---- hover enlargement: supplementary, never the only source ------- */
+.bigcard{position:fixed;z-index:50;width:330px;pointer-events:none;
+  background:#12141c;border:1px solid var(--gold);border-radius:12px;
+  padding:12px;box-shadow:0 18px 50px rgba(0,0,0,.65)}
+.bigcard .bc-art{height:150px;border-radius:8px;margin-bottom:9px;
+  background-size:cover;background-position:center}
+.bigcard h3{margin:0;font-size:15px;letter-spacing:.02em}
+.bigcard .bc-ep{margin:1px 0 8px;font-size:11px;font-style:italic;
+  color:var(--muted)}
+.bigcard .bc-slot{margin:7px 0;padding:7px 8px;border-radius:6px;
+  background:#15171f;border-left:3px solid var(--line)}
+.bigcard .bc-slot.i{border-left-color:#6fd3a8}
+.bigcard .bc-slot.ii{border-left-color:var(--gold)}
+.bigcard .bc-slot b{font-size:11px;letter-spacing:.08em}
+.bigcard .bc-slot p{margin:3px 0 0;font-size:12px;line-height:1.4}
+.bigcard .bc-state{margin-top:4px;font-size:11px;color:#9dffcf}
+.bigcard .bc-flav{margin:9px 0 0;padding-top:7px;font-size:11px;
+  font-style:italic;color:var(--muted);border-top:1px solid var(--line)}
+
+/* hand cards name both powers too, so choosing one is not a memory test */
+.handslots{display:flex;flex-direction:column;gap:1px;margin-top:1px}
+.handslots span{font-size:8px;letter-spacing:.04em;line-height:1.25;
+  max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-i{color:#6fd3a8}
+.hs-ii{color:var(--gold)}
+.slot{min-width:76px}

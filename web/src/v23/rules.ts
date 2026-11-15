@@ -85,6 +85,8 @@ export type CmdId = typeof CMDS[number];
 export interface TraitDef {
   name: string;
   timing: Timing;
+  /** one line, for the card face. Must match the implemented rule. */
+  short: string;
   text: string;
   /** what it is for, shown in the rail */
   why: string;
@@ -96,6 +98,7 @@ export interface TraitDef {
 
 export const TRAIT_INFO: Record<TraitId, TraitDef> = {
   sanctuary: {
+    short: 'Safe while 2+ allies adjoin',
     name: 'Sanctuary', timing: 'ongoing', status: 'approved',
     text: 'This character cannot be captured while it is orthogonally '
         + 'adjacent to at least two characters controlled by its own '
@@ -105,6 +108,7 @@ export const TRAIT_INFO: Record<TraitId, TraitDef> = {
     physical: 'Count the adjacent cards sharing its owner. No marker.',
   },
   anchor: {
+    short: 'Cannot be moved or swapped',
     name: 'Anchor', timing: 'ongoing', status: 'approved',
     text: 'This character cannot be moved or swapped by abilities.',
     why: 'An immovable point to build around. It can still be captured, '
@@ -112,6 +116,7 @@ export const TRAIT_INFO: Record<TraitId, TraitDef> = {
     physical: 'Printed on the card. No marker.',
   },
   harbinger: {
+    short: 'On deploy: swap two adjoining cards',
     name: 'Harbinger', timing: 'onDeploy', status: 'approved',
     text: 'When deployed, you may swap the positions of two already '
         + 'deployed characters orthogonally adjacent to this one. Either '
@@ -121,6 +126,7 @@ export const TRAIT_INFO: Record<TraitId, TraitDef> = {
     physical: 'Visible target selection at the moment of deployment.',
   },
   rally: {
+    short: 'If an adjoining ally falls, take its place',
     name: 'Rally', timing: 'onCapture', status: 'approved',
     text: 'Once per opposing deployment, when an adjacent ally is '
         + 'captured, you may swap this character with that captured '
@@ -130,6 +136,7 @@ export const TRAIT_INFO: Record<TraitId, TraitDef> = {
     physical: 'One temporary reaction marker, cleared at end of turn.',
   },
   exile: {
+    short: 'On deploy: move an adjoining enemy',
     name: 'Exile', timing: 'onDeploy', status: 'experimental',
     text: 'When deployed, you may move one adjacent enemy character '
         + 'into any unoccupied cell. Its controller does not change.',
@@ -138,6 +145,7 @@ export const TRAIT_INFO: Record<TraitId, TraitDef> = {
     physical: 'Visible target and destination selection.',
   },
   pact: {
+    short: 'On deploy: trade an ally for an enemy',
     name: 'Pact', timing: 'onDeploy', status: 'experimental',
     text: 'When deployed, you may choose one adjacent friendly and one '
         + 'adjacent enemy character and exchange their ownership. '
@@ -148,21 +156,21 @@ export const TRAIT_INFO: Record<TraitId, TraitDef> = {
   },
 };
 
-export interface CmdDef { name: string; text: string }
+export interface CmdDef { name: string; short: string; text: string }
 export const CMD_INFO: Record<CmdId, CmdDef> = {
-  plain: { name: 'Strike',
+  plain: { short: 'Attack every adjoining enemy', name: 'Strike',
     text: 'Attack every adjacent enemy by matching sigils. If more than '
         + 'one falls, one of them attacks again.' },
-  usurp: { name: 'Usurp',
+  usurp: { short: 'An enemy attacks all of its own side', name: 'Usurp',
     text: 'An adjacent enemy attacks all of its own side on your '
         + 'behalf. It does not change hands.' },
-  usurpOne: { name: 'Usurp, Single',
+  usurpOne: { short: 'An enemy attacks one of its own side', name: 'Usurp, Single',
     text: 'An adjacent enemy attacks one named card of its own side on '
         + 'your behalf.' },
-  transpose: { name: 'Transpose',
+  transpose: { short: 'Swap two adjoining cards', name: 'Transpose',
     text: 'Swap two adjacent characters, whoever owns them. Captures '
         + 'nothing.' },
-  reclaimRecent: { name: 'Reclaim',
+  reclaimRecent: { short: 'Take back a card lost last command', name: 'Reclaim',
     text: 'Take back a character the opponent captured from you on their '
         + 'last command, if it is adjacent to one of yours.' },
 };

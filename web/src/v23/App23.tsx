@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CardFace } from '../proto/ui/CardFace';
+import { CardInfo } from './CardInfo';
 import { isMuted, loadMuted, primeAudio, setMuted, sfx }
   from '../proto/ui/sound';
 import { mulberry32, randomSeed } from '../rng';
@@ -59,6 +60,8 @@ export function V23App() {
   const [showStack, setShowStack] = useState(true);
   const [mute, setMute] = useState(false);
   const [flash, setFlash] = useState<Set<number>>(new Set());
+  const [big, setBig] = useState<{ cell: number; x: number; y: number }
+    | null>(null);
   const botRng = useRef(mulberry32(seed ^ 0x9e3779b9));
 
   useEffect(() => { setMute(loadMuted()); }, []);
@@ -294,7 +297,7 @@ export function V23App() {
             <span><i className="k-gold" />ability target</span>
           </div>
 
-          <div className="board"
+          <div className="board v23"
                style={{ gridTemplateColumns: `repeat(${COLS}, var(--cell))`,
                         ['--rows' as string]: String(ROWS),
                         ['--cols' as string]: String(COLS) } as
@@ -319,9 +322,18 @@ export function V23App() {
                        + `${blocked ? ' warded' : ''}`
                        + `${flash.has(cell) ? ' flash' : ''}`
                        + `${hover === cell && placeable ? ' hovering' : ''}`}
-                     onMouseEnter={() => setHover(cell)}
-                     onMouseLeave={() =>
-                       setHover((h) => (h === cell ? null : h))}
+                     onMouseEnter={(ev) => {
+                       setHover(cell);
+                       if (id) {
+                         const r = (ev.currentTarget as HTMLElement)
+                           .getBoundingClientRect();
+                         setBig({ cell, x: r.right, y: r.top });
+                       }
+                     }}
+                     onMouseLeave={() => {
+                       setHover((h) => (h === cell ? null : h));
+                       setBig((b) => (b && b.cell === cell ? null : b));
+                     }}
                      onClick={() => {
                        if (over) return;
                        if (req) return;          // a decision is pending
@@ -341,22 +353,7 @@ export function V23App() {
                       <CardFace sigils={def.sigils} owner={owner}
                                 art={def.art}
                                 flash={flash.has(cell)} />
-                      <span className="crest">P{owner + 1}</span>
-                      <span className="charname">{def.name}</span>
-                      <span className="slots">
-                        {def.trait && (
-                          <span className={`slot1${blocked ? ' live' : ''}`}>
-                            {TRAIT_INFO[def.trait].name}
-                          </span>
-                        )}
-                        <span className="slot2">
-                          {CMD_INFO[def.command].name}
-                        </span>
-                      </span>
-                      {blocked && <span className="wardmark"
-                                        title={blocked}>✦</span>}
-                      {immovable && <span className="anchormark"
-                                          title={immovable}>⚓</span>}
+                      <CardInfo g={game} id={id!} />
                       {canCmd && <span className="cmddot" />}
                     </>
                   ) : <span className="cellno">{cell}</span>}
@@ -364,6 +361,42 @@ export function V23App() {
               );
             })}
           </div>
+
+          {/* Supplementary enlargement. The board already carries every
+              ability in text; this is for reading the full rule without
+              navigating the rail. */}
+          {big && game.cells[big.cell] && (() => {
+            const bid = game.cells[big.cell]!;
+            const bd = game.defs[bid];
+            const left = Math.min(big.x + 12, window.innerWidth - 348);
+            const top = Math.min(big.y, window.innerHeight - 430);
+            return (
+              <div className="bigcard"
+                   style={{ left: `${left}px`, top: `${Math.max(8, top)}px` }}>
+                <div className="bc-art"
+                     style={{ backgroundImage:
+                       `url(/art/cards/card-${String(bd.art)
+                         .padStart(2, '0')}.webp)` }} />
+                <h3>{bd.name}</h3>
+                {bd.epithet && <p className="bc-ep">{bd.epithet}</p>}
+                <div className="bc-slot i">
+                  <b>I · CONVERGENCE —{' '}
+                    {bd.trait ? TRAIT_INFO[bd.trait].name : 'NONE'}</b>
+                  {bd.trait && <p>{TRAIT_INFO[bd.trait].text}</p>}
+                  {bd.trait && (
+                    <p className="bc-state">
+                      {traitState(game, bid)}
+                    </p>
+                  )}
+                </div>
+                <div className="bc-slot ii">
+                  <b>II · DOMINION — {CMD_INFO[bd.command].name}</b>
+                  <p>{CMD_INFO[bd.command].text}</p>
+                </div>
+                {bd.flavour && <p className="bc-flav">“{bd.flavour}”</p>}
+              </div>
+            );
+          })()}
 
           {game.phase === 'convergence' && !req && (
             <div className="hand">
@@ -378,6 +411,14 @@ export function V23App() {
                     <CardFace sigils={d.sigils} owner={active} small
                               art={d.art} />
                     <small>{d.name.replace(/^The /, '')}</small>
+                    <small className="handslots">
+                      <span className="hs-i">
+                        {d.trait ? TRAIT_INFO[d.trait].name : '—'}
+                      </span>
+                      <span className="hs-ii">
+                        {CMD_INFO[d.command].name}
+                      </span>
+                    </small>
                   </button>
                 );
               })}
