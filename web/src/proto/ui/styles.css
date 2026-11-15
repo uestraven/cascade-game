@@ -786,3 +786,24 @@ button:disabled{opacity:.4;cursor:default}
   .bcard{grid-template-rows:minmax(0,.8fr) auto auto auto}
   .bc-state{padding-bottom:calc(var(--cell)*.014)}
 }
+
+/* ---------------------------------------------------------------------
+   v2.3 cells are no longer square.
+
+   Square was a rotation artifact: a card placed four ways has to be.
+   v2.3 removed rotation, so the cell can take whatever shape fills the
+   space, and the width and height are derived independently.
+
+   This is scoped to .board.v23 on purpose. v1, v2.1 and v2.2 still
+   rotate on placement, so their cards must stay square.
+
+   --cell remains the TYPE scale and is the smaller of the two, so
+   nothing can overflow vertically; the extra width goes to the ability
+   one-liners, which is where truncation was happening.
+   ------------------------------------------------------------------ */
+.board.v23{
+  --cellw:calc((var(--boardW) - var(--cols)*8px) / var(--cols));
+  --cellh:calc((var(--boardH) - var(--rows)*8px) / var(--rows));
+  --cell:min(var(--cellw), var(--cellh));
+}
+.board.v23 .cell{width:var(--cellw);height:var(--cellh)}

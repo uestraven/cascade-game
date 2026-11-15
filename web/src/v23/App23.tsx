@@ -306,10 +306,12 @@ export function V23App() {
           </div>
 
           <div className="board v23"
-               style={{ gridTemplateColumns: `repeat(${COLS}, var(--cell))`,
-                        ['--rows' as string]: String(ROWS),
-                        ['--cols' as string]: String(COLS) } as
-                        React.CSSProperties}>
+               style={{
+                 // --cellw, not --cell: v2.3 cells are not square
+                 gridTemplateColumns: `repeat(${COLS}, var(--cellw))`,
+                 ['--rows' as string]: String(ROWS),
+                 ['--cols' as string]: String(COLS),
+               } as React.CSSProperties}>
             {Array.from({ length: CELLS }, (_, cell) => {
               const id = game.cells[cell];
               const def = id ? game.defs[id] : null;

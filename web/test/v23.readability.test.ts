@@ -114,6 +114,38 @@ describe('text is sized from the cell, not in fixed pixels', () => {
     expect(head).not.toMatch(/font-size:\s*8px/);
   });
 
+  it('v2.3 cells are no longer square, and never smaller than they '
+     + 'were', () => {
+    // square was a rotation artifact; v2.3 has no rotation, so width and
+    // height derive independently and fill the space
+    expect(css).toMatch(/\.board\.v23\{/);
+    const b = css.slice(css.indexOf('.board.v23{'));
+    expect(b.slice(0, 300)).toContain('--cellw:calc(');
+    expect(b.slice(0, 300)).toContain('--cellh:calc(');
+    // --cell stays the TYPE scale and is the smaller of the two, so
+    // nothing can overflow vertically
+    expect(b.slice(0, 300))
+      .toContain('--cell:min(var(--cellw), var(--cellh))');
+    // the older rulesets still rotate, so their cards must stay square
+    const base = css.slice(css.indexOf('.board{'));
+    expect(base.slice(0, 260), 'v1/v2/v2.2 keep one square --cell')
+      .toMatch(/--cell:min\(calc/);
+
+    const free = (vw: number, vh: number) => {
+      const railL = vw <= 1280 ? 186 : vw <= 1500 ? 210 : 258;
+      const railR = vw <= 1280 ? 224 : vw <= 1500 ? 252 : 310;
+      const W = vw - railL - railR - 80, H = vh - 210;
+      return [(W - 32) / 4, (H - 24) / 3];
+    };
+    for (const [vw, vh] of [[2560, 1440], [1920, 1080], [1512, 982],
+                            [1440, 900], [1366, 768], [1280, 720]]) {
+      const [w, h] = free(vw, vh);
+      const wasSquare = Math.min(w, h);
+      expect(w, `${vw}x${vh} width`).toBeGreaterThanOrEqual(wasSquare);
+      expect(h, `${vw}x${vh} height`).toBeGreaterThanOrEqual(wasSquare);
+    }
+  });
+
   it('nothing renders below 9px at any supported viewport', () => {
     // mirrors the CSS, including the rails narrowing on small screens
     // and the effect lines dropping out under 840px of height
@@ -121,6 +153,7 @@ describe('text is sized from the cell, not in fixed pixels', () => {
       const railL = vw <= 1280 ? 186 : vw <= 1500 ? 210 : 258;
       const railR = vw <= 1280 ? 224 : vw <= 1500 ? 252 : 310;
       const h = vh - 210, w = vw - railL - railR - 5 * 16;
+      // the type scale is the smaller dimension, as the CSS does
       return Math.min((h - 3 * 8) / 3, (w - 4 * 8) / 4);
     };
     const clamp = (lo: number, v: number, hi: number) =>

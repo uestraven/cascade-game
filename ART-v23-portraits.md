@@ -39,21 +39,27 @@ the text rows. Measured across every supported viewport:
 
 | screen | card | **portrait band** | aspect | mode |
 |---|---|---|---|---|
-| 2560×1440 | 402px | **398 × 247** | 1.61 | full |
-| 1920×1200 | 310px | 306 × 169 | 1.81 | full |
-| 1920×1080 | 282px | **278 × 153** | 1.82 | full |
-| 1600×1000 | 230px | 226 × 123 | 1.84 | full |
-| 1512×982 | 208px | 204 × 109 | 1.88 | full |
-| 1440×900 | 216px | 212 × 115 | 1.85 | full |
-| 1366×768 | 178px | 174 × 98 | 1.78 | compact |
-| 1280×800 | 189px | 185 × 107 | 1.73 | compact |
-| 1280×720 | 162px | 158 × 84 | 1.88 | compact |
+| 2560×1440 | 470 × 402 | **466 × 247** | 1.89 | full |
+| 1920×1200 | 310 × 322 | 306 × 181 | 1.69 | full |
+| 1920×1080 | 310 × 282 | **306 × 153** | 2.00 | full |
+| 1600×1000 | 230 × 255 | 226 × 148 | 1.52 | full |
+| 1512×982 | 208 × 249 | 204 × 150 | 1.36 | full |
+| 1440×900 | 216 × 222 | 212 × 120 | 1.77 | full |
+| 1366×768 | 198 × 178 | 194 × 98 | 1.98 | compact |
+| 1280×800 | 190 × 189 | 186 × 107 | 1.74 | compact |
+| 1280×720 | 190 × 162 | **186 × 84** | 2.20 | compact |
 
-**Band width: 158–398 CSS px. Band height: 84–247 CSS px. Aspect ratio
-1.61–1.88.**
+**Band width: 186–466 CSS px. Band height: 84–247 CSS px. Aspect ratio
+1.36–2.20.**
 
-1600 × 900 is therefore **4× the largest band at 2× device pixel ratio**,
-with headroom. Do not deliver larger; it is already generous and the set
+> **Updated.** Cards were square only because earlier versions rotated
+> them; v2.3 does not, so width and height now derive independently and
+> fill the space. Cards are larger in every case, but the band's aspect
+> ratio varies more widely, which widens the crop. The numbers below and
+> the safe area in §3 are the revised ones.
+
+1600 × 900 is therefore **comfortably above the largest band at 2× device
+pixel ratio**, Do not deliver larger; it is already generous and the set
 is the page weight.
 
 ---
@@ -72,18 +78,23 @@ Because you are delivering 16:9 (1.778) into a band of 1.61–1.88:
 
 | band aspect | what gets cropped | worst case |
 |---|---|---|
-| **narrower than 16:9** (1.61, tall cards) | the **left and right edges** | **4.7% off each side** |
-| **wider than 16:9** (1.88, short cards) | the **bottom** | **5.4% off the bottom** |
+| **narrower than 16:9** (down to 1.36) | the **left and right edges** | **11.7% off each side** |
+| **wider than 16:9** (up to 2.20) | the **bottom** | **19.3% off the bottom** |
 
 The top edge is **never** cropped. The vertical centre is never cropped.
 
 ### Safe area
 
-> **Keep everything that matters inside the central 90% of the width and
-> the top 93% of the height.**
+> **Keep everything that matters inside the central 76% of the width and
+> the top 80% of the height.**
 
-On a 1600 × 900 delivery that is a safe rectangle of **1440 × 837,
-inset 80px left, 80px right, 0px top, 63px bottom.**
+On a 1600 × 900 delivery that is a safe rectangle of **1216 × 720,
+inset 192px left, 192px right, 0px top, 180px bottom.**
+
+The first delivery clears this comfortably — checked by cropping to both
+extremes at the smallest band size, where the faces, headdresses and
+silhouettes all survive and only lower drapery is lost. No re-crop is
+needed. The tighter numbers apply to future pieces.
 
 Anything outside that rectangle may be invisible on some screens. Put
 atmosphere there, not faces.
