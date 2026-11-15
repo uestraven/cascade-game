@@ -462,3 +462,34 @@ button:disabled{opacity:.4;cursor:default}
 .epithet{margin:1px 0 6px;font-style:italic}
 .flavour{margin-top:8px;font-style:italic;border-top:1px solid var(--line);
   padding-top:6px}
+
+/* ---------------------------------------------------------------------
+   v2.3: the stack, decisions, and Anchor.
+
+   The stack panel lists PENDING EFFECTS, not animation steps, and names
+   the next one to resolve. Ordinary captures and triggered reactions
+   appear as separate events so the log never implies that two
+   simultaneous captures happened one after the other.
+   ------------------------------------------------------------------ */
+.stackpanel{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:3px}
+.stackpanel li{padding:4px 7px;border-radius:5px;background:#15171f;
+  border:1px solid var(--line);font-size:11px}
+.stackpanel li.next{border-color:var(--gold);background:#231d10}
+.stackpanel li.deciding{border-color:var(--p1);background:#15202f;
+  color:var(--p1)}
+.nexttag{font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);margin-right:5px}
+
+.picker.decide{border-color:var(--p1)}
+.picker.decide .hint b{color:var(--p1)}
+
+.anchormark{position:absolute;top:3px;right:20px;z-index:4;font-size:11px;
+  color:#9fb4d8;text-shadow:0 0 5px rgba(0,0,0,.9)}
+.statusline{margin:3px 0;font-size:11px;color:#9dffcf}
+
+/* event kinds read differently in the log */
+.ev-captureBatch{color:#9dffcf}
+.ev-fail{color:#ffb3a7}
+.ev-trigger{color:var(--gold)}
+.ev-move,.ev-swap{color:#9fb4d8}
+.ev-phase{color:var(--gold);font-weight:600}
