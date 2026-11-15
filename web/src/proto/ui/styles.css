@@ -596,3 +596,12 @@ button:disabled{opacity:.4;cursor:default}
 .hs-i{color:#6fd3a8}
 .hs-ii{color:var(--gold)}
 .slot{min-width:76px}
+
+/* protection names its own source: Sanctuary and a Bound Champion are
+   different rules, and showing both as a generic "protected" made an
+   inert Sanctuary look like it was working */
+.statechip.warded.champion{background:rgba(40,30,8,.94);color:#ffe98a;
+  box-shadow:0 0 0 1px var(--gold)}
+.statechip.inert{background:rgba(14,16,22,.9);color:#8b93a6;
+  box-shadow:0 0 0 1px #343b4d}
+.cell.champ{box-shadow:inset 0 0 0 2px var(--gold)}

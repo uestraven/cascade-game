@@ -301,7 +301,7 @@ describe('HARBINGER', () => {
     const sanctuary = idAt(mid, 6);
     expect(alliesAdjacent(mid, sanctuary), 'protected before the swap')
       .toBe(2);
-    expect(captureBlocked(mid, sanctuary)).toMatch(/Sanctuary/);
+    expect(captureBlocked(mid, sanctuary)?.source).toBe('sanctuary');
     const opt = mid.pending!.options.find((o) =>
       o.cells.includes(6) && o.cells.includes(3))!;
     expect(opt, 'swapping 6 with 3 should be offered').toBeTruthy();

@@ -334,17 +334,33 @@ export function alliesAdjacent(s: V23State, id: CardId): number {
   return n;
 }
 
-/** Sanctuary, Bound Champions, and anything else that forbids capture.
- *  `view` lets the caller evaluate against a pre-batch snapshot. */
+/**
+ * Why a card cannot be captured, or null.
+ *
+ * The SOURCE is returned, not just a message. Two different rules can
+ * protect a card -- Sanctuary and Bound Champions -- and the interface
+ * was reporting a generic "protected" for both, so a Champion that
+ * happened to carry Sanctuary displayed as "protected · 0 allies": a
+ * contradiction that reads as Sanctuary working when it is inert.
+ *
+ * `view` lets the caller evaluate against a pre-batch snapshot.
+ */
+export interface Protection { source: 'sanctuary' | 'champion';
+                              text: string }
+
 export function captureBlocked(s: V23State, id: CardId,
-                               view: V23State = s): string | null {
+                               view: V23State = s): Protection | null {
   if (s.phase !== 'convergence') return null;
   const def = s.defs[id];
   if (view.champions[view.owner[id]]?.includes(id)) {
-    return 'a Bound Champion cannot be captured during Convergence';
+    return { source: 'champion',
+             text: 'Bound Champion — cannot be captured during '
+                 + 'Convergence' };
   }
   if (def.trait === 'sanctuary' && alliesAdjacent(view, id) >= 2) {
-    return 'Sanctuary — two or more adjacent allies';
+    return { source: 'sanctuary',
+             text: `Sanctuary — ${alliesAdjacent(view, id)} adjacent `
+                 + 'allies' };
   }
   return null;
 }
@@ -434,11 +450,12 @@ function setOwner(s: V23State, id: CardId, p: Player): void {
  */
 export function normalAttack(s: V23State, cell: number,
                              player: Player): { card: CardId;
-                                                blocked: string | null }[] {
+                                                blocked: Protection
+                                                  | null }[] {
   const srcId = s.cells[cell];
   if (!srcId) return [];
   const src = s.defs[srcId];
-  const out: { card: CardId; blocked: string | null }[] = [];
+  const out: { card: CardId; blocked: Protection | null }[] = [];
   for (let d = 0; d < 4; d++) {
     const t = NB[cell][d];
     if (t < 0) continue;
@@ -866,7 +883,7 @@ function settle(s: V23State): void {
         for (const h of hits) {
           if (h.blocked) {
             note(s, 'fail',
-                 `${s.defs[h.card].name} held — ${h.blocked}`,
+                 `${s.defs[h.card].name} held — ${h.blocked.text}`,
                  { cells: [cellOf(s, h.card)] });
           }
         }
@@ -1103,6 +1120,6 @@ export function previewDeploy(s: V23State, card: CardId, cell: number):
   return {
     taken: hits.filter((h) => !h.blocked).map((h) => h.card),
     blocked: hits.filter((h) => h.blocked)
-      .map((h) => ({ card: h.card, why: h.blocked! })),
+      .map((h) => ({ card: h.card, why: h.blocked!.text })),
   };
 }

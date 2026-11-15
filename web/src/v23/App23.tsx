@@ -319,7 +319,10 @@ export function V23App() {
                        + `${cmdCell === cell ? ' chosen' : ''}`
                        + `${highlight.take.has(cell) ? ' cap-direct' : ''}`
                        + `${highlight.touch.has(cell) ? ' chosen' : ''}`
-                       + `${blocked ? ' warded' : ''}`
+                       + `${blocked?.source === 'sanctuary'
+                           ? ' warded' : ''}`
+                       + `${blocked?.source === 'champion'
+                           ? ' champ' : ''}`
                        + `${flash.has(cell) ? ' flash' : ''}`
                        + `${hover === cell && placeable ? ' hovering' : ''}`}
                      onMouseEnter={(ev) => {

@@ -25,7 +25,11 @@ export function CardInfo({ g, id }: { g: V23State; id: CardId }) {
     <>
       <div className={`cardinfo ${g.phase}`}>
         <span className="ci-name">{def.name}</span>
-        <span className={`ci-slot ci-i${blocked ? ' active' : ''}`}>
+        {/* the trait line lights only when THIS trait is the reason --
+            a Bound Champion must not make Sanctuary look like it is
+            working */}
+        <span className={`ci-slot ci-i`
+          + `${blocked?.source === 'sanctuary' ? ' active' : ''}`}>
           <b>I · {def.trait
             ? TRAIT_INFO[def.trait].name.toUpperCase() : 'NONE'}</b>
           {def.trait && <em>{TRAIT_INFO[def.trait].short}</em>}
@@ -37,9 +41,19 @@ export function CardInfo({ g, id }: { g: V23State; id: CardId }) {
       </div>
       <span className="crest">P{owner + 1}</span>
       {blocked && (
-        <span className="statechip warded" title={blocked}>
-          ✦ protected
-          {def.trait === 'sanctuary' && ` · ${alliesAdjacent(g, id)} allies`}
+        <span className={`statechip warded ${blocked.source}`}
+              title={blocked.text}>
+          {blocked.source === 'champion'
+            ? '✦ champion'
+            : `✦ sanctuary · ${alliesAdjacent(g, id)} allies`}
+        </span>
+      )}
+      {/* an unprotected Sanctuary card says so, rather than saying
+          nothing -- "1 of 2" is the information that matters */}
+      {!blocked && def.trait === 'sanctuary'
+        && g.phase === 'convergence' && (
+        <span className="statechip inert">
+          {alliesAdjacent(g, id)} of 2 allies
         </span>
       )}
       {immovable && !blocked && (
