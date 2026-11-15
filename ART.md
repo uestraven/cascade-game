@@ -87,21 +87,31 @@ informative, not more.
 The sigils exist, are verified, and are drawn as inline SVG in code. They
 are the one asset you should **not** touch.
 
-| | Sigil | Silhouette |
+| Sigil | Silhouette | Colour |
 |---|---|---|
-| ⬤ | **Halo** | a ring |
-| ◆ | **Ward** | a cut diamond |
-| ✦ | **Crux** | a four-pointed star |
-| ✸ | **Gyre** | a four-armed pinwheel |
+| **Ouroboros** | a broken ring, head biting toward the tail | `#7BD8B5` |
+| **Crystal** | a faceted gem, one girdle facet | `#99CEFF` |
+| **Cross Potent** | a cross with crossbar ends | `#F1D79E` |
+| **Fleur-de-lis** | three lobes over a band | `#C9AAFF` |
+
+Internally still keyed `halo`, `ward`, `crux`, `gyre` — those are stable
+identifiers through the engine, the Python oracle, `protodeck.json` and
+every fixture. Only the drawing and the presented name changed.
 
 Source: `web/public/art/sigils/*.svg`, and `web/src/proto/ui/Sigil.tsx`.
 
-Why they are fixed: each is four-fold rotationally symmetric, verified
-pixel-identical against itself rotated 90° (0.0009–0.0024 RMSE). Pairwise
-distinctness at 16px is 0.35–0.53 RMSE, and ink coverage sits in a 19–28%
-band so none reads heavier than the others. Those properties took work to
-get and are load-bearing — a sigil that changed appearance when the card
-turned would be a constant misread.
+Four-fold rotational symmetry **no longer applies**. It did while cards
+were placed in four orientations; v2.3 removed rotation, and in any case
+the app never rotated a glyph — rotation was always modelled by permuting
+which value sits on which edge, so these shapes have only ever rendered
+upright. The symmetry requirement applied to the physical deck alone.
+
+The shapes are now authored for identity instead, each drawn and checked
+at **15px** — the glyph size inside the smallest socket — in colour and
+in greyscale. A printed card turned 90° shows a sideways Fleur-de-lis,
+which is accepted: none of the four can be mistaken for another when
+turned, and that was the fatal case the old constraint existed to
+prevent.
 
 **Your job is to make them sit well**, not to replace them. If you need a
 decorative treatment, add a *backing* behind the sigil (a recess, a

@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M32.0 32.0 q 0 -22 22 -22 q 0 14 -22 22 Z" fill="#000" transform="rotate(0 32.0 32.0)"/><path d="M32.0 32.0 q 0 -22 22 -22 q 0 14 -22 22 Z" fill="#000" transform="rotate(90 32.0 32.0)"/><path d="M32.0 32.0 q 0 -22 22 -22 q 0 14 -22 22 Z" fill="#000" transform="rotate(180 32.0 32.0)"/><path d="M32.0 32.0 q 0 -22 22 -22 q 0 14 -22 22 Z" fill="#000" transform="rotate(270 32.0 32.0)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><g fill="#C9AAFF">
+<!-- central lobe: a tapering spearhead -->
+<path d="M32 2 C27 13 26 26 32 37 C38 26 37 13 32 2 Z"/>
+<!-- side lobes: sweep outward, then curl back upward at the tip -->
+<path d="M31 37 C20 36 10 31 7 22 C6 15 11 12 14 16 C13 22 20 31 31 37 Z"/>
+<path d="M33 37 C44 36 54 31 57 22 C58 15 53 12 50 16 C51 22 44 31 33 37 Z"/>
+<!-- the band -->
+<rect x="14" y="37" width="36" height="8" rx="2"/>
+<!-- flared foot -->
+<path d="M32 45 C25 51 24 57 32 62 C40 57 39 51 32 45 Z"/>
+</g></svg>

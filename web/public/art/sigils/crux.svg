@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M32.0 4 L39 25 L60 32.0 L39 39 L32.0 60 L25 39 L4 32.0 L25 25 Z" fill="#000"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><!-- Cross Potent: crossbar ends -->
+<g fill="#F1D79E"><rect x="26" y="9" width="12" height="46"/>
+<rect x="9" y="26" width="46" height="12"/>
+<rect x="18" y="5" width="28" height="8"/><rect x="18" y="51" width="28" height="8"/>
+<rect x="5" y="18" width="8" height="28"/><rect x="51" y="18" width="8" height="28"/>
+</g></svg>

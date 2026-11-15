@@ -13,7 +13,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
-import { SIGIL_NAMES, SIGIL_PALETTE, sigilColor } from '../src/proto/ui/Sigil';
+import {
+  SIGIL_NAMES, SIGIL_PALETTE, Sigil, sigilColor,
+} from '../src/proto/ui/Sigil';
 import { BattleCard } from '../src/v23/BattleCard';
 import {
   type V23State, apply, deployments, newGame,
@@ -160,5 +162,57 @@ describe('sigil colour is independent of game state', () => {
     // and the socket itself is not dimmed with the expired trait
     expect(css.slice(css.indexOf('.bc-row.i.expired{'), 200))
       .not.toContain('.bc-sigil');
+  });
+});
+
+describe('the arcane shapes', () => {
+  it('each sigil draws something, and the four differ', () => {
+    const drawn = SIGIL_NAMES.map((_, i) =>
+      renderToStaticMarkup(createElement(Sigil, { sigil: i, size: 22 })));
+    expect(new Set(drawn).size, 'four distinct drawings').toBe(4);
+    for (const html of drawn) {
+      expect(html).toContain('viewBox="0 0 64 64"');
+      expect(html).toMatch(/<path|<rect|<circle/);
+    }
+  });
+
+  it('keeps the design features the brief named', () => {
+    const [halo, ward, crux, gyre] = SIGIL_NAMES.map((_, i) =>
+      renderToStaticMarkup(createElement(Sigil, { sigil: i, size: 22 })));
+    // Ouroboros: the head must remain visible, so there is a head shape
+    // and an eye on top of the ring stroke
+    expect(halo, 'ouroboros ring').toContain('A20 20');
+    expect(halo, 'ouroboros head').toContain('M46 3');
+    expect(halo, 'ouroboros eye').toContain('<circle');
+    // Crystal: exactly one internal facet line, not a lattice
+    expect((ward.match(/stroke-width/g) ?? []).length,
+           'one girdle facet only').toBe(1);
+    // Cross Potent: six bars -- the two arms plus four crossbar ends
+    expect((crux.match(/<rect/g) ?? []).length,
+           'crossbar ends preserved').toBe(6);
+    // Fleur-de-lis: three lobes, a band and a foot
+    expect((gyre.match(/<path/g) ?? []).length,
+           'three lobes plus a foot').toBe(4);
+    expect(gyre, 'the band').toContain('<rect');
+  });
+
+  it('stays legible without colour, which is how it prints', () => {
+    // colour={false} inherits, so the shape is the only channel
+    const grey = SIGIL_NAMES.map((_, i) => renderToStaticMarkup(
+      createElement(Sigil, { sigil: i, size: 15, colour: false })));
+    expect(new Set(grey).size, 'distinct with no colour at all').toBe(4);
+    for (const html of grey) expect(html).not.toContain('color:');
+  });
+
+  it('the standalone assets match the component', () => {
+    for (const n of SIGIL_NAMES) {
+      const svg = readFileSync(resolve(__dirname, '..', 'public', 'art',
+        'sigils', `${n}.svg`), 'utf8');
+      expect(svg, `${n}.svg`).toContain('viewBox="0 0 64 64"');
+      expect(svg, `${n}.svg` + ' uses its palette colour')
+        .toContain(SIGIL_PALETTE[n].color);
+      expect(svg, 'no script in a served asset')
+        .not.toMatch(/<script|onload=/i);
+    }
   });
 });
