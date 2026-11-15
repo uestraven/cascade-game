@@ -8,7 +8,8 @@ import { isMuted, loadMuted, primeAudio, setMuted, sfx }
 import { mulberry32, randomSeed } from '../rng';
 import {
   type CardId, type ChoiceOption, type DominionCommand, type Player,
-  type V23State, CELLS, CMD_INFO, COLS, DOMINION_COMMANDS, ROWS,
+  type V23State, CELLS, CMD_INFO, COLS, DOMINION_COMMANDS,
+  DOMINION_SEQUENCE, ROWS,
   TRAIT_INFO, alliesAdjacent, apply, captureBlocked, cellOf,
   commandsLeft, deployments, dominionCommands, isOver, moveBlocked,
   mustPass, newGame, previewAt, previewDeploy, score, toMove,
@@ -17,6 +18,104 @@ import {
 
 type Mode = 'bot' | 'hotseat';
 const BOT_MS = 460;
+/** long enough to read "this command was spent as a pass" */
+const PASS_MS = 1500;
+
+/**
+ * Phase II, drawn as a progress bar rather than a number to remember.
+ *
+ * Dominion is exactly six commands long and the order is fixed, so the
+ * whole phase can be shown at once: which commands have been spent, by
+ * whom, what each one took, which is being taken now, and how many
+ * each player has left. Nothing here is state the player has to hold
+ * in their head.
+ *
+ * The victory condition is stated in the header and not only in the
+ * briefing, because a line you dismissed four commands ago is not an
+ * answer to "what am I trying to do".
+ */
+export function DominionHeader({ g, mode }: { g: V23State; mode: Mode }) {
+  const done = g.commands;
+  const over = isOver(g);
+  const last = done >= DOMINION_COMMANDS;
+  const final = done === DOMINION_COMMANDS - 1 && !over;
+  const name = (p: Player) => (p === 0 ? 'P1' : mode === 'hotseat'
+    ? 'P2' : 'bot');
+  return (
+    <div className={`domheader${final ? ' final' : ''}`
+      + `${over ? ' done' : ''}`}>
+      <div className="dh-top">
+        <b className="dh-phase">Phase II · The Dominion</b>
+        <span className="dh-count">
+          {over || last ? 'all six commands spent'
+            : `Command ${done + 1} of ${DOMINION_COMMANDS}`}
+        </span>
+        {!over && (
+          <span className={`dh-turn p${toMove(g)}`}>
+            {name(toMove(g))} to command
+          </span>
+        )}
+        {final && <span className="dh-final">final command</span>}
+      </div>
+
+      {/* the six commands, all of them, all the time */}
+      <ol className="dh-track">
+        {DOMINION_SEQUENCE.map((p, k) => {
+          const rec = g.ledger[k];
+          const state = k < done ? 'spent' : k === done && !over
+            ? 'now' : 'todo';
+          return (
+            <li key={k} className={`dh-step ${state} p${p}`}>
+              <span className="dh-n">{k + 1}</span>
+              <span className="dh-who">{name(p)}</span>
+              <span className="dh-took">
+                {state === 'todo' ? '·'
+                  : state === 'now' ? '…'
+                    : rec?.kind === 'pass' ? 'passed'
+                      : rec && rec.took > 0 ? `+${rec.took}`
+                        : '0'}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+
+      <div className="dh-bottom">
+        <span className="dh-left">
+          <b className="p1t">{name(0)}</b> {commandsLeft(g, 0)} left
+        </span>
+        <span className="dh-left">
+          <b className="p2t">{name(1)}</b> {commandsLeft(g, 1)} left
+        </span>
+        <span className="dh-win">
+          Victory: control the most cards after command{' '}
+          {DOMINION_COMMANDS}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * What a trailing player is actually facing, in captures.
+ *
+ * A capture moves one card from one side to the other, so it changes
+ * the gap by TWO. That arithmetic is the single most important thing a
+ * player behind on entering Dominion needs, and working it out from a
+ * score of 9-3 under time pressure is not reasonable. Stated as the
+ * number of net captures needed, which is what a command produces.
+ *
+ * `draw` assumes an even total, which every v2.3 board is: all twelve
+ * cards are on the board for the whole of Dominion. On an odd total
+ * there is no draw to reach and only `win` means anything.
+ */
+export function comeback(behind: number, ahead: number) {
+  const gap = ahead - behind;
+  return {
+    draw: Math.ceil(gap / 2),
+    win: Math.floor(gap / 2) + 1,
+  };
+}
 
 /**
  * Whether this is a touch screen.
@@ -94,6 +193,9 @@ export function V23App() {
   /** a hand card under the cursor, inspected before being chosen */
   const [peek, setPeek] = useState<{ card: CardId; x: number; y: number }
     | null>(null);
+  /** the Dominion briefing has been read, and the result acknowledged */
+  const [briefed, setBriefed] = useState(false);
+  const [sawResult, setSawResult] = useState(false);
   const botRng = useRef(mulberry32(seed ^ 0x9e3779b9));
   const coarse = useCoarsePointer();
 
@@ -104,6 +206,7 @@ export function V23App() {
     setGame(newGame(s, { boundChampions: bc }));
     setSel(null); setHover(null); setOptHover(null); setCmdCell(null);
     setInspect(null); setFlash(new Set());
+    setBriefed(false); setSawResult(false); setPeek(null); setBig(null);
     botRng.current = mulberry32(s ^ 0x9e3779b9);
   }, []);
 
@@ -123,9 +226,19 @@ export function V23App() {
     window.setTimeout(() => setFlash(new Set()), 340);
   }, []);
 
+  /**
+   * The briefing is open and nothing may happen behind it.
+   *
+   * P2 opens Dominion and P2 is the bot in vs-computer mode, so
+   * without this the first command of the phase was taken while the
+   * overlay explaining the phase was still on screen.
+   */
+  const gate = game.phase === 'dominion' && game.commands === 0
+    && !briefed;
+
   // the opponent
   useEffect(() => {
-    if (mode !== 'bot' || over) return;
+    if (mode !== 'bot' || over || gate) return;
     if (!game.pending && toMove(game) === 0) return;
     if (game.pending && game.pending.player === 0) return;
     const t = window.setTimeout(() => {
@@ -133,15 +246,23 @@ export function V23App() {
       sfx('place');
     }, BOT_MS);
     return () => window.clearTimeout(t);
-  }, [game, mode, over, advance]);
+  }, [game, mode, over, gate, advance]);
 
-  // automatic pass when a side has nothing to command
+  /*
+   * A side with nothing to command spends its command as a pass.
+   *
+   * It used to happen in 340ms with only a line in the event log, so a
+   * command disappeared and the player was left wondering whether they
+   * had missed a turn. Now it is announced, held long enough to read,
+   * and recorded in the timeline as a spent command rather than a gap.
+   */
+  const passing = mustPass(game) && !over && !gate;
   useEffect(() => {
-    if (!mustPass(game) || over) return;
+    if (!passing) return;
     const t = window.setTimeout(() =>
-      advance(apply(game, { kind: 'pass' })), 340);
+      advance(apply(game, { kind: 'pass' })), PASS_MS);
     return () => window.clearTimeout(t);
-  }, [game, over, advance]);
+  }, [game, passing, advance]);
 
   // ---- previews -------------------------------------------------------
   /**
@@ -319,6 +440,12 @@ export function V23App() {
                   {12 - game.deployed} deployments left · traits active ·
                   no rotation, sigils are fixed
                 </span>
+                {/* what this phase is FOR. Convergence builds the
+                    position; the six commands of Dominion decide it. */}
+                <span>
+                  then <b>Phase II</b>: three commands each, and
+                  whoever controls the most of the twelve wins
+                </span>
               </>
             )}
             {game.phase === 'dominion' && (
@@ -399,6 +526,20 @@ export function V23App() {
         </div>
 
         <div className="stage">
+          {/* Phase II states its own shape, permanently. */}
+          {(game.phase === 'dominion' || over) && (
+            <DominionHeader g={game} mode={mode} />
+          )}
+
+          {/* a pass is a spent command, said out loud */}
+          {passing && (
+            <p className="passnote">
+              <b>P{toMove(game) + 1} controls no characters.</b>{' '}
+              Command {game.commands + 1} of {DOMINION_COMMANDS} is
+              spent as a pass.
+            </p>
+          )}
+
           <div className="previewkey">
             <span><i className="k-direct" />will be captured</span>
             <span><i className="k-shield" />protected, cannot be taken</span>
@@ -901,6 +1042,159 @@ export function V23App() {
           </ul>
         </div>
       </div>
+
+      {/* ---------------------------------------------------------------
+          The phase boundary, as an event rather than a label change.
+
+          Dominion is a different game from Convergence and it used to
+          begin with nothing but a line in the rail changing colour. A
+          player cannot be expected to understand an objective that was
+          never stated, so it is stated here, before the first command,
+          with the standing they are about to play from.
+          ------------------------------------------------------------ */}
+      {gate && (
+        <div className="curtain">
+          <div className="curtaincard">
+            <p className="ct-kicker">The Convergence is complete</p>
+            <h2 className="ct-title">Phase II · The Dominion</h2>
+            <p className="ct-lede">
+              Each player has <b>three commands</b>.{' '}
+              <b>{mode === 'hotseat' ? 'Player 2' : 'The computer'} acts
+              first.</b>{' '}
+              Control the most characters after the sixth command to win.
+            </p>
+
+            <div className="ct-standing">
+              <span className={`ct-score p1${s0 > s1 ? ' lead' : ''}`}>
+                <b>{s0}</b><em>P1</em>
+              </span>
+              <span className="ct-vs">holds</span>
+              <span className={`ct-score p2${s1 > s0 ? ' lead' : ''}`}>
+                <b>{s1}</b><em>{mode === 'hotseat' ? 'P2' : 'bot'}</em>
+              </span>
+            </div>
+
+            {/* the arithmetic a trailing player would otherwise have to
+                do under pressure: a capture changes the gap by two */}
+            {s0 === s1 ? (
+              <p className="ct-math">
+                Level. One net capture wins it.
+              </p>
+            ) : (() => {
+              const lo = Math.min(s0, s1), hi = Math.max(s0, s1);
+              const who = s0 < s1 ? 'P1'
+                : mode === 'hotseat' ? 'P2' : 'the computer';
+              const { draw, win } = comeback(lo, hi);
+              if (lo === 0) {
+                return (
+                  <p className="ct-math none">
+                    {who} controls nothing, so has no character to
+                    command. All three of those commands will be spent
+                    as passes.
+                  </p>
+                );
+              }
+              return (
+                <p className="ct-math">
+                  Each capture closes the gap by two, because the card
+                  changes hands. From {hi}–{lo}, <b>{who}</b> needs{' '}
+                  <b>{draw} net {draw === 1 ? 'capture' : 'captures'}</b>{' '}
+                  to draw and <b>{win}</b> to win — with {' '}
+                  {commandsLeft(game, s0 < s1 ? 0 : 1)} commands to do
+                  it in.
+                </p>
+              );
+            })()}
+
+            <ol className="ct-track">
+              {DOMINION_SEQUENCE.map((p, k) => (
+                <li key={k} className={`dh-step todo p${p}`}>
+                  <span className="dh-n">{k + 1}</span>
+                  <span className="dh-who">
+                    {p === 0 ? 'P1' : mode === 'hotseat' ? 'P2' : 'bot'}
+                  </span>
+                </li>
+              ))}
+            </ol>
+
+            <button className="ct-go" autoFocus
+                    onClick={() => setBriefed(true)}>
+              begin the Dominion
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* The end of the game, which used to be a word in the rail. */}
+      {over && !sawResult && (() => {
+        const w = winner(game);
+        const total = game.ledger.reduce((n, r) => n + Math.max(0, r.took),
+                                         0);
+        return (
+          <div className="curtain">
+            <div className={`curtaincard result w${w}`}>
+              <p className="ct-kicker">
+                The Dominion ends · all six commands spent
+              </p>
+              <h2 className="ct-title">
+                {w === -1 ? 'A draw' : `P${w + 1} wins`}
+              </h2>
+
+              <div className="ct-standing big">
+                <span className={`ct-score p1${w === 0 ? ' lead' : ''}`}>
+                  <b>{s0}</b><em>P1</em>
+                </span>
+                <span className="ct-vs">cards controlled</span>
+                <span className={`ct-score p2${w === 1 ? ' lead' : ''}`}>
+                  <b>{s1}</b><em>{mode === 'hotseat' ? 'P2' : 'bot'}</em>
+                </span>
+              </div>
+
+              <p className="ct-lede">
+                {w === -1
+                  ? 'Six and six. Twelve cards divide evenly, so a draw '
+                    + 'is a real result in Cascade, not a technicality.'
+                  : `${s0 > s1 ? 'P1' : mode === 'hotseat' ? 'P2' : 'The '
+                      + 'computer'} holds ${Math.max(s0, s1)} of 12.`}
+              </p>
+
+              {/* what the six commands actually did, so the phase can be
+                  reviewed rather than just scored */}
+              <ol className="ct-summary">
+                {game.ledger.map((r, k) => (
+                  <li key={k} className={`p${r.player}`}>
+                    <span className="dh-n">{k + 1}</span>
+                    <span className="dh-who">
+                      {r.player === 0 ? 'P1'
+                        : mode === 'hotseat' ? 'P2' : 'bot'}
+                    </span>
+                    <span className="cs-sum">
+                      {r.kind === 'pass' ? 'passed — nothing to command'
+                        : r.took > 0
+                          ? `took ${r.took} from cell ${r.cell}`
+                          : `commanded cell ${r.cell}, took nothing`}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p className="ct-foot">
+                {total} {total === 1 ? 'card' : 'cards'} changed hands
+                during Dominion.
+              </p>
+
+              <div className="ct-buttons">
+                <button className="ct-go"
+                        onClick={() => reset(randomSeed(), champions)}>
+                  new game
+                </button>
+                <button onClick={() => setSawResult(true)}>
+                  review the board
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

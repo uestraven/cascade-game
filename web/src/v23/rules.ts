@@ -265,6 +265,26 @@ export interface Variant {
   boundChampions: 0 | 2 | 3;
 }
 
+/**
+ * One spent Dominion command, in the order they were spent.
+ *
+ * The phase is six commands long and the UI has to show which of them
+ * have happened, by whom, and to what effect. Reconstructing that from
+ * the prose event log would mean parsing sentences, and the log is
+ * capped at 80 entries, so it is recorded explicitly instead.
+ *
+ * A pass is a spent command, not a skipped turn. It is recorded as one
+ * so the timeline can show it rather than appearing to lose a step.
+ */
+export interface CommandRecord {
+  player: Player;
+  kind: 'command' | 'pass';
+  /** net cards gained by the acting player, after the whole command */
+  took: number;
+  /** the cell commanded; absent on a pass */
+  cell?: number;
+}
+
 export interface V23State {
   phase: 'convergence' | 'dominion' | 'over';
   cells: (CardId | null)[];
@@ -274,6 +294,8 @@ export interface V23State {
   reserve: CardId[];
   deployed: number;
   commands: number;
+  /** what each spent command did, oldest first */
+  ledger: CommandRecord[];
   stack: Effect[];
   pending: ChoiceRequest | null;
   turn: Turn | null;
@@ -302,7 +324,7 @@ export const at = (s: V23State, cell: number): CardDef | null => {
 export const toMove = (s: V23State): Player => {
   if (s.pending) return s.pending.player;
   if (s.phase === 'convergence') return (s.deployed % 2) as Player;
-  if (s.phase === 'dominion') return (1 - (s.commands % 2)) as Player;
+  if (s.phase === 'dominion') return commandPlayer(s.commands);
   return 0;
 };
 
@@ -417,6 +439,7 @@ const clone = (s: V23State): V23State => ({
   reserve: s.reserve.slice(),
   stack: s.stack.map((e) => ({ ...e })),
   events: s.events.slice(),
+  ledger: s.ledger.slice(),
   used: s.used.slice(),
   recent: [s.recent[0].slice(), s.recent[1].slice()],
   champions: [s.champions[0].slice(), s.champions[1].slice()],
@@ -665,6 +688,12 @@ export type DominionCommand =
 /** The only way state advances. Pure: same state plus action, same result. */
 export function apply(prev: V23State, action: Action): V23State {
   const s = clone(prev);
+  // Who is spending a command, and what they held before spending it.
+  // Read from prev, because by the time the action has resolved the
+  // turn has already passed to the other player.
+  const actor = (action.kind === 'command' || action.kind === 'pass')
+    ? toMove(prev) : null;
+  const held = actor === null ? 0 : score(prev)[actor];
   switch (action.kind) {
     case 'deploy': deploy(s, action.card, action.cell); break;
     case 'choose': resolveChoice(s, action.option); break;
@@ -676,6 +705,14 @@ export function apply(prev: V23State, action: Action): V23State {
       break;
   }
   settle(s);
+  if (actor !== null) {
+    s.ledger = [...s.ledger, {
+      player: actor,
+      kind: action.kind === 'pass' ? 'pass' : 'command',
+      took: score(s)[actor] - held,
+      ...(action.kind === 'command' ? { cell: action.cmd.cell } : {}),
+    }];
+  }
   return s;
 }
 
@@ -839,6 +876,27 @@ function resolveChoice(s: V23State, option: string | null): void {
 function settle(s: V23State): void {
   for (let guard = 0; guard < 200; guard++) {
     if (s.pending) return;
+
+    /*
+     * The sixth command ends the phase however it was spent.
+     *
+     * This check used to live only in runCommand, so a pass -- the
+     * command of a player who controls nothing -- incremented the
+     * counter without ever ending the game. Dominion then ran a
+     * SEVENTH command, and since the passing player still controlled
+     * nothing, mustPass stayed true and the counter ran away.
+     *
+     * Reachable exactly where it hurts: a player wiped out during
+     * Convergence, which is the 11-1 and 12-0 case. It is here rather
+     * than in the two callers because settle() runs after every
+     * action, so no future path can increment the counter and forget.
+     */
+    if (s.phase === 'dominion' && s.commands >= DOMINION_COMMANDS
+        && !s.turn && s.stack.length === 0) {
+      s.phase = 'over';
+      note(s, 'phase', 'The Dominion ends.');
+      return;
+    }
 
     // 1. the stack, top first
     const top = s.stack[s.stack.length - 1];
@@ -1036,19 +1094,31 @@ function runCommand(s: V23State, cmd: DominionCommand): void {
   const opp = (1 - p) as Player;
   s.recent[opp] = before.filter((c) => s.owner[c] === p);
   s.commands += 1;
-  if (s.commands >= DOMINION_COMMANDS) {
-    s.phase = 'over';
-    note(s, 'phase', 'The Dominion ends.');
-  }
+  // the end of the phase is settle()'s job, so that a pass and a
+  // command cannot disagree about when the sixth one has happened
 }
 
 export const mustPass = (s: V23State): boolean =>
   s.phase === 'dominion' && !s.pending && dominionCommands(s).length === 0;
 
+/**
+ * Who takes command number k, zero-indexed.
+ *
+ * P2 opens Dominion and the two then alternate, so the six commands go
+ * P2, P1, P2, P1, P2, P1 — three each. One function, so the header,
+ * the engine's turn order and the tests cannot disagree about it.
+ */
+export const commandPlayer = (k: number): Player =>
+  (1 - (k % 2)) as Player;
+
+/** The whole fixed sequence, for a UI that wants to draw it up front. */
+export const DOMINION_SEQUENCE: Player[] =
+  Array.from({ length: DOMINION_COMMANDS }, (_, k) => commandPlayer(k));
+
 export const commandsLeft = (s: V23State, p: Player): number => {
   let n = 0;
   for (let k = s.commands; k < DOMINION_COMMANDS; k++) {
-    if (1 - (k % 2) === p) n++;
+    if (commandPlayer(k) === p) n++;
   }
   return n;
 };
@@ -1083,6 +1153,7 @@ export function newGame(seed: number,
     reserve: [],
     deployed: 0,
     commands: 0,
+    ledger: [],
     stack: [],
     pending: null,
     turn: null,

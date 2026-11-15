@@ -198,13 +198,76 @@ one card. Resulting reactions resolve before Pact's own normal attack.
 
 ---
 
-## The Dominion, unchanged
+## The Dominion
 
-Six commands, three each, P2 first. No exhaustion: a character may be
-commanded repeatedly while controlled. Commands are Strike, Usurp,
+The rules are unchanged from v2.2; what changed is that the phase now
+states itself.
+
+### The phase
+
+Six commands, three each, **P2 first**, so P1 closes:
+
+| 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|
+| P2 | P1 | P2 | P1 | P2 | P1 |
+
+On your command you select a character you currently control and choose
+one of its available commands. **No exhaustion:** a character may be
+commanded repeatedly while you control it. Commands are Strike, Usurp,
 Usurp-Single, Transpose and Reclaim, as in v2.2, with the
-multiple-direct-capture follow-up preserved. A player with nothing to
-command passes automatically. All Convergence traits are expired.
+multiple-direct-capture follow-up preserved.
+
+A follow-up is **not** an extra turn — it is part of resolving that one
+command.
+
+All Convergence traits are expired for the whole phase.
+
+### The ending
+
+Dominion ends immediately after the **sixth** command has fully
+resolved, including its captures, any follow-up, and any pending
+choice. There is no seventh command, no extra round and no overtime.
+Whoever controls the most of the twelve cards wins; 6–6 is a draw and a
+legitimate result.
+
+A player who controls nothing has no character to command, so their
+command is **spent as a pass**. A pass is a spent command, not a
+skipped turn, and the counter advances.
+
+> The engine disagreed with that last paragraph until this version. The
+> end-of-phase check lived only in the command path, so a pass bumped
+> the counter without ending the game — Dominion ran a seventh command,
+> and because the passing player still controlled nothing the counter
+> ran away. Reachable only when a player is wiped out during
+> Convergence, which is exactly the 11–1 and 12–0 case. Now checked
+> wherever the counter changes.
+
+### What a comeback costs
+
+A capture moves a card from one side to the other, so **each net
+capture closes the gap by two**:
+
+| entering Dominion | net captures to draw | to win |
+|---|---|---|
+| 6–6 | — | 1 |
+| 7–5 | 1 | 2 |
+| 8–4 | 2 | 3 |
+| 9–3 | 3 | 4 |
+| 10–2 | 4 | 5 |
+| 11–1 | 5 | 6 |
+| 12–0 | 6 | impossible — no character to command |
+
+Three commands, so 8–4 is recoverable and 11–1 needs a net capture on
+every command from a single character. The app states this arithmetic
+on the phase-transition screen rather than leaving the trailing player
+to work it out.
+
+**What is not established:** the 44.6% (v2.1 full-board) and 48.8%
+(single-target Usurp) reversal rates say Dominion can change an outcome.
+They say nothing about whether a player entering at 10–2 has a
+*satisfying* opportunity, and nothing at all about this six-trait
+prototype. The playtest question is whether a trailing player feels
+they have options, not whether they win.
 
 ---
 
@@ -278,3 +341,23 @@ is any good. The open questions:
 8. Do Sanctuary, Anchor or Bound Champions make the game too defensive?
 9. Do Exile or Pact create moments worth keeping?
 10. Do you want to play again?
+
+### The Dominion clarity questions
+
+11. **Did you understand the objective of Dominion before your first
+    command?** The briefing screen and the six-step header exist to
+    make this a yes without anyone explaining it.
+12. Did you ever have to wonder how many commands you had left, or
+    whether you could act again?
+13. When a command was spent as a pass, was it clear that a command had
+    been spent?
+14. Did the game end with a definite conclusion?
+15. **Entering Dominion behind, did you feel excited about turning it
+    around, or did you feel it was already decided?** Start games
+    deliberately at 7–5, 8–4, 9–3 and 10–2 and answer this for each.
+    This matters more than any reversal percentage.
+
+Deliberately *not* changed yet: three commands each. More commands
+might help comebacks, but they would also raise ownership volatility
+and make Convergence matter less. Clarity first, so confusion can be
+told apart from dissatisfaction with the rules.

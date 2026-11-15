@@ -1095,3 +1095,142 @@ button:disabled{opacity:.4;cursor:default}
   .bigcard{max-height:92dvh}
   .bigcard .bc-art{height:84px}
 }
+
+/* =====================================================================
+   PHASE II, MADE LEGIBLE
+
+   Dominion is six commands long, the order is fixed, and the objective
+   never changes — and until now none of that was on screen. The phase
+   announced itself by recolouring one line in the left rail, the
+   command count lived in a parenthesis, a pass vanished in 340ms, and
+   the game ended by a word in a banner changing to "Finished".
+
+   So: the whole phase is drawn at once as a six-step track, the
+   objective is restated in the header rather than only in the
+   briefing, and both boundaries — the start of the phase and the end
+   of the game — are events you have to acknowledge.
+   ================================================================== */
+.domheader{width:100%;padding:9px 12px;border-radius:9px;
+  background:linear-gradient(180deg,#2a1d08 0%,#1b1710 100%);
+  border:1px solid #5a4418}
+.domheader.final{border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,216,74,.22)}
+.domheader.done{background:var(--panel);border-color:var(--line)}
+
+.dh-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dh-phase{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold)}
+.dh-count{font-size:12px;color:#e8dcb6}
+.dh-turn{font-size:12px;font-weight:700;padding:1px 8px;border-radius:99px}
+.dh-turn.p0{color:#bcd9ff;box-shadow:0 0 0 1px var(--p1)}
+.dh-turn.p1{color:#ffc6ae;box-shadow:0 0 0 1px var(--p2)}
+/* the last command of the game says so */
+.dh-final{margin-left:auto;font-size:10.5px;font-weight:800;
+  letter-spacing:.14em;text-transform:uppercase;color:#1a1403;
+  background:var(--gold);padding:2px 8px;border-radius:99px}
+
+/* the track: six steps, always all six, so "can I act again?" is not a
+   question the player has to hold an answer to */
+.dh-track,.ct-track{list-style:none;display:grid;
+  grid-template-columns:repeat(6,1fr);gap:4px;margin:7px 0 6px;padding:0}
+.dh-step{display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:4px 2px;border-radius:6px;background:#15171f;
+  border:1px solid var(--line)}
+.dh-step .dh-n{font-size:9px;color:var(--muted);line-height:1}
+.dh-step .dh-who{font-size:11px;font-weight:700;line-height:1.1}
+.dh-step .dh-took{font-size:10px;line-height:1.1;color:var(--muted)}
+.dh-step.p0 .dh-who{color:#8fc0ff}
+.dh-step.p1 .dh-who{color:#ffab87}
+/* spent, being spent, not yet */
+.dh-step.spent{background:#1b2030;border-color:#39425c}
+.dh-step.spent .dh-took{color:#9dffcf;font-weight:700}
+.dh-step.now{background:#3a2a08;border-color:var(--gold);
+  box-shadow:0 0 10px rgba(255,216,74,.3)}
+.dh-step.now .dh-took{color:var(--gold)}
+.dh-step.todo{opacity:.5}
+
+.dh-bottom{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;
+  font-size:11px;color:var(--muted)}
+.dh-left b{font-weight:700}
+.p1t{color:var(--p1)} .p2t{color:var(--p2)}
+/* the objective, in the header and not only in the briefing: a line
+   dismissed four commands ago is not an answer to "what am I doing" */
+.dh-win{margin-left:auto;color:#e8dcb6;font-size:11px}
+
+/* a pass is a spent command, announced and held long enough to read */
+.passnote{width:100%;margin:0;padding:7px 11px;border-radius:7px;
+  font-size:12px;background:#2a1d08;border:1px solid #5a4418;
+  color:#e8dcb6}
+.passnote b{color:var(--gold)}
+
+/* ---- the two boundaries ------------------------------------------- */
+.curtain{position:fixed;inset:0;z-index:80;display:grid;
+  place-items:center;padding:16px;
+  background:rgba(6,8,12,.86);backdrop-filter:blur(3px)}
+.curtaincard{width:min(560px,100%);max-height:92dvh;overflow-y:auto;
+  padding:20px 22px calc(20px + env(safe-area-inset-bottom));
+  border-radius:14px;background:#13151d;
+  border:1px solid var(--gold);box-shadow:0 24px 70px rgba(0,0,0,.7)}
+.ct-kicker{margin:0;font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted)}
+.ct-title{margin:4px 0 10px;font-size:25px;letter-spacing:.06em;
+  text-transform:none;color:var(--gold)}
+.ct-lede{margin:0 0 12px;font-size:13.5px;line-height:1.5}
+.ct-lede b{color:#fff}
+
+.ct-standing{display:flex;align-items:center;justify-content:center;
+  gap:16px;margin:12px 0;padding:11px;border-radius:9px;
+  background:#0e1016;border:1px solid var(--line)}
+.ct-score{display:flex;flex-direction:column;align-items:center}
+.ct-score b{font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.ct-score em{font-style:normal;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-top:2px}
+.ct-score.p1 b{color:var(--p1)} .ct-score.p2 b{color:var(--p2)}
+.ct-score.lead b{text-shadow:0 0 16px currentColor}
+.ct-vs{font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted)}
+.ct-standing.big .ct-score b{font-size:52px}
+
+.ct-math{margin:0 0 12px;padding:9px 11px;border-radius:7px;
+  font-size:12.5px;line-height:1.5;background:#16253a;
+  border:1px solid var(--p1d)}
+.ct-math b{color:#bcd9ff}
+.ct-math.none{background:#2a1212;border-color:#5c2c1d;color:#ffc6ae}
+.ct-track{margin:12px 0 16px}
+.ct-track .dh-step{opacity:.75}
+
+.ct-summary{list-style:none;margin:12px 0 4px;padding:0;
+  display:grid;gap:3px}
+.ct-summary li{display:flex;gap:8px;align-items:baseline;
+  font-size:12px;padding:4px 7px;border-radius:5px;background:#15171f}
+.ct-summary li.p0{box-shadow:inset 2px 0 0 var(--p1)}
+.ct-summary li.p1{box-shadow:inset 2px 0 0 var(--p2)}
+.ct-summary .dh-who{min-width:26px}
+.ct-summary .cs-sum{color:var(--muted)}
+.ct-foot{margin:6px 0 0;font-size:11px;color:var(--muted)}
+
+.ct-buttons{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+.ct-go{font-size:14px;font-weight:700;letter-spacing:.06em;
+  padding:11px 18px;min-height:44px;border-radius:8px;
+  background:var(--gold);color:#17120a;border:0;cursor:pointer}
+.ct-go:hover{background:#ffe470;border-color:transparent}
+
+.curtaincard.result.w0{border-color:var(--p1)}
+.curtaincard.result.w1{border-color:var(--p2)}
+.curtaincard.result.w0 .ct-title{color:var(--p1)}
+.curtaincard.result.w1 .ct-title{color:var(--p2)}
+.curtaincard.result.w-1 .ct-title{color:var(--text)}
+
+@media (max-width: 900px), (hover: none) and (max-width: 1100px) {
+  /* the track keeps six columns -- the point is seeing the whole phase
+     at once -- so the labels get smaller instead of wrapping */
+  .dh-phase{font-size:11px}
+  .dh-win{margin-left:0;flex-basis:100%}
+  .dh-final{margin-left:0}
+  .dh-step{padding:3px 0}
+  .dh-step .dh-who{font-size:10px}
+  .dh-step .dh-took{font-size:9px}
+  .ct-title{font-size:21px}
+  .ct-standing.big .ct-score b{font-size:40px}
+  .domheader{padding:7px 9px}
+}
