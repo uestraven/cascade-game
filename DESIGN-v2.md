@@ -69,22 +69,56 @@ character has.
 
 Measured directly, with the current capture rule:
 
+**Corrected after implementation.** An earlier draft of this section
+estimated Phase II at ~7.7 captures and concluded the two-phase game cut
+churn by 15%. That estimate measured a bare attack with no abilities,
+which is not the proposal. With the four abilities firing in Phase II —
+Prism alone makes a capture unconditional, and Relay and Exchange let you
+choose the attacker — the real figures are much worse:
+
 | | captures | per action |
 |---|---|---|
-| Phase I (9 placements, direct only, no abilities) | **8.05** | 0.89 |
-| Phase II (6 commands, best available each time) | **~7.7** | 1.28 |
-| **Two-phase total** | **~15.7** | |
+| Phase I (9 placements, direct only, no abilities) | **9.4** | 1.04 |
+| Phase II (6 commands, as proposed) | **20.0** | **3.34** |
+| **Two-phase total** | **29.4** | |
 | v1 for comparison | 18.43 | 2.05 |
 
-**That is a 15% reduction in total churn, not a structural fix.** The
-nine-cell board still turns over about 1.7 times. Per *action* the
-proposal is much calmer — 1.28 against 2.05, and 16.6% of command
-positions offer nothing against 11.6% of placements — so the moment-to-
-moment calculation load genuinely drops. But the position you spend
-Phase I building is still largely gone by the end of Phase II.
+**The two-phase game as proposed is 60% churnier than v1, not calmer.**
+A command captures 3.34 cards on average against an opponent holding
+four or five; 47.8% of commands take four at once, and only 1.4% take
+nothing. Phase II alone turns the board over more than twice.
 
-The two phases deliver the *narrative* of build-then-exploit. On this
-evidence they do not by themselves deliver the *durability*.
+Two consequences follow, and both are fatal as the rules stand.
+
+**The closing command decides the game.** Holding the command count at
+six so each player gets three, and flipping only who closes:
+
+| Command size | Phase II | P1 closes | P2 closes | spread |
+|---|---|---|---|---|
+| all edges, follow-up always (as proposed) | 20.0 | 66.0% | 44.6% | **21.4** |
+| all edges, follow-up only on a multiple | 15.9 | 63.6% | 43.5% | 20.1 |
+| one edge, follow-up always | 15.0 | 91.2% | 21.6% | **69.6** |
+| one edge, no follow-up | 6.0 | 90.9% | 90.8% | **0.1** |
+
+**Deployment barely matters.** At the proposed settings the Phase I
+leader is still ahead at the end only 62.7% of the time, and a player who
+finishes deployment *one card behind* still wins **54.3%**. The position
+you spent nine placements building has almost no bearing on the result —
+which is the opposite of the proposal's purpose.
+
+### The two failure modes are in tension
+
+Shrinking a command fixes the closing-command problem completely — "one
+edge, no follow-up" has a spread of 0.1, so who closes stops mattering
+at all. But it replaces that failure with the one v1 already had: with
+Phase II too weak to overturn anything, the extra placement decides
+everything. On nine cells P1 places five and P2 four, so P1 wins 90.9%
+and the deployment leader wins 99.9% of the time.
+
+So Phase II has to be strong enough to overturn a one-card deployment
+lead and weak enough that no single command can steal the board. Both
+dials exist — command size and board parity — and the next section
+records where they land.
 
 ### The mechanism is the capture condition, not the turn structure
 
