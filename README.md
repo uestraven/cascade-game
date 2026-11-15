@@ -111,7 +111,18 @@ direct and cascade captures swapped, which is how that practice started.
 
 ---
 
-## State of the design
+## v1 is frozen; v2 is a redesign
+
+The `v1` tag is a complete, playable game. Work continues on the **`v2`**
+branch, where the direction changes: a deployment phase that fills the
+board, then a command phase that exploits it.
+
+The reason is in the numbers below. v1 is mechanically busy without being
+strategically rewarding — 88% of placements capture something, a nine-card
+board changes hands 18 times, and defending a card measured worth nothing.
+See **[DESIGN-v2.md](DESIGN-v2.md)**.
+
+## State of v1
 
 Settled: the capture rule, resolution order (traversal order provably
 cannot matter at a two-wave cap on a bipartite grid), first-player
