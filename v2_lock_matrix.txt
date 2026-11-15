@@ -1,0 +1,40 @@
+==============================================================================================
+LOCK: a card taken in Phase II cannot be taken again that phase
+==============================================================================================
+  What good looks like: spread small (the closing command is not
+  decisive), lead-kept well under 100% (Phase II can overturn a
+  deployment lead), P1 near 50%, few draws.
+
+  3x3, 9 placements, 6 commands
+    command size                lock  ph II  P1 last  P2 last  spread  draws  lead kept  overturned
+    all edges + follow-up      False   20.3    66.6%    44.4%   22.1   0.0%      63.1%       36.9%
+    all edges + follow-up       True    5.9     4.0%    49.9%   45.9   0.0%       8.0%       92.0%
+    all edges, no single f/u   False   16.0    64.9%    43.9%   21.0   0.0%      67.4%       32.6%
+    all edges, no single f/u    True    5.9     3.7%    48.6%   44.9   0.0%      11.1%       88.9%
+    one edge + follow-up       False   15.0    91.6%    21.9%   69.7   0.0%      87.1%       12.9%
+    one edge + follow-up        True    7.0     8.1%    30.0%   21.9   0.0%      16.1%       83.9%
+    one edge, no follow-up     False    6.0    90.9%    91.0%    0.1   0.0%      99.9%        0.1%
+    one edge, no follow-up      True    5.3    64.1%    81.0%   16.9   0.0%      72.9%       27.1%
+
+  3x4, 11 placements, 6 commands
+    command size                lock  ph II  P1 last  P2 last  spread  draws  lead kept  overturned
+    all edges + follow-up      False   22.0    72.9%    58.0%   14.9   0.0%      75.6%       24.4%
+    all edges + follow-up       True    7.8     4.3%    59.4%   55.1   0.0%      15.0%       85.0%
+    all edges, no single f/u   False   18.8    69.9%    68.7%    1.1   0.0%      68.0%       32.0%
+    all edges, no single f/u    True    7.8     6.7%    65.1%   58.4   0.0%      19.3%       80.7%
+    one edge + follow-up       False   15.4    82.9%    34.1%   48.7   0.0%      77.6%       22.4%
+    one edge + follow-up        True    8.2    15.0%    42.0%   27.0   0.0%      25.3%       74.7%
+    one edge, no follow-up     False    6.0    79.4%    79.4%    0.0   0.0%      99.9%        0.1%
+    one edge, no follow-up      True    5.7    72.4%    78.9%    6.4   0.0%      89.6%       10.4%
+
+  4x4, 15 placements, 10 commands
+    command size                lock  ph II  P1 last  P2 last  spread  draws  lead kept  overturned
+    all edges + follow-up      False   41.4    77.9%    42.9%   35.0   0.0%      72.6%       27.4%
+    all edges + follow-up       True   12.1    20.9%    58.6%   37.7   0.0%      21.0%       79.0%
+    all edges, no single f/u   False   37.1    68.9%    45.9%   23.0   0.0%      64.0%       36.0%
+    all edges, no single f/u    True   11.9    18.6%    63.4%   44.9   0.0%      26.3%       73.7%
+    one edge + follow-up       False   26.0    79.9%    35.6%   44.3   0.0%      72.9%       27.1%
+    one edge + follow-up        True   12.6    26.3%    53.9%   27.6   0.0%      24.6%       75.4%
+    one edge, no follow-up     False   10.0    71.1%    73.4%    2.3   0.0%     100.0%        0.0%
+    one edge, no follow-up      True    9.3    66.4%    71.6%    5.1   0.0%      86.4%       13.6%
+

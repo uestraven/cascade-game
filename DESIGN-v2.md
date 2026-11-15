@@ -172,6 +172,44 @@ and would give the permanent authored configurations in §2 real teeth.
 
 ---
 
+### Results: lock is rejected, and one configuration works
+
+**The lock rule flips the problem instead of fixing it.** Making a
+Phase II capture permanent does give the phase weight — it overturns the
+deployment result 73–92% of the time — but a locked capture is a
+permanent land grab, so the advantage moves from the *last* mover to the
+*first*. Spread goes to 37–58 points in most locked configurations. Full
+matrix in `v2_lock_matrix.txt`.
+
+**Odd command counts are catastrophic.** With an odd count one player
+gets an extra command, and that one command is worth 75–86 points of win
+rate. Commands must be split evenly; this is not a tuning preference.
+
+**What works, measured over 900 games per cell:** 3×4 board, 11
+placements (so one cell stays empty and a draw is impossible), an even
+command count, a command that attacks all edges, a follow-up allowed
+only when the attack captured more than one card, and no lock.
+
+| | 6 commands | 8 commands |
+|---|---|---|
+| closing-command spread | **1.6** | 2.7 |
+| Phase II overturns deployment | **32.7%** | 37.1% |
+| deployment leader still wins | 67.3% | 62.9% |
+| draws | 0.0% | 0.0% |
+| Phase II captures | 18.8 | — |
+
+This is the profile the proposal was aiming for. Deployment matters
+without being destiny, and no single command can steal the board.
+
+**The remaining fault is a seat bias, not a structural one.** P1 wins
+~68%, because 11 placements hands P1 six cards against P2's five with
+nothing given back. Phase II order cannot compensate — a spread of 1.6
+is precisely the statement that turn order inside Phase II no longer
+matters, which is what makes the configuration good and also removes it
+as a dial. Compensation has to come from deployment: a smaller hand for
+P1 (fewer choices rather than fewer cards), P2 deploying first, or an
+even placement count with a different anti-draw rule. Untested.
+
 ## 4. Test plan
 
 | Prototype | Rules | Question |
