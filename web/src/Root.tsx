@@ -16,13 +16,24 @@ export type Ruleset = 'v1' | 'v2';
  * The choice persists, so a playtest session is not reset by a reload,
  * and it is in the URL hash so a particular version can be linked.
  */
+/**
+ * v2 is the default on this branch.
+ *
+ * It was v1, which meant a fresh visit to the v2 branch served v1 and
+ * the mount effect then pinned '#v1' into the URL so it stayed that way.
+ * Two playtest sessions were spent on v1 believing they were v2. The
+ * branch under test is the one that should load.
+ */
+const DEFAULT: Ruleset = 'v2';
+
 const read = (): Ruleset => {
-  if (typeof window === 'undefined') return 'v1';
+  if (typeof window === 'undefined') return DEFAULT;
   if (window.location.hash === '#v2') return 'v2';
   if (window.location.hash === '#v1') return 'v1';
   try {
-    return localStorage.getItem('cascade.ruleset') === 'v2' ? 'v2' : 'v1';
-  } catch { return 'v1'; }
+    const saved = localStorage.getItem('cascade.ruleset');
+    return saved === 'v1' || saved === 'v2' ? saved : DEFAULT;
+  } catch { return DEFAULT; }
 };
 
 export function Root() {

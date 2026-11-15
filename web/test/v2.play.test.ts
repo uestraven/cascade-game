@@ -190,6 +190,14 @@ describe('a side with nothing on the board', () => {
 });
 
 describe('both rulesets are reachable from the interface', () => {
+  it('a fresh visit gets v2, because that is what is under test', () => {
+    // this defaulted to v1 and cost two playtest sessions: the branch
+    // served v1 and pinned #v1 into the URL, so v2 was never seen
+    const html = renderToStaticMarkup(createElement(Root));
+    expect(html).toContain('The Convergence');
+    expect(html).toContain('deployment &amp; command');
+  });
+
   it('the switch offers v1 and v2', () => {
     const html = renderToStaticMarkup(createElement(Root));
     expect(html).toContain('v1 — one phase');
