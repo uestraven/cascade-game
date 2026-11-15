@@ -262,6 +262,81 @@ the time, and a whole game runs to about 30 captures on twelve cells —
 2.6 per cell against v1's 2.0. The phase split has not made the game
 calmer per card, which was the complaint that started v2.
 
+## 3c. The finding that should come before a roster
+
+Three questions were raised about compounding advantage, character
+identity and Convergence passives. The measurements answer the first and
+reframe the other two.
+
+### There is no compounding ability advantage
+
+6,000 games, variant C. "Portfolio" is how many *distinct* abilities a
+player can choose between across the cards they hold.
+
+| held level at 6 cards each | P1 wins | | held level at portfolio diff 0 | P1 wins |
+|---|---|---|---|---|
+| portfolio −1 | 52.1% | | 4 cards | 32.8% |
+| portfolio 0 | 52.1% | | 5 cards | 49.6% |
+| portfolio +1 | 54.1% | | 6 cards | 52.1% |
+| | | | 7 cards | 62.3% |
+
+Control for ownership and the portfolio is worth **2 points**. Control
+for the portfolio and ownership is worth **30**. The apparent portfolio
+effect when ownership is ignored (31.9% at −2 against 56.9% at +1) is
+confounding: more cards simply means more distinct abilities.
+
+**So the advantage is position, not portfolio, and no catch-up bonus or
+ability-count compensation is warranted.** More cards give more options,
+and the options are worth almost nothing beyond the cards themselves.
+
+Nor does one character dominate: across three commands a player spends
+all three on the same card 10.1% of the time and two on the same card
+19.3%. An exhaustion rule is not needed on this evidence, which also
+matches the terminology point — a commanded card is never spent, so
+there is no ready/spent state to display.
+
+### Abilities barely affect Dominion at all
+
+The control test is the one that matters. Run Dominion, then run it with
+every ability switched off:
+
+| command | abilities | P1 | P2 | draw | Phase II captures | reversed |
+|---|---|---|---|---|---|---|
+| all edges (shipped) | on | 47.1% | 43.2% | 9.6% | 16.96 | 44.1% |
+| all edges | **off** | 44.7% | 46.2% | 9.1% | 15.44 | 45.9% |
+| one edge | on | 9.2% | 61.1% | 29.7% | 6.00 | 0.0% |
+| one edge | **off** | 9.4% | 60.3% | 30.3% | 6.00 | 0.0% |
+
+Removing every ability costs **1.5 captures out of 17** and moves the
+reversal rate by **1.7 points**. The phase built around abilities is not
+meaningfully about them; it is about the matching geometry of a full
+board.
+
+And there is no edge count that fixes it. With one edge a command takes
+*exactly* one card — 6 commands give 6.00 captures, 12 give 11.97 — so
+an ability can never add anything, reversal is 0.0% at every count, and
+the deployment result simply stands. With all edges the base attack
+takes three or four and an ability is noise on top.
+
+**The cause is that all four abilities only modify how you attack.**
+Prism adds one capture, Relay and Exchange choose the attacker, Pivot
+turns a card first. Each is "attack, but differently", so its value is
+bounded by the attack's. Swamped when the attack is big, capped when it
+is small.
+
+v1 already measured what escapes this. The two strongest abilities in
+the whole v1 set were **Mend (86.3%)** and **Anchor (70.5%)**, and
+neither changes a capture count at all — both only move cards. Pure
+repositioning beat every attack modifier.
+
+**That is the thing to fix before authoring twelve characters.** A named
+roster and Convergence passives are good ideas, and the Ward-versus-
+conditional-Veil comparison is the right experiment, but abilities that
+protect, move or deny are a different *shape* from the four in play, and
+giving characters richer identities will not rescue a phase whose
+outcome is 98% independent of its abilities. Fix the shape first, then
+author characters onto something that works.
+
 ## 4. Test plan
 
 | Prototype | Rules | Question |

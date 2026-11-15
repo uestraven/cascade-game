@@ -45,6 +45,7 @@ export function V2App() {
   const [hover, setHover] = useState<number | null>(null);
   const [cmdCell, setCmdCell] = useState<number | null>(null);
   const [pickHover, setPickHover] = useState<number | null>(null);
+  const [showMine, setShowMine] = useState(false);
   const [flash, setFlash] = useState(0);
   const [mute, setMute] = useState(false);
   const botRng = useRef(mulberry32(seed ^ 0x9e3779b9));
@@ -267,6 +268,20 @@ export function V2App() {
 
         <div className="stage">
           <div className="previewkey">
+            {phase === 'command' && (
+              <>
+                <button className={`tinybtn${showMine ? ' on' : ''}`}
+                        onMouseDown={() => setShowMine(true)}
+                        onMouseUp={() => setShowMine(false)}
+                        onMouseLeave={() => setShowMine(false)}
+                        onTouchStart={() => setShowMine(true)}
+                        onTouchEnd={() => setShowMine(false)}>
+                  hold: show my cards
+                </button>
+                <span><i className="k-cmd" />yours, commandable</span>
+                <span><i className="k-gold" />selected</span>
+              </>
+            )}
             {phase === 'deploy'
               ? <span><i className="k-direct" />this placement takes it</span>
               : <>
@@ -275,7 +290,7 @@ export function V2App() {
                 </>}
           </div>
 
-          <div className="board"
+          <div className={`board${showMine ? ' mine' : ''}`}
                style={{
                  gridTemplateColumns:
                    `repeat(${game.shape.cols}, var(--cell))`,
@@ -298,8 +313,13 @@ export function V2App() {
               return (
                 <div key={cell}
                      className={`cell${placeable ? ' placeable' : ''}`
+                       // layer 1: who holds it
+                       + `${owner >= 0 ? ` own${owner}` : ''}`
+                       + `${owner === active ? ' own-active' : ''}`
+                       // layer 2: may I act with it
                        + `${commandable ? ' commandable' : ''}`
-                       + `${cmdCell === cell ? ' target' : ''}${mark}`
+                       // layer 3: have I chosen it -- gold, only here
+                       + `${cmdCell === cell ? ' chosen' : ''}${mark}`
                        + `${hover === cell && placeable ? ' hovering' : ''}`}
                      onMouseEnter={() => setHover(cell)}
                      onMouseLeave={() =>
@@ -312,12 +332,28 @@ export function V2App() {
                          setCmdCell(cell); setPickHover(null);
                        }
                      }}>
-                  {c
-                    ? <CardFace sigils={c} owner={owner}
+                  {c ? (
+                    <>
+                      <CardFace sigils={c} owner={owner}
                                 ability={game.abilityAt[cell] ?? undefined}
                                 flash={((flash >>> cell) & 1) === 1}
                                 flipping={((flash >>> cell) & 1) === 1} />
-                    : <span className="cellno">{cell}</span>}
+                      {owner >= 0 && (
+                        <span className="crest">P{owner + 1}</span>
+                      )}
+                      {/* the mark appears only on a card you may
+                          command, so its presence is the answer */}
+                      {commandable && game.abilityAt[cell] && (
+                        <span className="cmdmark"
+                              title={`${game.abilityAt[cell]} — `
+                                + 'click to command'}>
+                          <img alt=""
+                               src={`/art/abilities/ability-`
+                                 + `${game.abilityAt[cell]}.svg`} />
+                        </span>
+                      )}
+                    </>
+                  ) : <span className="cellno">{cell}</span>}
                 </div>
               );
             })}

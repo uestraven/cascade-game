@@ -354,8 +354,64 @@ button:disabled{opacity:.4;cursor:default}
 .scorerow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
   margin:8px 0}
 
-/* a card you may command reads as actionable, not merely owned */
-.cell.commandable{cursor:pointer;border-style:solid;
-  border-color:var(--gold)}
-.cell.commandable:hover{box-shadow:inset 0 0 0 2px var(--gold)}
+/* ---------------------------------------------------------------------
+   Three layers on one card, kept apart.
+
+   A Dominion card has to say four things at once: what it is, who holds
+   it, whether you may command it, and whether you have selected it.
+   Until now ownership was the frame colour and BOTH commandable and
+   selected were gold, so the two states were pixel-identical and the
+   artwork was competing with all of it.
+
+   Layer 1 ownership      a thick cell outline plus a corner crest
+   Layer 2 commandable     the ability's own mark, friendly cards only
+   Layer 3 selected        gold, and gold is now reserved for it
+
+   Ownership keeps the established blue and orange rather than the
+   proposed teal and rose: the frame SVGs have #4a9eff and #ff7043 baked
+   into them, and a teal outline around a blue frame reads as a mistake
+   rather than a distinction.
+   ------------------------------------------------------------------ */
+.cell.own0,.cell.own1{border-style:solid;border-width:3px}
+.cell.own0{border-color:var(--p1);background:#0e1a28}
+.cell.own1{border-color:var(--p2);background:#241410}
+
+/* the crest: small, high contrast, readable across a table */
+.crest{position:absolute;top:3px;left:3px;z-index:3;
+  font-size:9px;font-weight:700;letter-spacing:.04em;
+  padding:1px 4px;border-radius:4px;line-height:1.3;
+  background:rgba(6,8,12,.82)}
+.cell.own0 .crest{color:var(--p1);box-shadow:0 0 0 1px var(--p1)}
+.cell.own1 .crest{color:var(--p2);box-shadow:0 0 0 1px var(--p2)}
+
+/* commandable: the ability mark, lit. Enemy cards never show one, so
+   its presence alone answers "can I act with this?" */
+.cmdmark{position:absolute;bottom:3px;right:3px;z-index:3;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(6,8,12,.72);display:grid;place-items:center;
+  box-shadow:0 0 0 1px rgba(255,216,74,.5),0 0 8px rgba(255,216,74,.25)}
+.cmdmark img{width:18px;height:18px;
+  filter:brightness(0) saturate(100%) invert(84%) sepia(52%)
+         saturate(1200%) hue-rotate(345deg) brightness(104%)}
+.cell.commandable{cursor:pointer}
+.cell.commandable:hover .cmdmark{box-shadow:0 0 0 1px var(--gold),
+  0 0 12px rgba(255,216,74,.6)}
+
+/* selected: gold, and only ever this */
+.cell.chosen{box-shadow:0 0 0 3px var(--gold),0 0 18px rgba(255,216,74,.4);
+  border-color:var(--gold) !important;z-index:2}
+
+/* a temporary dim of enemy art, so ownership can be read at a glance
+   without permanently covering the illustrations */
+.board.mine .cell:not(.own-active) .pcard{opacity:.4;filter:saturate(.5)}
+.board.mine .cell.own-active{box-shadow:0 0 0 2px var(--p1)}
+
 .rotbtn{font-size:11px;color:var(--muted)}
+
+/* legend swatches for the Dominion layers, and the hold-to-reveal */
+.previewkey .k-cmd{background:rgba(6,8,12,.72);
+  box-shadow:0 0 0 1px rgba(255,216,74,.5)}
+.previewkey .k-gold{background:var(--gold)}
+.tinybtn{font-size:10px;padding:2px 6px;letter-spacing:.06em;
+  text-transform:uppercase}
+.tinybtn.on{border-color:var(--p1);color:var(--p1)}
