@@ -2,7 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- viewport-fit=cover so env(safe-area-inset-*) is non-zero: the
+         bottom sheet and the hand strip sit on the bottom edge, which
+         is where a notched phone's home indicator lives. -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0d0f15" />
     <title>cascade</title>
   </head>
   <body>

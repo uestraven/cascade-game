@@ -21,7 +21,13 @@ body{margin:0;background:var(--bg);color:var(--text);
 .app{display:grid;
   grid-template-columns:var(--railL) minmax(0,1fr) var(--railR);
   gap:var(--gap);
-  height:100vh;max-height:100vh;padding:var(--gap);
+  /* dvh, with vh beneath it for anything that lacks it: on a phone the
+     URL bar is part of 100vh, so a 100vh shell is taller than the
+     visible viewport and the bottom of it -- the hand -- sits under the
+     browser chrome until you scroll. */
+  height:100vh;max-height:100vh;
+  height:100dvh;max-height:100dvh;
+  padding:var(--gap);
   align-items:start}
 .rail{height:100%;overflow-y:auto;overflow-x:hidden;
   padding-right:4px;scrollbar-width:thin}
@@ -317,12 +323,20 @@ button:disabled{opacity:.4;cursor:default}
 /* Below this width three columns stop being honest about the space, so
    stack and let the page scroll rather than squeezing the board. */
 @media (max-width: 1100px) {
-  .app{grid-template-columns:1fr;height:auto;max-height:none}
+  /* The second selector is not redundant. `.rulesetbar + .page .app`
+     further down sets height:calc(100vh - 33px) at three classes, and
+     a media query contributes no specificity, so a one-class
+     height:auto here lost to it and the stacked column stayed pinned
+     to a single screen's height. */
+  .app,
+  .rulesetbar + .page .app{
+    grid-template-columns:1fr;height:auto;max-height:none}
   .rail{height:auto;overflow:visible;border:0;padding:0}
   .rail.right{border-left:0;padding-left:0}
   .rail.left{border-right:0}
   .stage{height:auto}
-  .board{--boardW:calc(100vw - 3*var(--gap));--boardH:calc(100vh - 260px)}
+  .board{--boardW:calc(100vw - 3*var(--gap));
+         --boardH:calc(100dvh - 260px)}
 }
 
 /* ---------------------------------------------------------------------
@@ -862,3 +876,222 @@ button:disabled{opacity:.4;cursor:default}
   line-height:1}
 .surv-trait{color:var(--gold)}
 .surv-held{color:#9dffcf}
+
+/* =====================================================================
+   MOBILE — phones, and small tablets held in portrait.
+
+   Everything above assumes a pointer that hovers and room for three
+   columns. A phone has neither, and two things were outright broken
+   rather than merely cramped:
+
+     1  the shell kept `height: calc(100vh - 33px)` even when stacked,
+        because `.rulesetbar + .page .app` is three classes and the
+        stacking rule was one -- a media query adds no specificity of
+        its own. So the single column was pinned to one screen's height
+        and everything after the first rail spilled out of it.
+
+     2  the board went on claiming `100vh - 260px` of HEIGHT while its
+        width fell to a quarter of 390px. A v2.3 cell derives width and
+        height independently, so that came out 81 x 187: a 1:2.3 strip,
+        not a card.
+
+   And one thing was simply absent. Every preview added in v2.3 -- the
+   per-cell survey, the full card, the command's gain -- was reached by
+   hovering, and a touch screen cannot hover. That part is fixed in the
+   app rather than here; see useCoarsePointer in App23.
+
+   A constraint worth stating plainly rather than hiding: a 4x3 grid on
+   a 390px screen gives ~85px cells. Ability NAMES fit at 9px, the
+   one-line elaborations do not, so the elaborations are dropped here
+   and the strip under the board carries the full text instead.
+
+   The condition is width OR hoverlessness, not width alone. A phone on
+   its side is 844px wide and still has no cursor, so a width-only
+   query left it with the desktop ordering, no card strip, and a bottom
+   sheet whose own positioning rules had not loaded. 1100px bounds the
+   hover clause because that is where the three-column layout gives up
+   anyway.
+   ================================================================== */
+@media (max-width: 900px), (hover: none) and (max-width: 1100px) {
+  :root{--gap:10px}
+
+  /* 1 · the shell really stacks. The second selector repeats the
+     ruleset-bar rule at equal specificity so it can be beaten. */
+  .app,
+  .rulesetbar + .page .app{
+    grid-template-columns:1fr;
+    height:auto;max-height:none;
+    gap:12px;align-items:stretch;
+    padding:var(--gap) max(var(--gap), env(safe-area-inset-left))
+            calc(var(--gap) + env(safe-area-inset-bottom))
+            max(var(--gap), env(safe-area-inset-right))}
+  .rail{height:auto;overflow:visible;border:0;padding:0}
+  .rail.right{border-left:0;padding-left:0}
+  .rail.left{border-right:0}
+  .stage{height:auto;gap:10px;justify-items:stretch}
+
+  /* 2 · play first.
+     Desktop reads left rail, board, right rail. On a phone that order
+     put roughly six hundred pixels of title, controls, stack and event
+     log above the board, so a session began by scrolling past the
+     chrome to find the game. The board goes first; the decisions the
+     rules are waiting on come second, because they are the only other
+     thing that is urgent; reference and history go last. */
+  .stage{order:2}
+  .rail.right{order:3}
+  .rail.left{order:4}
+
+  /* the compact status strip: phase, turn and score, pinned so they are
+     readable without scrolling back up */
+  .mobilestatus{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    position:sticky;top:0;z-index:20;padding:7px var(--gap);
+    background:rgba(13,15,21,.96);border-bottom:1px solid var(--line);
+    backdrop-filter:blur(6px)}
+  .mobilestatus .ms-phase{font-size:11px;font-weight:700;
+    letter-spacing:.07em;text-transform:uppercase}
+  .mobilestatus .ms-phase.i{color:#6fd3a8}
+  .mobilestatus .ms-phase.ii{color:var(--gold)}
+  .mobilestatus .ms-phase.over{color:var(--muted)}
+  .mobilestatus .ms-turn{font-size:11px;color:var(--muted)}
+  .mobilestatus .chip{font-size:12px}
+  .mobilestatus .ms-right{margin-left:auto;display:flex;gap:6px}
+
+  /* 3 · the board keeps a card-shaped cell.
+     --cellh is capped against --cellw so height can no longer run away
+     from a narrow column; --cell (the type scale) still takes the
+     smaller of the two, so nothing overflows vertically. */
+  .board{--boardW:calc(100vw - 2*var(--gap));
+         --boardH:calc(100dvh - 320px)}
+  .board.v23{
+    --cellh:min(calc((100dvh - 330px - var(--rows)*8px) / var(--rows)),
+                calc(var(--cellw) * 1.5));
+  }
+  .board{justify-self:center}
+
+  /* names stay, elaborations go: 9px fits a name at this cell size and
+     does not fit a sentence */
+  .bc-body em{display:none}
+  .bc-row{padding:calc(var(--cell)*.03) calc(var(--cell)*.03)}
+  .cellno{font-size:10px}
+
+  /* 4 · the hand scrolls sideways with snap, and the cards are big
+     enough to hit. 44px is the minimum comfortable touch target. */
+  .stage .hand{justify-content:flex-start;gap:8px;
+    padding:2px 2px 8px;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch}
+  .stage .hand .slot{flex:none;scroll-snap-align:center;
+    min-width:88px;min-height:44px}
+  .handslots span{font-size:10px;max-width:84px}
+  .slot small{font-size:10px}
+
+  /* 5 · controls big enough for a thumb */
+  select,button{font-size:14px;padding:7px 10px;min-height:40px}
+  .tinybtn{font-size:11px;min-height:30px;padding:4px 8px}
+  .picker li{padding:10px 9px;min-height:44px}
+  .previewkey{font-size:10px;gap:8px}
+
+  /* the ruleset switch wraps instead of overflowing, and loses its
+     descriptive tail, which is the least useful thing on a phone */
+  .rulesetbar{flex-wrap:wrap;padding:6px var(--gap);gap:6px}
+  .rulesetbar > span:first-child,
+  .rulesetbar .muted.small2{display:none}
+
+  h1{font-size:19px}
+  .subtitle{margin:1px 0 8px}
+  .rail .log{max-height:none}
+  .rail.right .picker ul{max-height:none}
+
+  /* 6 · the card panel becomes a sheet.
+     `.bigcard` is a 330px popover placed at the cursor. There is no
+     cursor here, and pointer-events:none made it undismissable, so on
+     touch it is anchored to the bottom edge at full width and the app
+     stops writing inline coordinates into it. */
+  .bigcard{position:fixed;left:0;right:0;bottom:0;top:auto;
+    width:auto;max-width:none;max-height:76dvh;overflow-y:auto;
+    border-radius:14px 14px 0 0;border-width:1px 0 0;
+    padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+    pointer-events:auto;z-index:60}
+  .bigcard .bc-art{height:120px}
+  .sheetclose{position:sticky;top:0;float:right;margin:-4px -4px 0 8px;
+    min-height:36px;min-width:36px;line-height:1;
+    background:#1a1d27;border-color:var(--line)}
+}
+
+/* ---------------------------------------------------------------------
+   The strip under the board: what the card in focus actually does.
+
+   On a phone the authoritative rules text lives in the right rail,
+   which is now below the board and below the pickers. That is fine for
+   reference and useless mid-decision, so the focused card -- the one
+   selected in hand, or the one tapped on the board -- states both of
+   its abilities in full here, immediately under the grid where the
+   decision is being made.
+
+   Hidden on desktop: the right rail is already in view there, and two
+   copies of the same paragraph is worse than one.
+   ------------------------------------------------------------------ */
+.cardstrip{display:none}
+@media (max-width: 900px), (hover: none) and (max-width: 1100px) {
+  .cardstrip{display:flex;gap:9px;align-items:flex-start;width:100%;
+    text-align:left;padding:8px 10px;border-radius:9px;
+    background:var(--panel);border:1px solid var(--line);
+    color:var(--text);font:inherit;cursor:pointer}
+  .cardstrip .cs-art{flex:none;width:46px;height:46px;border-radius:6px;
+    background-size:cover;background-position:center top;
+    box-shadow:0 0 0 1px var(--line)}
+  .cardstrip.p1 .cs-art{box-shadow:0 0 0 2px var(--p1)}
+  .cardstrip.p2 .cs-art{box-shadow:0 0 0 2px var(--p2)}
+  .cardstrip .cs-text{min-width:0;flex:1}
+  .cardstrip b.cs-name{display:block;font-size:12.5px;line-height:1.25}
+  .cardstrip .cs-ab{display:block;font-size:11.5px;line-height:1.35;
+    margin-top:2px}
+  .cardstrip .cs-ab.i{color:#9dffcf}
+  .cardstrip .cs-ab.ii{color:#ffe08a}
+  .cardstrip .cs-ab b{letter-spacing:.05em}
+  .cardstrip .cs-more{flex:none;align-self:center;font-size:10px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .cardstrip.empty{color:var(--muted);font-size:11.5px;display:block;
+    text-align:center;cursor:default}
+}
+
+/* a touch device gets told how the two-tap preview works, because an
+   interaction you have to discover by accident is not an interaction */
+.taphint{display:none}
+@media (max-width: 900px), (hover: none) and (max-width: 1100px) {
+  .taphint{display:block;font-size:10.5px;color:var(--muted);
+    letter-spacing:.02em;margin:0}
+  .taphint b{color:var(--gold);font-weight:600}
+}
+
+/* ---------------------------------------------------------------------
+   SHORT viewports — a phone turned sideways, mainly.
+
+   The portrait rules above cap the cell's HEIGHT against its width,
+   because on a narrow tall screen height is what runs away. Rotate the
+   phone and the failure inverts exactly: 844x390 leaves the board
+   `100dvh - 260px` = 130px for three rows, so a cell came out 198 wide
+   by 35 tall. The same card, flattened instead of stretched.
+
+   So the cap inverts too. Both variables are restated from the
+   viewport here rather than from each other — had this capped width
+   against --cellh while the portrait block capped height against
+   --cellw, a screen matching both (667x375, an SE on its side) would
+   make the pair mutually recursive, which in CSS means neither
+   resolves and the board has no size at all.
+   ------------------------------------------------------------------ */
+@media (max-height: 560px) and (max-width: 1100px) {
+  .board.v23{
+    /* 150px: the status strip, the hand, and the page padding */
+    --cellh:calc((100dvh - 150px - var(--rows)*8px) / var(--rows));
+    --cellw:min(calc((var(--boardW) - var(--cols)*8px) / var(--cols)),
+                calc(((100dvh - 150px - var(--rows)*8px) / var(--rows))
+                     * 1.35));
+  }
+  .board{--boardH:calc(100dvh - 150px)}
+  /* there is no room for a 46px thumbnail and three lines of text */
+  .cardstrip .cs-art{width:34px;height:34px}
+  .cardstrip{padding:6px 9px}
+  .taphint{display:none}
+  .bigcard{max-height:92dvh}
+  .bigcard .bc-art{height:84px}
+}

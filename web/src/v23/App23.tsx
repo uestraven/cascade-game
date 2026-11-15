@@ -18,6 +18,33 @@ import {
 type Mode = 'bot' | 'hotseat';
 const BOT_MS = 460;
 
+/**
+ * Whether this is a touch screen.
+ *
+ * Every preview in the v2.3 build was reached by hovering — the card's
+ * full rules, the per-cell survey, which enemies a command would take.
+ * A touch screen cannot hover, so on a phone none of it was reachable;
+ * worse, mobile browsers synthesise a mouseenter on tap, so the hover
+ * popover opened on top of the thing you had just tapped.
+ *
+ * Asked as a media query rather than inferred from the width, because
+ * a hybrid laptop is wide AND coarse, and a desktop window dragged
+ * narrow is neither. It starts false so the first render matches the
+ * server's and a test's.
+ */
+function useCoarsePointer() {
+  const [coarse, setCoarse] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const m = window.matchMedia('(hover: none), (pointer: coarse)');
+    const sync = () => setCoarse(m.matches);
+    sync();
+    m.addEventListener('change', sync);
+    return () => m.removeEventListener('change', sync);
+  }, []);
+  return coarse;
+}
+
 /** The bot plays the same reducer the human does. */
 function botAction(g: V23State, rng: () => number) {
   if (g.pending) {
@@ -68,6 +95,7 @@ export function V23App() {
   const [peek, setPeek] = useState<{ card: CardId; x: number; y: number }
     | null>(null);
   const botRng = useRef(mulberry32(seed ^ 0x9e3779b9));
+  const coarse = useCoarsePointer();
 
   useEffect(() => { setMute(loadMuted()); }, []);
 
@@ -202,8 +230,53 @@ export function V23App() {
   const myDecision = req
     && (mode === 'hotseat' || req.player === 0);
 
+  /**
+   * The card whose rules the strip under the board should state: the one
+   * being inspected in hand, then the one selected, then the one tapped
+   * on the board. Nothing in the hand has a hover on a phone, so this
+   * is the only place a selected card's full text appears before it is
+   * committed.
+   */
+  const focusId: CardId | null = peek?.card ?? sel
+    ?? (detailId ?? null);
+  const focusDef = focusId ? game.defs[focusId] : null;
+  const focusOwner = focusId && game.owner[focusId] !== undefined
+    ? game.owner[focusId] : -1;
+
   return (
     <div className="page">
+      {/* Phase, turn and score, pinned to the top on a phone. On
+          desktop these live in the left rail, which a phone puts below
+          the board, so whose turn it is would have meant scrolling.
+
+          Deliberately a sibling of .app rather than a child: a sticky
+          grid item is stuck inside its own grid area, which here is
+          exactly its own height, so it would never have moved. */}
+      <div className="mobilestatus">
+          <span className={`ms-phase ${game.phase === 'convergence'
+            ? 'i' : game.phase === 'dominion' ? 'ii' : 'over'}`}>
+            {game.phase === 'convergence' ? 'I · Convergence'
+              : game.phase === 'dominion' ? 'II · Dominion' : 'Finished'}
+          </span>
+          <span className="ms-turn">
+            {over ? (winner(game) === -1 ? 'a draw'
+              : `P${winner(game) + 1} wins`)
+              : req ? `P${req.player + 1} decides`
+                : `P${active + 1} to ${game.phase === 'convergence'
+                    ? 'deploy' : 'command'}`}
+          </span>
+          <span className="chip p1c">P1 {s0}</span>
+          <span className="chip p2c">
+            {mode === 'hotseat' ? 'P2' : 'bot'} {s1}
+          </span>
+          <span className="ms-right">
+            <button className="tinybtn"
+                    onClick={() => reset(randomSeed(), champions)}>
+              new
+            </button>
+          </span>
+        </div>
+
       <div className="app">
         <div className="rail left">
           <h1>cascade</h1>
@@ -362,7 +435,11 @@ export function V23App() {
                            ? ' champ' : ''}`
                        + `${flash.has(cell) ? ' flash' : ''}`
                        + `${hover === cell && placeable ? ' hovering' : ''}`}
-                     onMouseEnter={(ev) => {
+                     // a touch browser fires mouseenter on tap, which
+                     // opened the enlargement over the cell you had
+                     // just tapped. On touch the strip under the board
+                     // carries this instead.
+                     onMouseEnter={coarse ? undefined : (ev) => {
                        setHover(cell);
                        if (id) {
                          const r = (ev.currentTarget as HTMLElement)
@@ -370,7 +447,7 @@ export function V23App() {
                          setBig({ cell, x: r.right, y: r.top });
                        }
                      }}
-                     onMouseLeave={() => {
+                     onMouseLeave={coarse ? undefined : () => {
                        setHover((h) => (h === cell ? null : h));
                        setBig((b) => (b && b.cell === cell ? null : b));
                      }}
@@ -423,17 +500,72 @@ export function V23App() {
             })}
           </div>
 
+          {/* What the card in focus does, stated under the board.
+              Visible only on a narrow screen, where the right rail that
+              normally carries this has been pushed below the pickers
+              and is no use mid-decision. */}
+          {focusDef && focusId ? (
+            <button className={`cardstrip${focusOwner === 0 ? ' p1'
+              : focusOwner === 1 ? ' p2' : ''}`}
+                    onClick={() => setPeek({ card: focusId, x: 0, y: 0 })}>
+              <span className="cs-art"
+                    style={{ backgroundImage:
+                      `url(/art/portraits/card-${String(focusDef.art)
+                        .padStart(2, '0')}.webp)` }} />
+              <span className="cs-text">
+                <b className="cs-name">{focusDef.name}</b>
+                <span className="cs-ab i">
+                  <b>I ·{' '}
+                    {focusDef.trait
+                      ? TRAIT_INFO[focusDef.trait].name : 'no trait'}</b>
+                  {focusDef.trait
+                    && ` — ${TRAIT_INFO[focusDef.trait].short}`}
+                </span>
+                <span className="cs-ab ii">
+                  <b>II · {CMD_INFO[focusDef.command].name}</b>
+                  {` — ${CMD_INFO[focusDef.command].short}`}
+                </span>
+              </span>
+              <span className="cs-more">full</span>
+            </button>
+          ) : (
+            <p className="cardstrip empty">
+              {game.phase === 'convergence'
+                ? 'tap a card in hand to see what it takes everywhere'
+                : 'tap one of your characters to read it'}
+            </p>
+          )}
+
+          {/* the two-tap rule, said out loud: an interaction you have
+              to discover by accident is not an interaction */}
+          {game.phase === 'convergence' && !req && (
+            <p className="taphint">
+              <b>tap</b> a card to select it and number every cell ·{' '}
+              <b>tap it again</b> for the full rules ·{' '}
+              <b>tap a cell</b> to deploy
+            </p>
+          )}
+
           {/* A hand card under the cursor, read in full BEFORE it is
               chosen. Without this a card's rules text was only
               reachable after committing to it. */}
           {peek && (() => {
             const d = game.defs[peek.card];
             const q = survey;
-            const left = Math.min(peek.x, window.innerWidth - 348);
-            const top = Math.max(8, peek.y - 430);
+            // On touch this is a sheet anchored to the bottom edge by
+            // the stylesheet, so no coordinates are written at all --
+            // an inline left/top would beat the sheet rule and park a
+            // 330px panel at an arbitrary offset.
+            const place = coarse ? undefined : {
+              left: `${Math.min(peek.x, window.innerWidth - 348)}px`,
+              top: `${Math.max(8, peek.y - 430)}px`,
+            };
             return (
-              <div className="bigcard peekcard"
-                   style={{ left: `${left}px`, top: `${top}px` }}>
+              <div className="bigcard peekcard" style={place}>
+                {coarse && (
+                  <button className="sheetclose" aria-label="close"
+                          onClick={() => setPeek(null)}>✕</button>
+                )}
                 <div className="bc-art"
                      style={{ backgroundImage:
                        `url(/art/portraits/card-${String(d.art)
@@ -482,7 +614,13 @@ export function V23App() {
             const top = Math.min(big.y, window.innerHeight - 430);
             return (
               <div className="bigcard"
-                   style={{ left: `${left}px`, top: `${Math.max(8, top)}px` }}>
+                   style={coarse ? undefined
+                     : { left: `${left}px`,
+                         top: `${Math.max(8, top)}px` }}>
+                {coarse && (
+                  <button className="sheetclose" aria-label="close"
+                          onClick={() => setBig(null)}>✕</button>
+                )}
                 <div className="bc-art"
                      style={{ backgroundImage:
                        `url(/art/portraits/card-${String(bd.art)
@@ -517,20 +655,34 @@ export function V23App() {
                           className={`slot${sel === cid ? ' sel' : ''}`
                             + `${peek?.card === cid ? ' peek' : ''}`}
                           disabled={!myTurn || over}
-                          onMouseEnter={(ev) => {
+                          onMouseEnter={coarse ? undefined : (ev) => {
                             const r = (ev.currentTarget as HTMLElement)
                               .getBoundingClientRect();
                             setPeek({ card: cid, x: r.left, y: r.top });
                           }}
-                          onMouseLeave={() =>
+                          onMouseLeave={coarse ? undefined : () =>
                             setPeek((q) => (q?.card === cid ? null : q))}
-                          onFocus={(ev) => {
+                          onFocus={coarse ? undefined : (ev) => {
                             const r = (ev.currentTarget as HTMLElement)
                               .getBoundingClientRect();
                             setPeek({ card: cid, x: r.left, y: r.top });
                           }}
-                          onClick={() => { primeAudio(); sfx('select');
-                                           setSel(cid); setInspect(null); }}>
+                          onClick={() => {
+                            primeAudio(); sfx('select');
+                            setInspect(null);
+                            // With no hover, one tap has to do the work
+                            // of moving the cursor there: it selects the
+                            // card AND surveys the board. A second tap
+                            // on the same card opens its full rules.
+                            // Nothing is deployed either way -- that
+                            // still takes a tap on a cell.
+                            if (coarse && sel === cid) {
+                              setPeek({ card: cid, x: 0, y: 0 });
+                              return;
+                            }
+                            setSel(cid);
+                            if (coarse) setPeek(null);
+                          }}>
                     <CardFace sigils={d.sigils} owner={active} small
                               art={d.art} />
                     <small>{d.name.replace(/^The /, '')}</small>
@@ -568,12 +720,27 @@ export function V23App() {
               )}
               {myDecision && (
                 <>
-                  <ul onMouseLeave={() => setOptHover(null)}>
+                  {coarse && (
+                    <p className="taphint">
+                      <b>tap</b> an option to see what it touches ·{' '}
+                      <b>tap again</b> to take it
+                    </p>
+                  )}
+                  <ul onMouseLeave={coarse ? undefined
+                    : () => setOptHover(null)}>
                     {req.options.map((o: ChoiceOption) => (
                       <li key={o.id}
                           className={optHover === o.id ? 'on' : ''}
-                          onMouseEnter={() => setOptHover(o.id)}
+                          onMouseEnter={coarse ? undefined
+                            : () => setOptHover(o.id)}
                           onClick={() => {
+                            // On touch the board preview has nowhere to
+                            // come from, so the first tap IS the hover
+                            // and the second commits.
+                            if (coarse && optHover !== o.id) {
+                              setOptHover(o.id);
+                              return;
+                            }
                             advance(apply(game, { kind: 'choose',
                                                   option: o.id }));
                             sfx('ability');
@@ -602,13 +769,25 @@ export function V23App() {
                   cancel
                 </button>
               </p>
-              <ul onMouseLeave={() => setCmdHover(null)}>
+              {coarse && (
+                <p className="taphint">
+                  <b>tap</b> a command to light up what it takes ·{' '}
+                  <b>tap again</b> to give the order
+                </p>
+              )}
+              <ul onMouseLeave={coarse ? undefined
+                : () => setCmdHover(null)}>
                 {cmdChoices.map((c, i) => (
                   <li key={i}
                       className={`${cmdHover === i ? 'on' : ''}`
                         + `${c.gain > 0 ? ' takes' : ''}`}
-                      onMouseEnter={() => setCmdHover(i)}
+                      onMouseEnter={coarse ? undefined
+                        : () => setCmdHover(i)}
                       onClick={() => {
+                        if (coarse && cmdHover !== i) {
+                          setCmdHover(i);
+                          return;
+                        }
                         advance(apply(game, { kind: 'command',
                                               cmd: c.cmd as DominionCommand }));
                         sfx('ability');
