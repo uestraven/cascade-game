@@ -451,6 +451,25 @@ export function normalAttack(s: V23State, cell: number,
   return out;
 }
 
+/**
+ * Record who is beside whom, right now.
+ *
+ * Rally needs the adjacency that held *immediately before the capture*.
+ * Taking this once at deploy time was wrong: Harbinger, Exile and Pact
+ * all resolve between the deployment and the attack, and a card they
+ * move leaves the snapshot claiming an adjacency that no longer exists.
+ */
+function snapshotAdjacency(s: V23State): Record<CardId, CardId[]> {
+  const out: Record<CardId, CardId[]> = {};
+  for (const id of s.cells) {
+    if (!id) continue;
+    const c = cellOf(s, id);
+    out[id] = NB[c].filter((t) => t >= 0 && s.cells[t])
+      .map((t) => s.cells[t]!);
+  }
+  return out;
+}
+
 /** Apply a whole batch at once and record it as one event. */
 function applyBatch(s: V23State, taker: Player,
                     cards: CardId[], why: string): string | null {
@@ -643,18 +662,8 @@ function deploy(s: V23State, card: CardId, cell: number): void {
   note(s, 'deploy', `P${p + 1} deployed ${s.defs[card].name} to ${cell}`,
        { player: p, cells: [cell] });
 
-  // who is beside whom, before anything is captured -- Rally needs the
-  // adjacency that held at the moment of the capture, and a batch can
-  // move nothing but can certainly remove allies
-  const snapshot: Record<CardId, CardId[]> = {};
-  for (const id of s.cells) {
-    if (!id) continue;
-    const c = cellOf(s, id);
-    snapshot[id] = NB[c].filter((t) => t >= 0 && s.cells[t])
-      .map((t) => s.cells[t]!);
-  }
   s.turn = { deployed: card, cell, step: 'onDeploy',
-             adjacencySnapshot: snapshot };
+             adjacencySnapshot: snapshotAdjacency(s) };
 }
 
 /** Build the choice an On Deploy trait needs, or null if it cannot act. */
@@ -753,6 +762,9 @@ function resolveChoice(s: V23State, option: string | null): void {
                     + 'neither card changed hands');
       return;
     }
+    // adjacency as it stands at this instant, not as it stood when the
+    // Pact card was deployed
+    if (s.turn) s.turn.adjacencySnapshot = snapshotAdjacency(s);
     const captured = [{ card: fid, from: p },
                       { card: eid, from: s.owner[eid] }];
     setOwner(s, fid, (1 - p) as Player);
@@ -860,6 +872,9 @@ function settle(s: V23State): void {
         }
         t.step = 'reactions';
         if (taken.length) {
+          // On Deploy effects may have moved cards since the deployment,
+          // so re-read adjacency before the batch that Rally answers
+          t.adjacencySnapshot = snapshotAdjacency(s);
           const captured = taken.map((c) => ({ card: c, from: s.owner[c] }));
           const ev = applyBatch(s, p, taken, 'placement attack')!;
           pushTriggers(s, collectRally(s, ev, captured, p), p);

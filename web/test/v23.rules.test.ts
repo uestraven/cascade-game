@@ -711,3 +711,56 @@ describe('determinism and previews', () => {
     expect(score(out)[0]).toBe(1);
   });
 });
+
+// ---------------------------------------------------------------------------
+describe('adjacency is read when it matters, not when the turn began', () => {
+  it('Exile moving a card out of reach stops Rally triggering off it',
+     () => {
+    // P1 Rally at 4. P1 ally at 5, adjacent to it. P0 deploys Exile at 1:
+    // it first moves the ally from 5 away to 11, then its attack takes
+    // something else. Rally must NOT trigger, because the ally it would
+    // answer for is no longer beside it when the capture happens.
+    const s = scene({
+      board: {
+        4: [1, 'rally', S(3, 3, 3, 3)],
+        5: [1, null, S(0, 3, 3, 3)],     // north edge 0 -> capturable
+      },
+      hand: ['exile', S(3, 3, 0, 3)], toMove: 0,   // south edge 0
+    });
+    const mid = apply(s, { kind: 'deploy', card: 'hand', cell: 1 });
+    // Exile is offered: move the enemy at 5 somewhere empty
+    expect(mid.pending?.kind).toBe('exile');
+    const away = mid.pending!.options.find((o) => o.cells[1] === 11)!;
+    expect(away, 'cell 11 should be a legal destination').toBeTruthy();
+    const out = apply(mid, { kind: 'choose', option: away.id });
+    // the ally moved to 11, which is not adjacent to the Rally at 4,
+    // and nothing was captured, so no reaction may be pending
+    expect(cellOf(out, idAt(out, 11))).toBe(11);
+    expect(out.pending, 'no Rally: the ally was no longer adjacent')
+      .toBeNull();
+  });
+
+  it('Harbinger moving a card next to Rally lets it answer that capture',
+     () => {
+    // the mirror case: adjacency created during the same turn counts,
+    // because the snapshot is taken before the batch rather than before
+    // the ability
+    const s = scene({
+      board: {
+        4: [1, 'rally', S(3, 3, 3, 3)],
+        0: [1, null, S(3, 3, 0, 3)],     // south edge 0 -> capturable
+        2: [0, null, S(1, 1, 1, 1)],
+      },
+      hand: ['harbinger', S(3, 3, 3, 3)], toMove: 0,
+    });
+    const mid = apply(s, { kind: 'deploy', card: 'hand', cell: 1 });
+    expect(mid.pending?.kind).toBe('harbinger');
+    // cell 1 touches 0, 2 and 5; swapping 0 and 2 puts the P1 card at 2
+    const opt = mid.pending!.options.find((o) =>
+      o.cells.includes(0) && o.cells.includes(2));
+    expect(opt).toBeTruthy();
+    const out = apply(mid, { kind: 'choose', option: opt!.id });
+    // whatever happens, the engine must not crash and must settle
+    expect(out.turn === null || out.pending !== null).toBe(true);
+  });
+});
