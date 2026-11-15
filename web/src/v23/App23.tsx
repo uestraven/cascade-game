@@ -250,6 +250,14 @@ export function V23App() {
                 {commandsLeft(game, 1)}
               </span>
             )}
+            {/* the active variant, always visible -- it changes which
+                cards can be captured and must not be something you have
+                to remember choosing */}
+            <span className={`variantchip${champions ? ' on' : ''}`}>
+              {champions
+                ? `★ bound champions: ${champions} each`
+                : 'no champions'}
+            </span>
           </div>
 
           {/* the stack, as pending effects rather than an animation */}
@@ -284,7 +292,7 @@ export function V23App() {
 
           <h2>events</h2>
           <ul className="log">
-            {game.events.slice(0, 14).map((e) => (
+            {game.events.slice(0, 40).map((e) => (
               <li key={e.id} className={`ln ev-${e.kind}`}>{e.text}</li>
             ))}
           </ul>

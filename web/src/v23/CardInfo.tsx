@@ -1,6 +1,6 @@
 import {
   type CardId, type V23State, CMD_INFO, TRAIT_INFO, alliesAdjacent,
-  captureBlocked, moveBlocked,
+  captureBlocked, isChampion, moveBlocked,
 } from './rules';
 
 /**
@@ -20,6 +20,7 @@ export function CardInfo({ g, id }: { g: V23State; id: CardId }) {
   const blocked = captureBlocked(g, id);
   const immovable = moveBlocked(g, id);
   const owner = g.owner[id];
+  const champ = isChampion(g, id);
 
   return (
     <>
@@ -40,6 +41,18 @@ export function CardInfo({ g, id }: { g: V23State; id: CardId }) {
         </span>
       </div>
       <span className="crest">P{owner + 1}</span>
+      {/* Champion status is PERSISTENT, and shown whether or not its
+          protection currently matters. Inferring it from a log line that
+          scrolls away was not a reasonable thing to ask of a player. */}
+      {champ && (
+        <span className={`champbadge${g.phase === 'convergence'
+          ? '' : ' spent'}`}
+              title={g.phase === 'convergence'
+                ? 'Bound Champion — cannot be captured during Convergence'
+                : 'Bound Champion — protection expired'}>
+          ★ champion
+        </span>
+      )}
       {blocked && (
         <span className={`statechip warded ${blocked.source}`}
               title={blocked.text}>

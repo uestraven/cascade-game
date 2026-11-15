@@ -352,7 +352,8 @@ export function captureBlocked(s: V23State, id: CardId,
                                view: V23State = s): Protection | null {
   if (s.phase !== 'convergence') return null;
   const def = s.defs[id];
-  if (view.champions[view.owner[id]]?.includes(id)) {
+  // designation, not ownership -- see isChampion
+  if (view.champions[0].includes(id) || view.champions[1].includes(id)) {
     return { source: 'champion',
              text: 'Bound Champion — cannot be captured during '
                  + 'Convergence' };
@@ -371,6 +372,16 @@ export function moveBlocked(s: V23State, id: CardId): string | null {
   return s.defs[id].trait === 'anchor'
     ? 'Anchor — cannot be moved or swapped' : null;
 }
+
+/**
+ * Is this card a Bound Champion?
+ *
+ * Checks designation, not current ownership. Indexing by owner was
+ * wrong: a card still in hand has no owner entry at all, so every
+ * champion read as false before it was deployed.
+ */
+export const isChampion = (s: V23State, id: CardId): boolean =>
+  s.champions[0].includes(id) || s.champions[1].includes(id);
 
 export const traitState = (s: V23State, id: CardId): string => {
   const def = s.defs[id];

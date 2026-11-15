@@ -11,7 +11,8 @@ import { describe, expect, it } from 'vitest';
 import {
   type CardId, type Player, type V23State, CELLS, CMDS, DEPLOYMENTS,
   DOMINION_COMMANDS, NB, TRAITS, TRAIT_INFO, alliesAdjacent, apply,
-  captureBlocked, cellOf, deployments, dominionCommands, isOver,
+  captureBlocked, cellOf, deployments, dominionCommands, isChampion,
+  isOver,
   moveBlocked, mustPass, newGame, normalAttack, previewDeploy, score,
   toMove, traitState,
 } from '../src/v23/rules';
@@ -762,5 +763,47 @@ describe('adjacency is read when it matters, not when the turn began', () => {
     const out = apply(mid, { kind: 'choose', option: opt!.id });
     // whatever happens, the engine must not crash and must settle
     expect(out.turn === null || out.pending !== null).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('Bound Champions are visible, not inferred', () => {
+  it('a champion is identifiable from the card, in both phases', () => {
+    const g = newGame(4, { boundChampions: 3 });
+    const champs = [...g.champions[0], ...g.champions[1]];
+    expect(champs).toHaveLength(6);
+    for (const id of champs) expect(isChampion(g, id)).toBe(true);
+    for (const id of [...g.hands[0], ...g.hands[1]]) {
+      if (!champs.includes(id)) expect(isChampion(g, id)).toBe(false);
+    }
+    // and still identifiable after protection expires
+    const done: V23State = { ...g, phase: 'dominion' };
+    expect(isChampion(done, champs[0]), 'status outlives the protection')
+      .toBe(true);
+    expect(captureBlocked(done, champs[0]), 'but protection is gone')
+      .toBeNull();
+  });
+
+  it('a Champion carrying Sanctuary reports the right reason', () => {
+    // this is the combination that read as "Sanctuary protecting a card
+    // with no allies": the protection was the Champion rule all along
+    let g = newGame(4, { boundChampions: 3 });
+    const champ = [...g.champions[0], ...g.champions[1]]
+      .find((id) => g.defs[id].trait === 'sanctuary');
+    if (!champ) return;                 // not every deal produces one
+    const p = g.owner[champ] ?? 0;
+    g = { ...g, cells: g.cells.slice(), owner: { ...g.owner } };
+    g.cells[5] = champ;
+    g.owner[champ] = p;
+    expect(alliesAdjacent(g, champ), 'no allies at all').toBe(0);
+    const why = captureBlocked(g, champ);
+    expect(why?.source, 'the reason must be the Champion rule, not '
+      + 'Sanctuary').toBe('champion');
+  });
+
+  it('champions are off unless asked for', () => {
+    const g = newGame(4);
+    expect(g.champions[0]).toHaveLength(0);
+    expect(g.champions[1]).toHaveLength(0);
   });
 });
