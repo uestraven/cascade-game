@@ -1,12 +1,13 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Prototype A is the live game: four sigils, matching captures, four
-// abilities. The eight-element version is still in src/v3 and still
-// tested; it is just no longer what the site serves.
-import { App } from './proto/ui/App';
+// Two rulesets ship side by side. v1 is the single-phase game with
+// twenty abilities; v2 splits deployment from command. The switch exists
+// because which one is more satisfying is the open question, and no
+// measurement answers it.
+import { Root } from './Root';
 import './proto/ui/styles.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode><App /></StrictMode>,
+  <StrictMode><Root /></StrictMode>,
 );
