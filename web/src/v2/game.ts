@@ -26,9 +26,15 @@
  *     moving the advantage from the last mover to the first (spread
  *     37-58).
  *
- * Known fault: P1 wins about 68%, because 11 placements gives P1 six
- * cards against P2's five with nothing given back. That is a seat bias
- * and not a structural one, and it is not yet fixed.
+ * Draws are permitted. On a complete board a level score is reachable,
+ * and the measured rate is 9.5% -- low enough not to need a tiebreaker,
+ * and preferable to engineering a first-player advantage simply to
+ * guarantee a winner.
+ *
+ * Known and unfixed: a command still takes four cards about half the
+ * time, and the whole game runs to 30 captures on twelve cells, about
+ * 2.6 per cell against v1's 2.0. The phase split has not made the game
+ * calmer per card, which was the original complaint.
  */
 
 import {
@@ -51,9 +57,35 @@ export const V2_ABILITY_TEXT: Record<V2Ability, string> = {
   prism: 'One edge of the attacking card matches any sigil this command.',
 };
 
-/** 11 placements on a twelve-cell board: one cell stays empty, which is
- *  what makes a draw impossible. */
-export const V2_BOARD: Shape = makeShape(3, 4, [7, 6], 15, 11);
+/**
+ * Variant C: the full board, six cards each, P2 opens Dominion.
+ *
+ * Twelve placements on twelve cells, so the board finishes complete and
+ * both players deploy exactly six. Chosen by measurement over 2,500
+ * games per variant:
+ *
+ *   A  7/6 deal, 6/5 places, P2 opens   P1 66.6  P2 33.4  draw  0.0
+ *   B  6/6 deal, 6/6 places, P1 opens   P1 31.0  P2 45.4  draw 23.6
+ *   C  6/6 deal, 6/6 places, P2 opens   P1 46.6  P2 43.9  draw  9.5  <-
+ *   D  7/7 deal, 6/6 places, P1 opens   P1 29.6  P2 44.9  draw 25.6
+ *
+ * Two things in that table are load-bearing.
+ *
+ * On a FULL board, closing Dominion is worth about 15 points: B and C
+ * differ only in who opens, and P1 goes from 31.0% to 46.6% by closing
+ * instead of opening. At eleven placements the same swing measured 1.6
+ * points, so this is a property of the full board and not a constant.
+ *
+ * C is therefore balanced by two asymmetries cancelling, not by design:
+ * P1 deploys first and so can never capture with its opening placement,
+ * while P2 must always place in response and usually can. P1 closing
+ * Dominion pays that back. Change the order of either phase and the
+ * cancellation breaks.
+ *
+ * D showed that a spare hand card buys nothing measurable, so the deal
+ * is exactly what gets deployed.
+ */
+export const V2_BOARD: Shape = makeShape(3, 4, [6, 6], 14, 12);
 export const COMMANDS = 6;
 
 export interface V2Card { sigils: Card; ability: V2Ability; art?: number }

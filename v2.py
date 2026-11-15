@@ -215,7 +215,7 @@ def run_command(cards, own, abil, player, src, opt, followup_needs_multi,
 
 def phase2(cards, own, abil, rng, *, commands=PHASE2, exhaust='none',
            followup_needs_multi=False, one_edge=False, p2_first=True,
-           lock=False, track=None):
+           lock=False, track=None, passes=None):
     """Returns captures. `p2_first` decides who opens; with an even
     command count the other player closes. Holding the count fixed and
     flipping this is the only way to measure the last mover without also
@@ -233,6 +233,9 @@ def phase2(cards, own, abil, rng, *, commands=PHASE2, exhaust='none',
         elif exhaust == 'round':
             mine = [c for c in mine if c != last[player]] or mine
         if not mine:
+            # nothing on the board to command; the turn is consumed
+            if passes is not None:
+                passes[player] += 1
             continue
         best, ties = None, []
         edges = range(4) if one_edge else (None,)
@@ -274,8 +277,12 @@ def build_deck(rng, size):
 
 def play(rng, *, commands=PHASE2, exhaust='none',
          followup_needs_multi=False, one_edge=False, p2_first=True,
-         lock=False, greed=1.0, track=None):
+         lock=False, greed=1.0, track=None, passes=None, hands=None,
+         deck_size=None):
     hsz, dsz = deal_for()
+    if hands is not None:
+        hsz = hands
+        dsz = deck_size if deck_size is not None else sum(hands) + 2
     deck = build_deck(rng, dsz)
     hands = [list(deck[:hsz[0]]), list(deck[hsz[0]:sum(hsz)])]
     cards = [None] * P.NCELLS
@@ -286,6 +293,6 @@ def play(rng, *, commands=PHASE2, exhaust='none',
     c2 = phase2(cards, own, abil, rng, commands=commands, exhaust=exhaust,
                 followup_needs_multi=followup_needs_multi,
                 one_edge=one_edge, p2_first=p2_first, lock=lock,
-                track=track)
+                track=track, passes=passes)
     end = [bin(own[0]).count('1'), bin(own[1]).count('1')]
     return mid, end, c1, c2

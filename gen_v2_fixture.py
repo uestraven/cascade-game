@@ -33,8 +33,9 @@ def enc(opt):
 
 def main():
     want = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
-    # the shipped board: 3x4, 11 placements, so one cell stays empty
-    P.set_board(3, 4, (7, 6), 11)
+    # the shipped board: variant C -- 3x4, 12 placements, six each, so
+    # the board finishes complete
+    P.set_board(3, 4, (6, 6), 12)
     rng = random.Random(2525)
     cases = []
     cover = Counter()
@@ -44,8 +45,10 @@ def main():
         cards = [None] * n
         own = [0, 0]
         abil = {}
-        # a realistic Phase II board: all but one cell filled
-        filled = rng.sample(range(n), n - 1)
+        # a realistic Phase II board is complete, but a cell can be
+        # empty mid-deployment, so both are generated
+        k = n if rng.random() < 0.8 else n - 1
+        filled = rng.sample(range(n), k)
         for i, c in enumerate(filled):
             cards[c] = rng.choice(P.BY_SHAPE['versatile'])
             own[i % 2] |= 1 << c
@@ -88,7 +91,7 @@ def main():
         'format': 'cascade-v2-command-fixture',
         'generator': 'gen_v2_fixture.py (oracle: v2.py)',
         'note': 'all edges attack; follow-up only after a multiple '
-                'capture; no lock; 3x4 with 11 placements',
+                'capture; no lock; variant C -- 3x4, 12 placements',
         'coverage': dict(cover),
         'cases': cases,
     }

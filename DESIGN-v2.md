@@ -210,6 +210,58 @@ as a dial. Compensation has to come from deployment: a smaller hand for
 P1 (fewer choices rather than fewer cards), P2 deploying first, or an
 even placement count with a different anti-draw rule. Untested.
 
+## 3b. v2.1: the variant experiment, and what shipped
+
+Four variants, 2,500 games each, six commands and multiple-capture
+follow-ups and no lock throughout. P1, P2 and draws reported separately,
+because a 50% P1 rate can hide a quarter of games ending level.
+
+| variant | deal | places | opens | P1 | P2 | draws | reversed |
+|---|---|---|---|---|---|---|---|
+| A baseline | 7/6 | 6/5 | P2 | 66.6% | 33.4% | 0.0% | 32.1% |
+| B equal+full | 6/6 | 6/6 | P1 | 31.0% | 45.4% | 23.6% | 35.0% |
+| **C phase order** | **6/6** | **6/6** | **P2** | **46.6%** | **43.9%** | **9.5%** | 44.6% |
+| D hand choice | 7/7 | 6/6 | P1 | 29.6% | 44.9% | 25.6% | 35.5% |
+
+**On a full board, closing Dominion is worth about 15 points.** B and C
+differ only in who opens; P1 goes from 31.0% to 46.6% by closing instead
+of opening. At eleven placements the same swing measured 1.6 points, so
+the small spread found earlier was a property of the odd board and does
+not generalise — exactly the caution raised when the full board was
+proposed.
+
+**C is balanced by cancellation, not by design.** P1 deploys first and so
+can never capture with its opening placement, while P2 always places in
+response and usually can. P1 closing Dominion pays that back. Changing
+the order of either phase breaks the cancellation, which is why the
+shipped configuration is pinned by a test that fails on variant B.
+
+**Draws need no tiebreaker.** The full board makes a level score
+reachable, but C measures 9.5% — against 23.6% and 25.6% for B and D, and
+v1's 21–26% on even boards. The draw rate turned out to be a function of
+phase order rather than of board fullness.
+
+**D buys nothing.** A spare hand card moves P1 by 1.4 points and costs a
+larger deck and more decision load. The deal is now exactly what gets
+deployed.
+
+### What shipped, and what is still wrong with it
+
+Variant C is live in the app: 3×4, twelve placements, six cards each,
+Dominion opens with P2, six commands, follow-up only after a multiple
+direct capture, no lock, draws permitted.
+
+Two faults remain, both measured and neither fixed.
+
+**Dominion may matter too much.** It reverses the deployment leader
+44.6% of the time, against 32–35% in the other variants. Near a coin
+flip devalues the twelve placements that precede it.
+
+**The churn is untouched.** A command still takes four cards 43–53% of
+the time, and a whole game runs to about 30 captures on twelve cells —
+2.6 per cell against v1's 2.0. The phase split has not made the game
+calmer per card, which was the complaint that started v2.
+
 ## 4. Test plan
 
 | Prototype | Rules | Question |

@@ -209,7 +209,15 @@ export function V2App() {
                 </span>
               </>
             )}
-            {phase === 'over' && <b>Finished</b>}
+            {phase === 'over' && (
+              <>
+                <b>Finished</b>
+                <span>
+                  {win === -1 ? 'level — a draw'
+                    : `P${win + 1} holds the most cards`}
+                </span>
+              </>
+            )}
           </div>
 
           <div className="scorerow">
@@ -242,9 +250,13 @@ export function V2App() {
             spend six commands exploiting the position you built.
           </p>
           <p className="muted small2">
-            Measured: the closing command is worth 1.6 points of win rate,
-            and Phase II changes who wins 32.7% of the time. P1 currently
-            wins about 68% — that bias is known and not yet fixed.
+            Measured over 2,500 games: P1 46.6%, P2 43.9%, drawn 9.5%.
+            Dominion changes who wins 44.6% of the time — arguably too
+            often, since it devalues the twelve placements before it.
+          </p>
+          <p className="muted small2">
+            Draws are allowed. A level board is a legitimate result and
+            better than inventing a first-player edge to avoid one.
           </p>
 
           <h2>log</h2>

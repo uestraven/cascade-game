@@ -16,6 +16,7 @@ import {
   passCommand, phaseOf, pickCommand, pickPlacement, placements, score,
   toMove,
 } from '../src/v2/game';
+import { mulberry32 } from '../src/rng';
 import { Root } from '../src/Root';
 import { V2App } from '../src/v2/App2';
 
@@ -144,11 +145,17 @@ describe('v2 is a different game from v1', () => {
     expect(seen).toBeGreaterThan(200);
   });
 
-  it('a draw is impossible: one cell always stays empty', () => {
-    expect(V2_BOARD.order.length).toBe(11);
+  it('the board finishes complete, and draws are allowed', () => {
+    // variant C deploys twelve cards onto twelve cells, so a level
+    // score is reachable. Draws are permitted on purpose: measured at
+    // 9.5%, which is preferable to engineering a first-player advantage
+    // just to guarantee a winner.
+    expect(V2_BOARD.order.length).toBe(12);
     expect(V2_BOARD.cells).toBe(12);
+    expect(V2_BOARD.hands).toEqual([6, 6]);
     const rng = () => 0.5;
-    for (let seed = 0; seed < 25; seed++) {
+    let drawn = 0, played = 0;
+    for (let seed = 0; seed < 60; seed++) {
       let g = newGame(seed);
       while (!isOver(g)) {
         g = phaseOf(g) === 'deploy'
@@ -158,9 +165,74 @@ describe('v2 is a different game from v1', () => {
             : applyCommand(g, pickCommand(g, rng)!).state;
       }
       const [a, b] = score(g);
-      expect(a + b).toBe(11);
-      expect(a === b, `seed ${seed} drew`).toBe(false);
+      // every cell is owned by somebody at the end
+      expect(a + b).toBe(12);
+      expect(g.hands[0]).toHaveLength(0);
+      expect(g.hands[1]).toHaveLength(0);
+      if (a === b) drawn += 1;
+      played += 1;
     }
+    // a deterministic rng is not the measured distribution, so this only
+    // checks draws are reachable and not the common case
+    expect(played).toBe(60);
+    expect(drawn).toBeLessThan(played / 2);
+  });
+
+  it('both players deploy exactly six, with no card left over', () => {
+    const g = newGame(9);
+    expect(g.hands[0]).toHaveLength(6);
+    expect(g.hands[1]).toHaveLength(6);
+    expect(g.reserve).toHaveLength(2);
+  });
+
+});
+
+describe('the shipped game is variant C', () => {
+  it('reproduces the measured distribution', () => {
+    // The configuration is three numbers -- 12 placements, a 6/6 deal,
+    // P2 opening Dominion -- and getting any of them wrong changes the
+    // game without breaking a single other test. The Python experiment
+    // over 2,500 games per variant gave:
+    //
+    //   A  7/6, 6/5, P2 opens   P1 66.6  P2 33.4  draw  0.0
+    //   B  6/6, 6/6, P1 opens   P1 31.0  P2 45.4  draw 23.6
+    //   C  6/6, 6/6, P2 opens   P1 46.6  P2 43.9  draw  9.5
+    //   D  7/7, 6/6, P1 opens   P1 29.6  P2 44.9  draw 25.6
+    //
+    // Only C lands inside the bounds below, so this test tells the
+    // variants apart rather than merely checking the game runs. Bounds
+    // are wide because the two bots break ties differently.
+    const N = 400;
+    let p1 = 0, p2 = 0, draw = 0, c1 = 0;
+    for (let seed = 0; seed < N; seed++) {
+      const rng = mulberry32((seed * 2654435761) >>> 0);
+      let g = newGame(seed);
+      while (!isOver(g)) {
+        if (phaseOf(g) === 'deploy') {
+          const r = applyPlacement(g, pickPlacement(g, rng)!);
+          c1 += r.captured.length;
+          g = r.state;
+        } else if (mustPass(g)) {
+          g = passCommand(g);
+        } else {
+          g = applyCommand(g, pickCommand(g, rng)!).state;
+        }
+      }
+      const [a, b] = score(g);
+      if (a > b) p1 += 1; else if (b > a) p2 += 1; else draw += 1;
+    }
+    const pc = (x: number) => (100 * x) / N;
+    expect(pc(p1), 'P1 win rate').toBeGreaterThan(40);
+    expect(pc(p1), 'P1 win rate').toBeLessThan(54);
+    expect(pc(p2), 'P2 win rate').toBeGreaterThan(36);
+    expect(pc(p2), 'P2 win rate').toBeLessThan(50);
+    expect(Math.abs(pc(p1) - pc(p2)), 'seat bias').toBeLessThan(10);
+    // a 50% P1 rate can hide a quarter of games ending level, so draws
+    // are bounded in their own right
+    expect(pc(draw), 'draw rate').toBeGreaterThan(4);
+    expect(pc(draw), 'draw rate').toBeLessThan(17);
+    expect(c1 / N, 'phase I captures').toBeGreaterThan(11.5);
+    expect(c1 / N, 'phase I captures').toBeLessThan(14.5);
   });
 });
 
