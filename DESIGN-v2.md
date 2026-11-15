@@ -337,6 +337,74 @@ giving characters richer identities will not rescue a phase whose
 outcome is 98% independent of its abilities. Fix the shape first, then
 author characters onto something that works.
 
+## 3d. v2.2: abilities designed from intended experience
+
+The four old abilities are discarded rather than rebalanced. They were
+placeholders for testing the command system, and all four only modified
+*how you attack*, which is why switching every one off cost 1.5 captures
+and 1.7 points.
+
+Five candidates implemented in `v22.py`, each built for a named
+experience, each measured against PLAIN -- the identical game with the
+ability replaced by an ordinary attack. 1,500 games apiece, two-phase
+baseline held fixed.
+
+| ability | used | P1 | P2 | draw | conv | dom | reversed | swing |
+|---|---|---|---|---|---|---|---|---|
+| PLAIN (control) | — | 46.7% | 45.6% | 7.7% | 13.1 | 15.6 | 44.5% | — |
+| **Sanctuary** | passive | 40.3% | 45.5% | 14.2% | **10.7** | **11.8** | 43.7% | **12.9** |
+| **Usurp** | 72.4% | 42.9% | 54.5% | 2.7% | 13.1 | **21.0** | **26.6%** | **17.7** |
+| Transpose | 13.2% | 47.3% | 44.9% | 7.8% | 13.1 | 14.8 | 44.5% | 1.3 |
+| **Reclaim** | 28.2% | 49.7% | 41.2% | 9.1% | 13.0 | 16.3 | 46.8% | 8.8 |
+| Retribution | passive | **55.3%** | 37.2% | 7.5% | 13.1 | 19.7 | 54.0% | 17.3 |
+
+`swing` is the total absolute movement in P1, P2 and draw rate away from
+PLAIN. For scale, switching off all four of v2.1's abilities moved it
+about 5 points.
+
+**Four of five are live, against nought of four before.** Designing from
+an intended experience rather than from "another way to attack" worked.
+
+- **Sanctuary is the first thing to make Convergence matter.** It cuts
+  deployment captures 13.1 → 10.7 and carries forward into Dominion
+  (15.6 → 11.8). Cost: draws rise to 14.2%.
+- **Usurp is the strongest and the most distinctive.** Chosen in 72% of
+  commands, and it *lowers* the reversal rate to 26.6% — the deployment
+  leader holds their lead more often, which is the opposite of the
+  complaint about v2.1. Problem: P2 +12 and draws collapse to 2.7%.
+- **Reclaim is live and nearly balanced** at 28% usage and swing 8.8.
+- **Retribution does a great deal and breaks balance**: P1 +18. Worth
+  diagnosing rather than discarding, since P2 commands first and so
+  takes the first retaliation.
+
+### Two instrument limits, both found the hard way
+
+**The `used` column is meaningless for a passive.** Sanctuary and
+Retribution are never *chosen* as a command, so an automated verdict of
+"never taken, not worth it" was wrong for both. Passives have to be
+judged on swing and phase captures alone.
+
+**Deferred-payoff abilities cannot be measured by this harness at all.**
+Transpose takes nothing now and pays off next command, so its entire
+measured value sits in one bot heuristic:
+
+| lookahead weight | chosen | P1 | P2 | draw |
+|---|---|---|---|---|
+| 0.0 | 2.2% | 45.0% | 46.4% | 8.6% |
+| 0.5 | 13.6% | 48.0% | 44.6% | 7.4% |
+| 1.0 | 40.4% | 46.7% | 40.0% | 13.3% |
+| 2.0 | 98.0% | 10.4% | 65.1% | 24.4% |
+
+The swing of 1.3 is a statement about a greedy one-ply bot, not about
+the Weaver. This is v1's Anchor again, which read 47.7% greedy and
+≥70.5% when forced.
+
+So the division of labour is now explicit, and it matches the reversed
+process: **simulation catches abilities whose immediate effect is
+nothing, and cannot judge abilities whose payoff is deferred.** Usurp,
+Reclaim, Sanctuary and Retribution are the measurable kind and all four
+are live. Transpose needs a human.
+
 ## 4. Test plan
 
 | Prototype | Rules | Question |
