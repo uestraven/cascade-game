@@ -11,7 +11,8 @@ import {
   type V23State, CELLS, CMD_INFO, COLS, DOMINION_COMMANDS, ROWS,
   TRAIT_INFO, alliesAdjacent, apply, captureBlocked, cellOf,
   commandsLeft, deployments, dominionCommands, isOver, moveBlocked,
-  mustPass, newGame, previewDeploy, score, toMove, traitState, winner,
+  mustPass, newGame, previewAt, previewDeploy, score, toMove,
+  traitState, winner,
 } from './rules';
 
 type Mode = 'bot' | 'hotseat';
@@ -63,6 +64,9 @@ export function V23App() {
   const [flash, setFlash] = useState<Set<number>>(new Set());
   const [big, setBig] = useState<{ cell: number; x: number; y: number }
     | null>(null);
+  /** a hand card under the cursor, inspected before being chosen */
+  const [peek, setPeek] = useState<{ card: CardId; x: number; y: number }
+    | null>(null);
   const botRng = useRef(mulberry32(seed ^ 0x9e3779b9));
 
   useEffect(() => { setMute(loadMuted()); }, []);
@@ -112,6 +116,28 @@ export function V23App() {
   }, [game, over, advance]);
 
   // ---- previews -------------------------------------------------------
+  /**
+   * What the card under the cursor would do EVERYWHERE, so cards can be
+   * compared before one is committed to. Runs the real engine per empty
+   * cell; a 4x3 board is twelve evaluations.
+   */
+  const survey = useMemo(() => {
+    const card = peek?.card ?? sel;
+    if (game.phase !== 'convergence' || !card || game.pending) return null;
+    if (!game.hands[active].includes(card)) return null;
+    const out = new Map<number, { taken: number; blocked: number;
+                                  traitOptions: number }>();
+    let best = 0;
+    for (let c = 0; c < CELLS; c++) {
+      if (game.cells[c]) continue;
+      const p = previewAt(game, card, c);
+      out.set(c, { taken: p.taken.length, blocked: p.blocked.length,
+                   traitOptions: p.traitOptions });
+      best = Math.max(best, p.taken.length);
+    }
+    return { card, cells: out, best };
+  }, [peek, sel, game, active]);
+
   const deployPreview = useMemo(() => {
     if (game.phase !== 'convergence' || !sel || hover === null) return null;
     if (game.cells[hover] !== null || game.pending) return null;
@@ -367,16 +393,89 @@ export function V23App() {
                       <BattleCard g={game} id={id!} owner={owner} />
                       {canCmd && <span className="cmddot" />}
                     </>
-                  ) : <span className="cellno">{cell}</span>}
+                  ) : (
+                    <>
+                      <span className="cellno">{cell}</span>
+                      {survey?.cells.has(cell) && (() => {
+                        const q = survey.cells.get(cell)!;
+                        const top = q.taken > 0 && q.taken === survey.best;
+                        return (
+                          <span className={`surv${top ? ' top' : ''}`
+                            + `${q.taken === 0 ? ' none' : ''}`}>
+                            <b>{q.taken > 0 ? `+${q.taken}` : '0'}</b>
+                            {q.traitOptions > 0 && (
+                              <i className="surv-trait"
+                                 title={`${q.traitOptions} ability `
+                                   + 'target(s) here'}>✦</i>
+                            )}
+                            {q.blocked > 0 && (
+                              <i className="surv-held"
+                                 title={`${q.blocked} held by `
+                                   + 'protection'}>⛉</i>
+                            )}
+                          </span>
+                        );
+                      })()}
+                    </>
+                  )}
                 </div>
               );
             })}
           </div>
 
-          {/* Supplementary enlargement. The board already carries every
-              ability in text; this is for reading the full rule without
-              navigating the rail. */}
-          {big && game.cells[big.cell] && (() => {
+          {/* A hand card under the cursor, read in full BEFORE it is
+              chosen. Without this a card's rules text was only
+              reachable after committing to it. */}
+          {peek && (() => {
+            const d = game.defs[peek.card];
+            const q = survey;
+            const left = Math.min(peek.x, window.innerWidth - 348);
+            const top = Math.max(8, peek.y - 430);
+            return (
+              <div className="bigcard peekcard"
+                   style={{ left: `${left}px`, top: `${top}px` }}>
+                <div className="bc-art"
+                     style={{ backgroundImage:
+                       `url(/art/portraits/card-${String(d.art)
+                         .padStart(2, '0')}.webp)` }} />
+                <h3>{d.name}</h3>
+                {d.epithet && <p className="bc-ep">{d.epithet}</p>}
+                <div className="peeksigils">
+                  {(['north', 'east', 'south', 'west'] as const)
+                    .map((side, i) => (
+                    <span key={side}>
+                      <span className="sl-disc"
+                            style={{ color: SIGIL_PALETTE[
+                              SIGIL_NAMES[d.sigils[i]]].color }}>
+                        <Sigil sigil={d.sigils[i]} size={14} />
+                      </span>
+                      <em>{side}</em>
+                    </span>
+                  ))}
+                </div>
+                <div className="bc-slot i">
+                  <b>I · CONVERGENCE —{' '}
+                    {d.trait ? TRAIT_INFO[d.trait].name : 'NONE'}</b>
+                  {d.trait && <p>{TRAIT_INFO[d.trait].text}</p>}
+                </div>
+                <div className="bc-slot ii">
+                  <b>II · DOMINION — {CMD_INFO[d.command].name}</b>
+                  <p>{CMD_INFO[d.command].text}</p>
+                </div>
+                {q && (
+                  <p className="bc-state">
+                    {q.best > 0
+                      ? `best placement takes ${q.best} — see the board`
+                      : 'no placement captures anything right now'}
+                  </p>
+                )}
+                {d.flavour && <p className="bc-flav">“{d.flavour}”</p>}
+              </div>
+            );
+          })()}
+
+          {/* Supplementary enlargement for a card already on the board. */}
+          {big && !peek && game.cells[big.cell] && (() => {
             const bid = game.cells[big.cell]!;
             const bd = game.defs[bid];
             const left = Math.min(big.x + 12, window.innerWidth - 348);
@@ -415,8 +514,21 @@ export function V23App() {
                 const d = game.defs[cid];
                 return (
                   <button key={cid}
-                          className={`slot${sel === cid ? ' sel' : ''}`}
+                          className={`slot${sel === cid ? ' sel' : ''}`
+                            + `${peek?.card === cid ? ' peek' : ''}`}
                           disabled={!myTurn || over}
+                          onMouseEnter={(ev) => {
+                            const r = (ev.currentTarget as HTMLElement)
+                              .getBoundingClientRect();
+                            setPeek({ card: cid, x: r.left, y: r.top });
+                          }}
+                          onMouseLeave={() =>
+                            setPeek((q) => (q?.card === cid ? null : q))}
+                          onFocus={(ev) => {
+                            const r = (ev.currentTarget as HTMLElement)
+                              .getBoundingClientRect();
+                            setPeek({ card: cid, x: r.left, y: r.top });
+                          }}
                           onClick={() => { primeAudio(); sfx('select');
                                            setSel(cid); setInspect(null); }}>
                     <CardFace sigils={d.sigils} owner={active} small

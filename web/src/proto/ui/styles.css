@@ -824,3 +824,41 @@ button:disabled{opacity:.4;cursor:default}
   display:grid;place-items:center;background:rgba(13,20,36,.94);
   box-shadow:0 0 0 1px #8995AD, 0 2px 3px rgba(0,0,0,.65)}
 .sigillegend b{font-size:11px;letter-spacing:.04em}
+
+/* ---------------------------------------------------------------------
+   Inspecting a card BEFORE choosing it.
+
+   Hovering a hand card does two things: it opens the full card -- both
+   abilities in full text, the four sigils named by edge -- and it
+   surveys every empty cell with what that card would actually do there,
+   computed by the real engine rather than a second guess at the rules.
+
+   This existed only after selection before, which made comparing two
+   cards in hand a matter of committing to one and undoing it.
+   ------------------------------------------------------------------ */
+.slot.peek{border-color:var(--gold);border-radius:9px;background:#231d10}
+
+.peekcard{border-color:var(--p1)}
+.peeksigils{display:grid;grid-template-columns:1fr 1fr;gap:4px;
+  margin:6px 0 2px}
+.peeksigils > span{display:flex;align-items:center;gap:5px}
+.peeksigils em{font-style:normal;font-size:10px;color:var(--muted);
+  letter-spacing:.06em;text-transform:uppercase}
+.peeksigils .sl-disc{width:22px;height:22px}
+
+/* the per-cell survey: what this card would take if played here */
+.surv{position:absolute;inset:0;z-index:3;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;pointer-events:none;border-radius:8px;
+  background:rgba(8,12,20,.42)}
+.surv b{font-size:clamp(12px, calc(var(--cell)*.10), 26px);
+  font-weight:800;line-height:1;color:#7fe0a3;
+  text-shadow:0 1px 4px #05070b}
+.surv.none b{color:#5d6675}
+.surv.top{background:rgba(16,44,28,.52);
+  box-shadow:inset 0 0 0 2px #52c272}
+.surv.top b{color:#9dffcf}
+.surv i{font-style:normal;font-size:clamp(9px, calc(var(--cell)*.05), 15px);
+  line-height:1}
+.surv-trait{color:var(--gold)}
+.surv-held{color:#9dffcf}

@@ -1120,6 +1120,37 @@ export function deployments(s: V23State): { card: CardId; cell: number }[] {
   return out;
 }
 
+/**
+ * Everything a deployment would do at one cell, for inspection BEFORE
+ * the card is chosen.
+ *
+ * Runs the real engine on a draft: the attack it would make, what
+ * protection would hold, and how many choices its On Deploy trait would
+ * offer there. Same code the live game runs, so the preview cannot
+ * disagree with the move.
+ */
+export function previewAt(s: V23State, card: CardId, cell: number): {
+  taken: CardId[];
+  blocked: { card: CardId; why: string }[];
+  traitOptions: number;
+} {
+  const base = previewDeploy(s, card, cell);
+  const def = s.defs[card];
+  let traitOptions = 0;
+  if (def.trait && TRAIT_INFO[def.trait].timing === 'onDeploy') {
+    const d = clone(s);
+    const p = toMove(d);
+    d.hands[p] = d.hands[p].filter((c) => c !== card);
+    d.cells[cell] = card;
+    d.owner[card] = p;
+    const opts = def.trait === 'harbinger' ? harbingerOptions(d, cell)
+      : def.trait === 'exile' ? exileOptions(d, cell, p)
+      : def.trait === 'pact' ? pactOptions(d, cell, p) : [];
+    traitOptions = opts.length;
+  }
+  return { ...base, traitOptions };
+}
+
 /** What a deployment would capture, before any optional ability. Used by
  *  the preview, and deliberately the same code the live game runs. */
 export function previewDeploy(s: V23State, card: CardId, cell: number):
