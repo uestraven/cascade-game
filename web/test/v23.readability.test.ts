@@ -150,8 +150,14 @@ describe('text is sized from the cell, not in fixed pixels', () => {
     }
     const block = css.slice(css.indexOf('.bc-sigil{'),
                             css.indexOf('.bc-sigil.n{'));
-    expect(block, 'about 17% of the card, down from 27%')
-      .toMatch(/width:17%/);
+    // sized from the cell and square, so the socket is a circle of a
+    // diameter the artwork can actually be specified against
+    expect(block, 'diameter derives from --cell')
+      .toMatch(/width:calc\(var\(--cell\)\*\.115\)/);
+    expect(block, 'and it is round, not an ellipse')
+      .toContain('aspect-ratio:1');
+    // 11.5% of the card against the old face's 27%
+    expect(0.115).toBeLessThan(0.27);
   });
 
   it('drops the one-line effects rather than rendering them unreadably',

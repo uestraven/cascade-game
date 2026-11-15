@@ -656,8 +656,12 @@ button:disabled{opacity:.4;cursor:default}
 
 /* 5 · sigils: still on their four edges, because the edge IS the rule,
    but no longer the focal point of the card */
+/* Sized from the CELL and square, so the sockets are circles of a
+   predictable diameter. Percentages of the portrait band gave 17% of
+   width by 17% of height on a ~1.8:1 band -- a squashed ellipse, and a
+   size the artwork could not be specified against. */
 .bc-sigil{position:absolute;display:grid;place-items:center;
-  width:17%;height:17%;min-width:11px;min-height:11px;
+  width:calc(var(--cell)*.115);aspect-ratio:1;min-width:15px;
   border-radius:50%;background:rgba(6,8,12,.74);
   box-shadow:0 0 0 1px rgba(255,255,255,.10)}
 .bc-sigil > .sigil{width:74%;height:74%}
