@@ -59,7 +59,7 @@ import proto as P
 # passive or deployment-triggered and expires when Convergence ends, a
 # command is an action chosen on your turn. Either slot may be empty.
 TRAITS = (None, 'sanctuary', 'retribution')
-COMMANDS_SET = ('plain', 'usurp', 'transpose', 'reclaim',
+COMMANDS_SET = ('plain', 'usurp', 'usurp_one', 'transpose', 'reclaim',
                 'reclaim_recent')
 
 #: a roster entry is (trait, command); decks cycle through one
@@ -203,6 +203,21 @@ def command_options(cards, own, passive, active, player, src, prov,
             t = P.NB[src][d]
             if t >= 0 and cards[t] is not None and (own[opp] >> t) & 1:
                 out.append(('usurp', t))
+    elif act == 'usurp_one':
+        # the single-target cut: the usurped card strikes ONE named
+        # neighbour of its own side rather than every one at once, which
+        # caps the command at a single capture
+        out.append(('plain',))
+        for d in range(4):
+            t = P.NB[src][d]
+            if t < 0 or cards[t] is None or not (own[opp] >> t) & 1:
+                continue
+            for e in range(4):
+                u = P.NB[t][e]
+                if u < 0 or cards[u] is None or u == src:
+                    continue
+                if (own[opp] >> u) & 1:
+                    out.append(('usurp_one', t, u))
     elif act == 'transpose':
         out.append(('plain',))
         for d in range(4):
@@ -268,6 +283,13 @@ def run_command(cards, own, passive, active, player, src, opt, rng, prov,
         # their card attacks their own side; the spoils are ours
         got = attack_from(cards, own, passive, opt[1], player, 'dominion',
                           restrict_owner=opp)
+    elif kind == 'usurp_one':
+        t, u = opt[1], opt[2]
+        d = next((k for k in range(4) if P.NB[t][k] == u), None)
+        if d is not None and (own[opp] >> u) & 1 \
+                and not protected(cards, own, passive, u, opp, 'dominion') \
+                and matches(cards, t, d, u):
+            got = [u]
     elif kind == 'transpose':
         a, b = opt[1], opt[2]
         cards[a], cards[b] = cards[b], cards[a]

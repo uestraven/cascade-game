@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { App } from './proto/ui/App';
 import { V2App } from './v2/App2';
+import { V22App } from './v22/App22';
 
-export type Ruleset = 'v1' | 'v2';
+export type Ruleset = 'v1' | 'v2' | 'v22';
 
 /**
  * Which game the site serves.
@@ -24,15 +25,16 @@ export type Ruleset = 'v1' | 'v2';
  * Two playtest sessions were spent on v1 believing they were v2. The
  * branch under test is the one that should load.
  */
-const DEFAULT: Ruleset = 'v2';
+const DEFAULT: Ruleset = 'v22';
 
 const read = (): Ruleset => {
   if (typeof window === 'undefined') return DEFAULT;
-  if (window.location.hash === '#v2') return 'v2';
-  if (window.location.hash === '#v1') return 'v1';
+  const h = window.location.hash.slice(1);
+  if (h === 'v1' || h === 'v2' || h === 'v22') return h;
   try {
     const saved = localStorage.getItem('cascade.ruleset');
-    return saved === 'v1' || saved === 'v2' ? saved : DEFAULT;
+    if (saved === 'v1' || saved === 'v2' || saved === 'v22') return saved;
+    return DEFAULT;
   } catch { return DEFAULT; }
 };
 
@@ -56,15 +58,23 @@ export function Root() {
         </button>
         <button className={rules === 'v2' ? 'on' : ''}
                 onClick={() => setRules('v2')}>
-          v2 — deploy &amp; command
+          v2.1 — deploy &amp; command
+        </button>
+        <button className={rules === 'v22' ? 'on' : ''}
+                onClick={() => setRules('v22')}>
+          v2.2 — character powers
         </button>
         <span className="muted small2">
           {rules === 'v1'
             ? 'place, capture, cascade, repeat — 20 abilities'
-            : 'fill the board, then command it — 4 abilities'}
+            : rules === 'v2'
+              ? 'the verified baseline — four attack modifiers'
+              : 'two slots per character — traits and commands'}
         </span>
       </div>
-      {rules === 'v1' ? <App /> : <V2App />}
+      {rules === 'v1' ? <App />
+        : rules === 'v2' ? <V2App />
+        : <V22App />}
     </>
   );
 }

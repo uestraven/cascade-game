@@ -262,18 +262,23 @@ describe('a side with nothing on the board', () => {
 });
 
 describe('both rulesets are reachable from the interface', () => {
-  it('a fresh visit gets v2, because that is what is under test', () => {
-    // this defaulted to v1 and cost two playtest sessions: the branch
-    // served v1 and pinned #v1 into the URL, so v2 was never seen
+  it('a fresh visit gets the ruleset under test, not an older one',
+     () => {
+    // the original fault this guards: the switch defaulted to v1 while
+    // v2 was the branch under test, and pinned '#v1' into the URL, so
+    // two playtest sessions were spent on the wrong game. The newest
+    // ruleset is now v2.2, so that is what a fresh visit must serve.
     const html = renderToStaticMarkup(createElement(Root));
     expect(html).toContain('The Convergence');
-    expect(html).toContain('deployment &amp; command');
+    expect(html).toContain('character powers');
+    expect(html).not.toContain('place, capture, cascade, repeat');
   });
 
-  it('the switch offers v1 and v2', () => {
+  it('every ruleset stays reachable as a control', () => {
     const html = renderToStaticMarkup(createElement(Root));
     expect(html).toContain('v1 — one phase');
-    expect(html).toContain('v2 — deploy');
+    expect(html).toContain('v2.1 — deploy');
+    expect(html).toContain('v2.2 — character powers');
   });
 
   it('v2 renders its phase banner and says which phase it is', () => {

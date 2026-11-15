@@ -490,6 +490,54 @@ sweep shows the *greedy* bot cannot, not that the question is
 unanswerable. Making it playable now and improving the bot later are
 both open.
 
+## 3f. v2.2 shipped — Character Powers
+
+Playable now, default ruleset, with v1 and v2.1 still switchable as
+controls. The v2.1 baseline is preserved exactly and asserted by test:
+same board, deal, placement count, command count and command order.
+Only the abilities changed.
+
+**Two slots per character.** A Convergence *trait* (passive, expires
+when the phase ends) and a Dominion *command* (an action you choose).
+Either may be empty. Both are named on the card itself and spelled out
+in full in the right rail, with the trait dimmed once it has expired —
+an expired power that still looks live is a misread.
+
+**Single-target Usurp flattens the snowball**, and the original ships
+alongside it for comparison:
+
+| version | used | P1 | P2 | draw | reversed | behind 4 | ahead 2 |
+|---|---|---|---|---|---|---|---|
+| plain (control) | — | 46.7% | 45.6% | 7.7% | 44.5% | 39.5% | 52.1% |
+| usurp (all targets) | 72.4% | 42.9% | 54.5% | 2.7% | 26.6% | **21.4%** | **73.5%** |
+| **usurp (single)** | 18.1% | 50.2% | 42.5% | 7.3% | 48.8% | 37.6% | 59.7% |
+
+Capping it at one capture removes the gradient, returns the draw rate to
+normal, and drops usage from crowding-out to a genuine choice.
+
+**Reclaim ships in its physically representable form only** — a card the
+opponent took on their *last* command, one temporary marker, no history.
+
+**As shipped**, over 400 games of the TypeScript itself: P1 45.0%, P2
+47.5%, drawn 7.5%, Convergence captures 11.84 (against v2.1's 13.07 —
+Sanctuary is doing visible work), Dominion 15.32. Every command gets
+chosen: plain 1586, usurp 313, reclaim 163, single-usurp 115, transpose
+92.
+
+Rules verified against `v22.py` before release: 2,500 positions carrying
+7,033 outcomes, compared on captures, ownership, the board, and *both
+slots* — Transpose moves the slots with the cards, so a port that moved
+one and not the other would otherwise pass.
+
+**Deliberately unresolved, for human playtesting to answer:** whether
+Transpose's deferred payoff is interesting (no bot here can price it),
+whether Sanctuary makes people actually build and defend formations or
+merely reduces captures, whether the original Usurp is exciting or
+oppressive, and whether a named character changes how it is played. The
+three questions worth asking after a game: which ability was most
+satisfying to activate, which one changed your plan, and which felt
+unfair when used against you.
+
 ## 4. Test plan
 
 | Prototype | Rules | Question |
