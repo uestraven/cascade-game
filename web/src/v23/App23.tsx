@@ -194,8 +194,9 @@ export function V23App() {
   /** a hand card under the cursor, inspected before being chosen */
   const [peek, setPeek] = useState<{ card: CardId; x: number; y: number }
     | null>(null);
-  /** the Dominion briefing has been read, and the result acknowledged */
-  const [briefed, setBriefed] = useState(false);
+  /** each phase's briefing has been read, and the result acknowledged */
+  const [briefedI, setBriefedI] = useState(false);
+  const [briefedII, setBriefedII] = useState(false);
   const [sawResult, setSawResult] = useState(false);
   const botRng = useRef(mulberry32(seed ^ 0x9e3779b9));
   const coarse = useCoarsePointer();
@@ -207,7 +208,8 @@ export function V23App() {
     setGame(newGame(s, { boundChampions: bc }));
     setSel(null); setHover(null); setOptHover(null); setCmdCell(null);
     setInspect(null); setFlash(new Set());
-    setBriefed(false); setSawResult(false); setPeek(null); setBig(null);
+    setBriefedI(false); setBriefedII(false);
+    setSawResult(false); setPeek(null); setBig(null);
     botRng.current = mulberry32(s ^ 0x9e3779b9);
   }, []);
 
@@ -234,8 +236,11 @@ export function V23App() {
    * without this the first command of the phase was taken while the
    * overlay explaining the phase was still on screen.
    */
-  const gate = game.phase === 'dominion' && game.commands === 0
-    && !briefed;
+  const gateI = game.phase === 'convergence' && game.deployed === 0
+    && !briefedI;
+  const gateII = game.phase === 'dominion' && game.commands === 0
+    && !briefedII;
+  const gate = gateI || gateII;
 
   // the opponent
   useEffect(() => {
@@ -1070,7 +1075,92 @@ export function V23App() {
           never stated, so it is stated here, before the first command,
           with the standing they are about to play from.
           ------------------------------------------------------------ */}
-      {gate && (
+      {/* ---------------------------------------------------------------
+          Phase I, before the first deployment.
+
+          Dominion got a briefing first because it was the phase being
+          complained about, which left the game opening on a board of
+          empty cells with the rules in a rail. Convergence has its own
+          objective, and it is not "capture things": it is to build the
+          position that the six commands of Dominion will be fought
+          over. A player who does not know that plays Phase I as if it
+          were the whole game.
+
+          The capture rule is stated here because it is the one rule
+          everything else rests on, and the four sigils are drawn
+          rather than named — matching is a visual test, so a list of
+          words is the wrong way to teach it.
+          ------------------------------------------------------------ */}
+      {gateI && (
+        <div className="curtain">
+          <div className="curtaincard">
+            <p className="ct-kicker">A new game · twelve characters</p>
+            <h2 className="ct-title">Phase I · The Convergence</h2>
+            <p className="ct-lede">
+              Six characters each. Take turns placing <b>one</b> onto
+              the board until all twelve are down —{' '}
+              <b>twelve deployments</b>.{' '}
+              <b>{mode === 'hotseat' ? 'Player 1' : 'You'} deploy
+              first.</b>
+            </p>
+
+            <div className="ct-rule">
+              <b>The one rule.</b> The character you have just placed
+              attacks each neighbour. If the two <b>facing</b> sigils
+              are <b>the same</b>, you take that card. Nothing else on
+              the board attacks — only the card you played.
+            </div>
+
+            {/* matching is a visual test, so show the symbols */}
+            <ul className="ct-sigils">
+              {SIGIL_NAMES.map((n, i) => (
+                <li key={n}>
+                  <span className="sl-disc"
+                        style={{ color: SIGIL_PALETTE[n].color }}>
+                    <Sigil sigil={i as 0 | 1 | 2 | 3} size={18} />
+                  </span>
+                  <em>{SIGIL_PALETTE[n].arcane}</em>
+                </li>
+              ))}
+            </ul>
+            <p className="ct-note">
+              A sigil's colour says only which symbol it is. Four edges,
+              fixed: <b>characters never rotate</b>, so a character's
+              four sigils are part of who it is.
+            </p>
+
+            <div className="ct-rule green">
+              <b>Convergence abilities are live — and only now.</b>{' '}
+              Every character has one, and all six of them expire the
+              moment Phase I ends. If you are going to use a trait, this
+              is the phase to use it in.
+            </div>
+
+            {champions > 0 && (
+              <p className="ct-note champ">
+                ★ <b>Bound Champions</b> are on: {champions} of each
+                player's characters cannot be captured for the whole of
+                Convergence. They sparkle while that holds.
+              </p>
+            )}
+
+            <div className="ct-rule gold">
+              <b>What this phase is for.</b> Convergence does not decide
+              the game — it builds the board. Then{' '}
+              <b>Phase II · The Dominion</b> gives each player{' '}
+              <b>three commands</b>, and whoever controls the most of
+              the twelve at the end wins.
+            </div>
+
+            <button className="ct-go" autoFocus
+                    onClick={() => setBriefedI(true)}>
+              begin the Convergence
+            </button>
+          </div>
+        </div>
+      )}
+
+      {gateII && (
         <div className="curtain">
           <div className="curtaincard">
             <p className="ct-kicker">The Convergence is complete</p>
@@ -1136,7 +1226,7 @@ export function V23App() {
             </ol>
 
             <button className="ct-go" autoFocus
-                    onClick={() => setBriefed(true)}>
+                    onClick={() => setBriefedII(true)}>
               begin the Dominion
             </button>
           </div>

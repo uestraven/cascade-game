@@ -198,6 +198,29 @@ one card. Resulting reactions resolve before Pact's own normal attack.
 
 ---
 
+## The Convergence
+
+Six characters each. Players alternate placing **one** card until all
+twelve are down — twelve deployments, **P1 first**, so P2 places last.
+
+**The capture rule.** The character just placed attacks each
+neighbour; if the two *facing* sigils are the same, that card changes
+hands. Nothing else on the board attacks — only the card played.
+
+**Sigils are fixed.** No rotation, so a character's four edges are part
+of its identity.
+
+Convergence traits are live for this phase only and all six expire the
+moment it ends. Convergence does not decide the game; it builds the
+board that Dominion is fought over.
+
+The app states all of this on a briefing screen before the first
+deployment. Phase II got one first because it was the phase being
+complained about, which left the game *opening* on a board of empty
+cells with its rules in a side rail.
+
+---
+
 ## The Dominion
 
 The rules are unchanged from v2.2; what changed is that the phase now
@@ -342,11 +365,14 @@ is any good. The open questions:
 9. Do Exile or Pact create moments worth keeping?
 10. Do you want to play again?
 
-### The Dominion clarity questions
+### The clarity questions
 
-11. **Did you understand the objective of Dominion before your first
-    command?** The briefing screen and the six-step header exist to
-    make this a yes without anyone explaining it.
+11. **Did you understand the objective of each phase before your
+    first move in it?** Both phases open on a briefing, and Dominion
+    also carries a six-step header, so that this is a yes without
+    anyone explaining it.
+11a. Did the Convergence briefing teach the capture rule, or did you
+    still have to be told how matching works?
 12. Did you ever have to wonder how many commands you had left, or
     whether you could act again?
 13. When a command was spent as a pass, was it clear that a command had

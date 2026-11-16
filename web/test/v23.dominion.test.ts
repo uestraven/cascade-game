@@ -16,11 +16,12 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
-import { DominionHeader, comeback } from '../src/v23/App23';
+import { DominionHeader, V23App, comeback } from '../src/v23/App23';
 import {
-  type Player, type V23State, CELLS, DOMINION_COMMANDS,
-  DOMINION_SEQUENCE, apply, commandPlayer, commandsLeft, deployments,
-  dominionCommands, isOver, mustPass, newGame, score, toMove, winner,
+  type Player, type V23State, CELLS, DEPLOYMENTS, DOMINION_COMMANDS,
+  DOMINION_SEQUENCE, TRAITS, apply, commandPlayer, commandsLeft,
+  deployments, dominionCommands, isOver, mustPass, newGame, score,
+  toMove, winner,
 } from '../src/v23/rules';
 
 const app = readFileSync(
@@ -343,12 +344,83 @@ describe('both boundaries are events, not label changes', () => {
     expect(ms, 'long enough to read').toBeGreaterThanOrEqual(1200);
   });
 
-  it('clears both overlays on a new game', () => {
-    // a result screen that survived a reset would cover the new board
+  it('clears every overlay on a new game', () => {
+    // a result screen that survived a reset would cover the new board,
+    // and a briefing that did not reset would never be seen again
     const i = app.indexOf('const reset = useCallback');
     const body = app.slice(i, app.indexOf('}, []);', i));
-    expect(body).toContain('setBriefed(false)');
+    expect(body, 'the Convergence briefing').toContain('setBriefedI(false)');
+    expect(body, 'the Dominion briefing').toContain('setBriefedII(false)');
     expect(body).toContain('setSawResult(false)');
+  });
+
+  it('briefs the player before the first deployment too', () => {
+    // Dominion got a briefing first, because it was the phase being
+    // complained about. That left the game OPENING on a board of empty
+    // cells with the rules in a rail.
+    expect(app).toMatch(
+      /game\.phase === 'convergence' && game\.deployed === 0\s*\n?\s*&& !briefedI/);
+    // rendered, not just present in the source: a gate left in place
+    // with its render site deleted would satisfy a source check
+    const fresh = renderToStaticMarkup(createElement(V23App));
+    expect(fresh, 'a new game opens on the briefing')
+      .toContain('curtain');
+    expect(fresh).toContain('Phase I · The Convergence');
+    expect(fresh).toContain('A new game');
+    expect(fresh, 'and the Dominion briefing is not also up')
+      .not.toContain('The Convergence is complete');
+    // the one rule everything rests on
+    expect(app, 'the capture test').toContain('facing');
+    expect(app).toMatch(/are <b>the same<\/b>/);
+    expect(app, 'only the acting card attacks')
+      .toContain('only the card you played');
+    // the ability window, which is what makes Phase I its own phase
+    expect(app).toContain('Convergence abilities are live');
+    expect(app, 'and that they end').toContain('expire the');
+    // no rotation, which is a v2.3 non-negotiable
+    expect(app).toMatch(/characters never rotate<\/b>/);
+  });
+
+  it('is held behind by the same gate as the Dominion briefing', () => {
+    // one `gate` feeding both effects, so a new briefing cannot be
+    // added without the bot and the auto-pass respecting it
+    expect(app).toMatch(/const gate = gateI \|\| gateII;/);
+    expect(app).toMatch(/if \(mode !== 'bot' \|\| over \|\| gate\) return/);
+    expect(app).toMatch(/mustPass\(game\) && !over && !gate/);
+  });
+
+  it('states the numbers the engine actually uses', () => {
+    // prose that can drift from the constants is worse than no prose
+    expect(DEPLOYMENTS, 'twelve deployments').toBe(12);
+    expect(app).toMatch(/<b>twelve deployments<\/b>/);
+    expect(TRAITS, 'six Convergence traits').toHaveLength(6);
+    expect(app).toMatch(/all six of them/);
+    // P1 opens Convergence and P2 opens Dominion -- both are stated,
+    // and they are not the same player
+    const fresh = newGame(1);
+    expect(toMove(fresh), 'P1 deploys first').toBe(0);
+    expect(commandPlayer(0), 'P2 commands first').toBe(1);
+    expect(app, 'the Convergence briefing names P1')
+      .toContain("'Player 1'");
+    expect(app, 'the Dominion briefing names P2')
+      .toContain("'Player 2'");
+  });
+
+  it('shows the four sigils rather than listing their names', () => {
+    // matching is a visual test; a list of words is the wrong way to
+    // teach it
+    expect(app).toContain('ct-sigils');
+    const i = app.indexOf('ct-sigils');
+    expect(app.slice(i, i + 400)).toContain('<Sigil');
+    expect(app.slice(i, i + 400)).toContain('SIGIL_PALETTE');
+  });
+
+  it('mentions Champions only when the variant is on', () => {
+    expect(app).toMatch(/\{champions > 0 && \(/);
+    const i = app.indexOf('{champions > 0 && (');
+    expect(app.slice(i, i + 420)).toContain('Bound Champions');
+    expect(app.slice(i, i + 420), 'and says what they do')
+      .toContain('cannot be captured');
   });
 
   it('tells a Convergence player what Phase II is for', () => {
