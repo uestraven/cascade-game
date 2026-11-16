@@ -67,26 +67,42 @@ function rule(selector: string) {
 }
 
 /**
- * The `background:#rrggbb` that a selector ends up with.
+ * The flat `background:#rrggbb` a selector ends up with, or null.
  *
- * Searches every rule with that exact selector and takes the last one
- * to set a flat background, because the cascade does: `.bcard.p1`
- * appears twice, once for its border and once, later, for its body.
+ * Checks every rule with that exact selector and takes the last one to
+ * set one, because the cascade does. Returns null when none do, which
+ * is what the "nothing is darkened" block is asserting.
  */
-function bodyColour(selector: string) {
-  let from = 0, found: string | null = null, seen = 0;
+function bodyOverride(selector: string): string | null {
+  let from = 0, found: string | null = null;
   for (;;) {
     const i = css.indexOf(selector + '{', from);
-    if (i === -1) break;
-    seen++;
+    if (i === -1) return found;
     from = i + 1;
     const m = css.slice(i, css.indexOf('}', i))
       .match(/background:\s*(#[0-9a-fA-F]{6})/);
     if (m) found = m[1];
   }
-  expect(seen, `${selector} should exist`).toBeGreaterThan(0);
-  expect(found, `${selector} should set a flat background`).not.toBeNull();
-  return found!;
+}
+
+/**
+ * Every rule whose selector mentions a Champion card.
+ *
+ * Anchored on the selector text and walked forward to its own `{`,
+ * NOT on a preceding `}`: the first version required one, so every
+ * rule introduced by a comment -- which is most of them in this file
+ * -- was skipped, and a box-shadow added back to the sparkle overlay
+ * went unnoticed.
+ */
+function champRules() {
+  const out: { selector: string; body: string }[] = [];
+  for (const m of css.matchAll(/\.bcard\.champ[^{};/]*\{/g)) {
+    const i = m.index! + m[0].length;
+    out.push({ selector: m[0].slice(0, -1).trim(),
+               body: css.slice(i, css.indexOf('}', i)) });
+  }
+  expect(out.length, 'Champion rules should exist').toBeGreaterThan(1);
+  return out;
 }
 
 /** a game with Champions, and one without */
@@ -106,80 +122,68 @@ function deployUntil(g: V23State, want: string): V23State {
   return s;
 }
 
-describe('the card body carries ownership, red the darker', () => {
-  it('gives the two players different bodies, not just borders', () => {
-    const p1 = bodyColour('.bcard.p1');
-    const p2 = bodyColour('.bcard.p2');
-    expect(p1, 'the two must differ at all').not.toBe(p2);
-    // red darker, as asked
-    expect(Lstar(p2), `p2 ${p2} must be darker than p1 ${p1}`)
-      .toBeLessThan(Lstar(p1));
-    // and far enough apart to read across a table, not just in a diff
-    expect(Lstar(p1) - Lstar(p2),
-           `dL* ${(Lstar(p1) - Lstar(p2)).toFixed(1)} is too subtle`)
-      .toBeGreaterThan(6);
+describe('nothing is darkened', () => {
+  it('leaves both players the same card body', () => {
+    // An earlier pass darkened P2 relative to P1 (L* 5.0 against 15.5)
+    // and darkened Champions below both. The designer rejected it, so
+    // this is a guard against reintroducing it, not a preference.
+    expect(bodyOverride('.bcard.p1'), 'P1 body must not be re-tinted')
+      .toBeNull();
+    expect(bodyOverride('.bcard.p2'), 'P2 body must not be re-tinted')
+      .toBeNull();
+    expect(bodyOverride('.bcard.champ'),
+           'a Champion body must not be re-tinted').toBeNull();
+    // the shared body is still the only one
+    expect(bodyOverride('.bcard')).toBe('#0f1117');
   });
 
-  it('keeps every on-card text colour legible on both bodies', () => {
-    // darkening a card is worthless if it costs the ability text
-    for (const bg of [bodyColour('.bcard.p1'), bodyColour('.bcard.p2'),
-                      bodyColour('.bcard.champ')]) {
-      for (const [fg, label] of [['#f4f7fc', 'card name'],
-                                 ['#ccd4e2', 'ability one-liner'],
-                                 ['#6fd3a8', 'Convergence label'],
-                                 ['#ffd84a', 'Dominion label']] as const) {
-        expect(contrast(bg, fg), `${label} on ${bg}`)
-          .toBeGreaterThan(4.5);
-      }
+  it('leaves the portrait, the name bar and the ability rows alone',
+     () => {
+    // the scrim over the portrait was the largest part of the old
+    // darkening and the easiest to reach for again
+    expect(css, 'no scrim over a Champion portrait')
+      .not.toContain('.bcard.champ .bc-portrait::before');
+    for (const sel of ['.bcard.champ .bc-name',
+                       '.bcard.champ .bc-row.i',
+                       '.bcard.champ .bc-row.ii']) {
+      expect(css, `${sel} must not exist`).not.toContain(sel);
     }
-  });
-});
-
-describe('a Champion is darker than either player\'s cards', () => {
-  it('measurably, for both players', () => {
-    const champ = bodyColour('.bcard.champ');
-    for (const sel of ['.bcard.p1', '.bcard.p2']) {
-      expect(Lstar(champ), `${champ} vs ${sel}`)
-        .toBeLessThan(Lstar(bodyColour(sel)));
+    // and no filter anywhere in the Champion rules
+    for (const sel of champRules()) {
+      expect(sel.body, `${sel.selector} must not filter`)
+        .not.toMatch(/filter:/);
     }
   });
 
-  it('does not rest on darkness alone, which has no room for red', () => {
-    // P2's body is already near black, so a P2 Champion can only be a
-    // few L* darker. The portrait scrim, the rim and the sparkle carry
-    // it; this asserts those exist rather than trusting the tint.
-    const champ = bodyColour('.bcard.champ');
-    const gap = Lstar(bodyColour('.bcard.p2')) - Lstar(champ);
-    expect(gap, 'the red gap really is small').toBeLessThan(6);
-    // so the other three cues must be present
-    expect(css, 'a scrim over the portrait')
-      .toContain('.bcard.champ .bc-portrait::before');
-    expect(css, 'a gold rim').toMatch(/\.bcard\.champ\.live::after\{/);
-    expect(css, 'and the sparkle').toContain('champtwinkle');
+  it('adds light rather than taking it away', () => {
+    // every colour the sparkle introduces is brighter than the card
+    // body it sits on, so the card can only get lighter
+    const body = luminance('#0f1117');
+    const colours = [...css.matchAll(
+      /rgba\((\d+),\s*(\d+),\s*(\d+),\s*\.?\d+\)/g)]
+      .filter((m) => css.slice(Math.max(0, m.index! - 900), m.index!)
+        .includes('.bcard.champ'))
+      .map((m) => [+m[1], +m[2], +m[3]] as const);
+    expect(colours.length, 'the sparkle has colours')
+      .toBeGreaterThanOrEqual(3);
+    for (const [r, g, b] of colours) {
+      const hex = '#' + [r, g, b]
+        .map((v) => v.toString(16).padStart(2, '0')).join('');
+      expect(luminance(hex), `rgb(${r},${g},${b}) must be a highlight`)
+        .toBeGreaterThan(body);
+    }
   });
 
-  it('puts the rim on the card, where it is not painted over', () => {
-    // the regression: `inset` box-shadow on .cell, covered entirely by
-    // .bcard at inset:0
-    expect(rule('.bcard.champ.live::after')).toContain('inset 0 0 0 2px');
-    // the overlay sits above every row background
-    const base = rule('.bcard.champ::after');
-    expect(base).toMatch(/z-index:[6-9]/);
-    expect(base).toContain('pointer-events:none');
-  });
-
-  it('never takes box-shadow on .bcard itself', () => {
-    // `.v23 .cell.commandable .bcard` owns that property at the same
-    // specificity, and whichever came last would silently eat the
-    // other. Seeing that a card is commandable matters more.
-    expect(css).toContain('.v23 .cell.commandable .bcard');
-    for (const sel of ['.bcard.champ{', '.bcard.champ.live{',
-                       '.bcard.champ.spent{']) {
-      const i = css.indexOf(sel);
-      if (i === -1) continue;
-      expect(css.slice(i, css.indexOf('}', i)), `${sel} box-shadow`)
+  it('marks a Champion with the sparkle and nothing structural', () => {
+    // no rim either: `.cell.chosen` owns box-shadow at cell level and
+    // `.v23 .cell.commandable .bcard` owns it at card level, so a rim
+    // would have had to outrank one of them. Selection and
+    // commandability matter more than Champion status.
+    for (const { selector, body } of champRules()) {
+      expect(body, `${selector} must not add a box-shadow`)
         .not.toContain('box-shadow');
     }
+    expect(css).toContain('.v23 .cell.commandable .bcard');
   });
 });
 
@@ -189,8 +193,16 @@ describe('the sparkle', () => {
     // permanent information -- but it stops being lit
     expect(rule('.bcard.champ.live::after'), 'live must animate')
       .toContain('animation:champtwinkle');
-    expect(rule('.bcard.champ.spent::after'), 'spent must not animate')
-      .not.toContain('animation');
+    // a Champion whose protection has expired gets no sparkle at all.
+    // Every Champion rule is scoped to .live, so there is nothing to
+    // switch off -- which is checked rather than assumed, because a
+    // bare `.bcard.champ` rule would also catch the spent ones.
+    for (const { selector } of champRules()) {
+      expect(selector, `${selector} must be scoped to .live`)
+        .toContain('.live');
+    }
+    expect(css, 'and no rule targets the spent state')
+      .not.toContain('.bcard.champ.spent');
     expect(css, 'and the glint is live-only')
       .toContain('.bcard.champ.live .bc-portrait::after');
   });
