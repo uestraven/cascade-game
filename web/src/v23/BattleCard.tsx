@@ -41,8 +41,17 @@ export function BattleCard({ g, id, owner }: {
     .padStart(2, '0')}.webp`;
   const side = ['n', 'e', 's', 'w'] as const;
 
+  // A champion's ring used to be `inset` box-shadow on the CELL, which
+  // the battle card covers completely -- .bcard is inset:0 over the
+  // cell's padding box and paints after it, so the only thing marking a
+  // champion was the corner badge. The ring belongs on the card.
+  const champ = bound
+    ? (g.phase === 'convergence' ? ' champ live' : ' champ spent')
+    : '';
+
   return (
-    <div className={`bcard ${owner === 0 ? 'p1' : 'p2'} ${g.phase}`}
+    <div className={`bcard ${owner === 0 ? 'p1' : 'p2'} ${g.phase}`
+           + champ}
          style={{ ['--accent' as string]: accent }}>
       {/* 1 · identity — a bounded portrait, not a full-bleed background */}
       <div className="bc-portrait" style={{ backgroundImage: `url(${art})` }}>

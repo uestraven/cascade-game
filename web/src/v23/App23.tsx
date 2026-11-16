@@ -11,7 +11,8 @@ import {
   type V23State, CELLS, CMD_INFO, COLS, DOMINION_COMMANDS,
   DOMINION_SEQUENCE, ROWS,
   TRAIT_INFO, alliesAdjacent, apply, captureBlocked, cellOf,
-  commandsLeft, deployments, dominionCommands, isOver, moveBlocked,
+  commandsLeft, deployments, dominionCommands, isChampion, isOver,
+  moveBlocked,
   mustPass, newGame, previewAt, previewDeploy, score, toMove,
   traitState, winner,
 } from './rules';
@@ -713,6 +714,17 @@ export function V23App() {
                          .padStart(2, '0')}.webp)` }} />
                 <h3>{d.name}</h3>
                 {d.epithet && <p className="bc-ep">{d.epithet}</p>}
+                {/* whether this one is safe to deploy forward is part
+                    of choosing it, so it is said here and not only
+                    once the card is on the board */}
+                {isChampion(game, peek.card) && (
+                  <p className="peekchamp">
+                    ★ Bound Champion —{' '}
+                    {game.phase === 'convergence'
+                      ? 'cannot be captured during Convergence'
+                      : 'protection has expired'}
+                  </p>
+                )}
                 <div className="peeksigils">
                   {(['north', 'east', 'south', 'west'] as const)
                     .map((side, i) => (
@@ -794,7 +806,8 @@ export function V23App() {
                 return (
                   <button key={cid}
                           className={`slot${sel === cid ? ' sel' : ''}`
-                            + `${peek?.card === cid ? ' peek' : ''}`}
+                            + `${peek?.card === cid ? ' peek' : ''}`
+                            + `${isChampion(game, cid) ? ' champ' : ''}`}
                           disabled={!myTurn || over}
                           onMouseEnter={coarse ? undefined : (ev) => {
                             const r = (ev.currentTarget as HTMLElement)
@@ -826,7 +839,12 @@ export function V23App() {
                           }}>
                     <CardFace sigils={d.sigils} owner={active} small
                               art={d.art} />
-                    <small>{d.name.replace(/^The /, '')}</small>
+                    <small>
+                      {isChampion(game, cid) && (
+                        <span className="handchamp">★ </span>
+                      )}
+                      {d.name.replace(/^The /, '')}
+                    </small>
                     <small className="handslots">
                       <span className="hs-i">
                         {d.trait ? TRAIT_INFO[d.trait].name : '—'}

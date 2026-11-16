@@ -618,7 +618,12 @@ button:disabled{opacity:.4;cursor:default}
   box-shadow:0 0 0 1px var(--gold)}
 .statechip.inert{background:rgba(14,16,22,.9);color:#8b93a6;
   box-shadow:0 0 0 1px #343b4d}
-.cell.champ{box-shadow:inset 0 0 0 2px var(--gold)}
+/* `.cell.champ` keeps the class as a hook but draws nothing: an inset
+   shadow here is painted under the battle card, which covers the
+   cell's whole padding box. The Champion rim is on `.bcard.champ`
+   instead. It is not merely moved up here either -- `.cell.chosen`
+   already owns box-shadow at the same specificity, so a rule at this
+   level would have silently cancelled the selection ring. */
 
 /* Bound Champion status is persistent information, not a transient
    protection state, so it has its own badge that stays put and dims
@@ -1234,3 +1239,115 @@ button:disabled{opacity:.4;cursor:default}
   .ct-standing.big .ct-score b{font-size:40px}
   .domheader{padding:7px 9px}
 }
+
+/* =====================================================================
+   TELLING CARDS APART: OWNERSHIP IN THE BODY, CHAMPIONS IN THE LIGHT
+
+   Two things were wrong rather than merely subtle.
+
+   1  A champion's gold ring was `box-shadow: inset` on the CELL. The
+      battle card is `position:absolute; inset:0` over that cell's
+      padding box and paints after it, so the ring was completely
+      hidden and the only thing marking a champion was the small corner
+      badge. The ring now lives on the card.
+
+   2  Both players' cards had the same #0f1117 body. Ownership was
+      carried by the 2px border, the P1/P2 chip and the accent
+      gradient, and nothing else -- at a 84px cell on a phone, by the
+      border alone.
+
+   So the body now carries ownership, with red the darker of the two,
+   and a champion is darker still and catches the light.
+
+   An honest limit on "darker": P2's body sits at L* 5.0 against P1's
+   15.5, which is a clear step. But there is no room below it -- black
+   is L* 0 -- so a P2 champion can only be ~3 L* darker than a plain P2
+   card. Darkness alone cannot carry champion status for the red
+   player. The 44% scrim over the portrait, the gold rim and the
+   sparkle do the work; the body tint is the supporting cue, not the
+   signal.
+   ================================================================== */
+.bcard.p1{background:#18273f}
+.bcard.p2{background:#1c0d08}
+
+/* the champion body: darker than either, for both players */
+.bcard.champ{background:#06070b}
+/* the portrait is the largest area, so it is where "darker" is read.
+   A scrim rather than a filter, because a filter on .bc-portrait would
+   also dim the four sigil sockets and the badge sitting inside it. */
+.bcard.champ .bc-portrait::before{content:'';position:absolute;inset:0;
+  background:rgba(2,3,6,.44);pointer-events:none}
+.bcard.champ .bc-name{background:linear-gradient(90deg,
+  color-mix(in srgb, var(--accent) 24%, #05060a) 0%, #05060a 80%)}
+.bcard.champ .bc-row.i{background:rgba(9,22,18,.8)}
+.bcard.champ .bc-row.ii{background:rgba(24,19,5,.8)}
+
+/* The rim and the sparkle, in one overlay above everything on the card
+   so neither can be covered by a row background.
+
+   Deliberately NOT a box-shadow on .bcard: `.v23 .cell.commandable
+   .bcard` already owns that property at the same specificity, and
+   whichever came last in the file would have silently eaten the other.
+   Being able to see that a card is commandable matters more than any
+   of this. */
+.bcard.champ::after{content:'';position:absolute;inset:0;z-index:6;
+  pointer-events:none;border-radius:6px}
+.bcard.champ.live::after{
+  box-shadow:inset 0 0 0 2px rgba(255,216,74,.9),
+             inset 0 0 22px rgba(255,216,74,.17);
+  /* three specks of catchlight, sized from the cell so they are a
+     speck at 84px and still a speck at 400px */
+  background:
+    radial-gradient(circle at 17% 24%, rgba(255,248,214,.95) 0,
+      rgba(255,248,214,.95) calc(var(--cell)*.012), transparent
+      calc(var(--cell)*.026)),
+    radial-gradient(circle at 79% 15%, rgba(255,248,214,.85) 0,
+      rgba(255,248,214,.85) calc(var(--cell)*.010), transparent
+      calc(var(--cell)*.022)),
+    radial-gradient(circle at 88% 71%, rgba(255,248,214,.9) 0,
+      rgba(255,248,214,.9) calc(var(--cell)*.011), transparent
+      calc(var(--cell)*.024));
+  animation:champtwinkle 3.1s ease-in-out infinite}
+/* protection expired: the mark stays, because being a champion is
+   permanent information, but it stops being lit */
+.bcard.champ.spent::after{
+  box-shadow:inset 0 0 0 1px rgba(255,216,74,.32)}
+
+/* the slow glint that crosses the card. A second element would be
+   cleaner but ::before is already the portrait scrim's anchor, so this
+   rides on .bc-portrait, which is where a highlight reads anyway. */
+.bcard.champ.live .bc-portrait::after{content:'';position:absolute;
+  inset:0;pointer-events:none;mix-blend-mode:screen;
+  background:linear-gradient(112deg, transparent 40%,
+    rgba(255,240,196,.30) 47%, rgba(255,255,255,.46) 50%,
+    rgba(255,240,196,.30) 53%, transparent 60%);
+  background-size:260% 260%;background-repeat:no-repeat;
+  animation:champglint 5.4s ease-in-out infinite}
+
+@keyframes champtwinkle{
+  0%,100%{opacity:.30}
+  42%{opacity:1}
+  68%{opacity:.45}
+}
+@keyframes champglint{
+  0%{background-position:-60% -60%}
+  55%,100%{background-position:160% 160%}
+}
+
+/* "slightly" is a brightness instruction, not a licence to move: a
+   playtester reading four ability lines does not need animation in
+   their peripheral vision, and some people cannot tolerate it at all */
+@media (prefers-reduced-motion: reduce){
+  .bcard.champ.live::after,
+  .bcard.champ.live .bc-portrait::after{animation:none}
+  .bcard.champ.live::after{opacity:.85}
+  .bcard.champ.live .bc-portrait::after{background-position:34% 34%}
+}
+
+/* a champion still in hand is a champion: you cannot plan around
+   deploying one safely if the hand does not say which they are */
+.slot.champ{border-color:rgba(255,216,74,.5);border-radius:9px}
+.handchamp{color:var(--gold);font-weight:700;letter-spacing:.06em}
+.peekchamp{margin:4px 0 2px;padding:4px 8px;border-radius:5px;
+  font-size:11.5px;background:rgba(40,30,8,.9);color:#ffe98a;
+  box-shadow:0 0 0 1px var(--gold)}
